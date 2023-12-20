@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .search-container {
+        text-align: center;
+        margin-top: 100px;
+        display: flex;
+        justify-content: center;
+        width: fit-content;
+    }
+
+    .search-container input {
+        width: 500px;
+        height: 50px;
+        font-size: large;
+        border-radius: 5px;
+        border: 1px solid var(--foreground);
+        padding: 10px;
+        font-size: 18px;
+    }
+
+    .search-container button {
+        height: 50px;
+        width: 100px;
+        border-radius: 5px;
+        border: 3px solid var(--foreground);
+        color: var(--foreground);
+        background-color: transparent;
+        font-size: 18px;
+        margin-left: 10px;
+    }
+
+    .search-container button:hover {
+        background-color: var(--foreground);
+        color: var(--background)
+    }
+
+    .main-content-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 50px;
+        background-color: var(--primary);
+        width: 100%;
+    }
+
+</style>
+
+<div class="search-container">
+    <form 
+    {% comment %} action="/search" 
+    method="POST" {% endcomment %}
+    >
+        <input 
+        type="text" 
+        placeholder="Search an address, neighborhood, city, or zip code." 
+        name="search"
+        >
+        <button
+        type="submit"
+        >
+        Search
+        </button>
+    </form>
+</div>
+
+<div class="main-content-container">
+    <h2>Trending Property Listings</h2>
+
+</div>
+
+{% endblock content %}

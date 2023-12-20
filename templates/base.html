@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% load static %}
+    <!-- custom CSS -->
+    <link rel="stylesheet" type="text/css" href={% static "css/styles.css" %}>
+    
+    <!-- htmx -->
+    <script src="https://unpkg.com/htmx.org@1.1.0"></script>
+
+    <title>Nice House Bro</title>
+</head>
+<body>
+    
+    {% include 'components/nav.html' %}
+
+    <div class="app-container">
+    {% block content %}
+    
+    {% endblock %}
+    </div>
+
+</body>
+</html>
