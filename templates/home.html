@@ -5,10 +5,16 @@
 <style>
     .search-container {
         text-align: center;
-        margin-top: 100px;
+        margin-top: 50px;
         display: flex;
         justify-content: center;
-        width: fit-content;
+        align-items: center;
+        width: 100%;
+        height: 500px;
+        background-image: url("/media/awesome-house.jpg");
+        background-size:    cover;                      
+        background-repeat:   no-repeat;
+        background-position: center center;
     }
 
     .search-container input {
@@ -42,11 +48,39 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        margin-top: 50px;
-        background-color: var(--primary);
+        background-color: var(--foreground);
+        color: var(--background);
         width: 100%;
+        padding-top: 25px;
     }
 
+    .card-container {
+        display: flex;
+        overflow-x: auto;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .card {
+        width: 300px;
+        background-color: var(--background);
+        color: var(--foreground);
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .card img {
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
+    .card-details {
+        font-size: 16px;
+        margin-top: auto;
+    }
 </style>
 
 <div class="search-container">
@@ -69,7 +103,30 @@
 
 <div class="main-content-container">
     <h2>Trending Property Listings</h2>
-
+    <div class="card-container">
+        <div class="card">
+            <img src="path_to_image.jpg" alt="Property Image">
+            <div class="card-details">
+                <h3>Property 1</h3>
+                <p>Details about Property 1</p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="path_to_image.jpg" alt="Property Image">
+            <div class="card-details">
+                <h3>Property 2</h3>
+                <p>Details about Property 2</p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="path_to_image.jpg" alt="Property Image">
+            <div class="card-details">
+                <h3>Property 3</h3>
+                <p>Details about Property 3</p>
+            </div>
+        </div>
+        <!-- Add more cards as needed -->
+    </div>
 </div>
 
 {% endblock content %}
