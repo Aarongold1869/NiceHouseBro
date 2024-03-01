@@ -11,6 +11,7 @@ class Property(TypedDict):
 
 PROPERTY_DATA: List[Property] = [
     {
+        "id": 1,
         "address": "123 Main St",
         "price": 100000,
         "bedrooms": 3,
@@ -20,6 +21,7 @@ PROPERTY_DATA: List[Property] = [
         "image_url": "media/awesome-house.jpg"
     },
     {
+        "id": 2,
         "address": "456 Gregory St",
         "price": 275000,
         "bedrooms": 2,
@@ -29,6 +31,7 @@ PROPERTY_DATA: List[Property] = [
         "image_url": "media/awesome-house.jpg"
     },
     {
+        "id": 3,
         "address": "789 Alcaniz St",
         "price": 320000,
         "bedrooms": 4,
@@ -38,6 +41,7 @@ PROPERTY_DATA: List[Property] = [
         "image_url": "media/awesome-house.jpg"
     },
     {
+        "id": 4,
         "address": "1011 Garden St",
         "price": 152000,
         "bedrooms": 3,
@@ -47,6 +51,7 @@ PROPERTY_DATA: List[Property] = [
         "image_url": "media/awesome-house.jpg"
     },
     {
+        "id": 5,
         "address": "1213 Taragona St",
         "price": 75000,
         "bedrooms": 1,

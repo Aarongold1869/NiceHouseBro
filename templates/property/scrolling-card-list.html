@@ -39,7 +39,7 @@ initially -->
     <div class="col-12 py-2" style="display:flex; justify-content: center;">
         <div class='col-sm-8 py-2' style="display: flex; flex-direction: row; overflow-x: scroll; white-space: nowrap; justify-content: flex-start;" >
             {% for property in property_list %}
-            <a href='#'>
+            <a href="{% url "property-detial" property_id=property.id %}">
                 <div class="card mx-2 shadow" style="display: inline-block; min-width: 18rem; cursor:pointer;">
                     <img src="{{ property.image_url }}" class="card-img-top" alt="...">
                     <div class="card-body text-wrap">
