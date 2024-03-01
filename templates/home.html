@@ -1,14 +1,21 @@
 {% extends 'base.html' %}
 
+<style>
+  .form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: red!important;
+    opacity: 1!important; /* Firefox */
+  }
+</style>
+
 {% block content %}
-<div class="bg-dark text-secondary px-4 py-5 text-center">
+<div class="bg-dark text-secondary px-4 py-4 text-center">
     <div class="py-5">
       <h1 class="display-5 fw-bold text-white">Find your next investment property.</h1>
       <div class="col-12 mx-auto">
         <p class="fs-5 mb-4">Start Searching</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
             <form class="d-flex col-sm-6" role="search">
-                <input class="form-control me-2" type="search" placeholder="Enter an address, city, state, or zip." aria-label="Search">
+                <input class="form-control me-2 bg-white text-dark" type="search" placeholder="Enter an address, city, state, or zip." aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
         </div>
