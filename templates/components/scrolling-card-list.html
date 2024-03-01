@@ -1,0 +1,67 @@
+<!-- horizontal scrolling conatiner containing cards. Cards include a full width image and text below and link to another
+page containing additional information about the property. on desktop 3 and a half cards are visible, on mobile only 1 card is visible
+initially -->
+
+<style>
+    .flex-row {
+        display: flex;
+        flex-direction: row;
+        /* flex-wrap: wrap; */
+        justify-content: space-between;
+    }
+    .horizontal-scrollable > .flex-row { 
+            overflow-x: scroll; 
+            white-space: nowrap; 
+        } 
+          
+    .horizontal-scrollable > .row > .col-xs-4 { 
+        display: inline-block; 
+        float: none; 
+    } 
+</style>
+
+<div class="container-fluid py-4 bg-white" data-bs-theme="light">
+    <div class="col-12 py-2">
+        <h2 class="text-center text-dark">Featured Properties</h2>
+    </div>
+    <div class="col-12 py-2" style="display:flex; justify-content: center;">
+        <div class='col-sm-8' style="display: flex; flex-direction: row; overflow-x: scroll; white-space: nowrap; justify-content: flex-start;" >
+            <!-- <a href='#'> -->
+                <div class="card mx-2" style="display: inline-block; min-width: 18rem;">
+                    <img src="https://via.placeholder.com/150" class="card-img-top" alt="...">
+                    <div class="card-body text-wrap">
+                        <h5 class="card-title">Property 1</h5>
+                        <p class="card-text">This is a short description of the property.</p>
+                    </div>
+                </div>
+            <!-- </a> -->
+            <!-- <a href='#'> -->
+                <div class="card mx-2" style="display: inline-block; min-width: 18rem;">
+                    <img src="https://via.placeholder.com/150" class="card-img-top" alt="...">
+                    <div class="card-body text-wrap">
+                        <h5 class="card-title">Property 2</h5>
+                        <p class="card-text">This is a short description of the property.</p>
+                    </div>
+                </div>
+            <!-- </a> -->
+            <!-- <a href='#'> -->
+                <div class="card mx-2" style="display: inline-block; min-width: 18rem;">
+                    <img src="https://via.placeholder.com/150" class="card-img-top" alt="...">
+                    <div class="card-body text-wrap">
+                        <h5 class="card-title">Property 3</h5>
+                        <p class="card-text">This is a short description of the property.</p>
+                    </div>
+                </div>
+            <!-- </a> -->
+            <!-- <a href='#'> -->
+                <div class="card mx-2" style="display: inline-block; min-width: 18rem;">
+                    <img src="https://via.placeholder.com/150" class="card-img-top" alt="...">
+                    <div class="card-body text-wrap">
+                        <h5 class="card-title">Property 4</h5>
+                        <p class="card-text">This is a short description of the property.</p>
+                    </div>
+                </div>
+            <!-- </a> -->
+        </div>
+    </div>
+</div> 
