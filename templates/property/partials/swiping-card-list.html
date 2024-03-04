@@ -1,0 +1,24 @@
+
+<div class="container" data-bs-theme="dark">
+    <div>
+        <h3 class="text-center pt-3">Explore</h3>
+    </div>
+
+    <div 
+    class='py-2 position-relative align-items-center' 
+    style="display: flex; flex-direction: row; overflow-x: scroll; white-space: nowrap; justify-content: flex-start;"
+    >
+        <button class="btn btn-sm btn-outline-light mx-1">Price</button>
+        <button class="btn btn-sm btn-outline-light mx-1">Distance</button>
+        <button class="btn btn-sm btn-outline-light mx-1">Cap Rate</button>
+        <button class="btn btn-sm btn-outline-light mx-1">Bedrooms</button>
+        <button class="btn btn-sm btn-outline-light mx-1">Bathrooms</button>
+    </div>
+    <div class="py-2" style="display:flex; justify-content: center;">
+        {% if not property %}
+            {% include "property/partials/end-of-list.html" %}
+        {% else %}
+            {% include "property/partials/property-card.html" %}
+        {% endif %}
+    </div>
+</div> 

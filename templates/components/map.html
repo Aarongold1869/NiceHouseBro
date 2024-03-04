@@ -1,0 +1,18 @@
+<div id="map" style="width: 100%; height: 400px;"></div>
+
+{{ property.Coordinates|json_script:"coordinates" }}
+
+<script>
+    let coordinates = JSON.parse(document.getElementById('coordinates').textContent);
+    var map = L.map('map').setView(coordinates, 15);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    var marker = L.marker(coordinates).addTo(map);
+
+    
+    console.log(coordinates);
+</script>

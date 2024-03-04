@@ -10,7 +10,14 @@ class Account(models.Model):
 
 class SavedProperty(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
-    property_id = models.IntegerField()
+    property_id = models.CharField(max_length=100)
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint('account', 'property_id', name='account-property_id'),
+        ]
     
     def __str__(self):
-        return self.property_id
+        return f'{self.account.user.username} - {str(self.property_id)}'
+    
+

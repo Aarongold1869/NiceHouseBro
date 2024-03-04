@@ -10,7 +10,11 @@
 <div id='property-detail' class="d-flex flex-column align-items-center justify-content-center position-relative">
     <div class="col-sm-6">
     
-        <div class="position-sticky top-0 start-0 end-0" style='z-index: 10; background-color:rgba(33, 37, 41,.8)'>
+        <div 
+        id="user-controls"
+        class="position-sticky top-0" 
+        style='z-index: 10; background-color:rgba(33, 37, 41,.8)'
+        >
             <div class="d-flex justify-content-between p-2">
                 <button class="btn btn-dark bg-transparent text-center border-0" onclick="window.history.back()">
                     <svg style="vertical-align: middle;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
@@ -57,15 +61,15 @@
         {% comment %} property details {% endcomment %}
         <div class="container p-4 bg-dark-subtle">
             <h2 class="fw-bold mb-3">{{ property.price|currency:0 }}</h2>
-            <h6 class="mb-3">
+            <h5 class="mb-3">
                 <strong>{{ property.cap_rate|percentage }}</strong> Cap Rate 
                 <strong>{{ property.bedrooms }}</strong> Beds 
                 <strong>{{ property.bathrooms }}</strong> Baths 
                 <strong>{{ property.area|comma }}</strong> square feet
-            </h6>
-            <h6 class="mb-3">{{ property.address }}</h6>
+            </h5>
+            <h5 class="mb-3">{{ property.address }}</h5>
             <div id="description-container">
-                <p id="property-description">{% lorem 40 w %}...</p>  
+                <p id="property-description" class='fs-6'>{% lorem 40 w %}...</p>  
                 <button 
                 class="btn btn-dark"
                 hx-get="{% url 'toggle_desc_visible' property_id=property.id action='show' %}"
@@ -74,6 +78,10 @@
                 >See More</button>
             </div>
         </div>
+
+        {% comment %} Map {% endcomment %}
+        {% include "components/map.html" %}
+
     </div>
 </div>
 
