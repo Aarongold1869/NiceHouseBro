@@ -41,7 +41,7 @@ initially -->
             {% for property in property_list %}
             <a href="{% url "property-detial" property_id=property.id %}">
                 <div class="card mx-2 shadow" style="display: inline-block; min-width: 18rem; cursor:pointer;">
-                    <img src="{{ property.image_url }}" class="card-img-top" alt="...">
+                    <img src="{{ property.cover_image_url }}" class="card-img-top" alt="...">
                     <div class="card-body text-wrap">
                         <h5 class="card-title" style='font-weight:600;'>{{ property.price|currency:0 }}</h5>
                         <p class='card-subtitle mb-2' style="font-size:.7rem;">

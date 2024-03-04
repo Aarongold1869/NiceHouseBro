@@ -1,0 +1,9 @@
+<div id="description-container">
+    <p id="property-description">{% lorem 40 w %}...</p>  
+    <button 
+    class="btn btn-dark"
+    hx-get="{% url 'toggle_desc_visible' property_id=property.id action='show' %}"
+    hx-target="#description-container"
+    hx-swap="outerHTML"
+    >See More</button>
+</div>

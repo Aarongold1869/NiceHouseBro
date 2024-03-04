@@ -18,7 +18,8 @@ PROPERTY_DATA: List[Property] = [
         "bathrooms": 2,
         "area": 1500,
         "cap_rate": 0.1,
-        "image_url": "media/awesome-house.jpg"
+        "cover_image_url": "media/awesome-house.jpg",
+        "image_array": ["media/awesome-house.jpg", "media/hoarder-house.jpg", "media/shrek.webp"]
     },
     {
         "id": 2,
@@ -28,7 +29,8 @@ PROPERTY_DATA: List[Property] = [
         "bathrooms": 2,
         "area": 2000,
         "cap_rate": 0.4,
-        "image_url": "media/awesome-house.jpg"
+        "cover_image_url": "media/awesome-house.jpg",
+        "image_array": ["media/awesome-house.jpg", "media/hoarder-house.jpg", "media/shrek.webp"]
     },
     {
         "id": 3,
@@ -38,7 +40,8 @@ PROPERTY_DATA: List[Property] = [
         "bathrooms": 3,
         "area": 2500,
         "cap_rate": 0.35,
-        "image_url": "media/awesome-house.jpg"
+        "cover_image_url": "media/awesome-house.jpg",
+        "image_array": ["media/awesome-house.jpg", "media/hoarder-house.jpg", "media/shrek.webp"]
     },
     {
         "id": 4,
@@ -48,7 +51,8 @@ PROPERTY_DATA: List[Property] = [
         "bathrooms": 2,
         "area": 1700,
         "cap_rate": 0.1,
-        "image_url": "media/awesome-house.jpg"
+        "cover_image_url": "media/awesome-house.jpg",
+        "image_array": ["media/awesome-house.jpg", "media/hoarder-house.jpg", "media/shrek.webp"]
     },
     {
         "id": 5,
@@ -58,6 +62,7 @@ PROPERTY_DATA: List[Property] = [
         "bathrooms": 1,
         "area": 900,
         "cap_rate": 0.08,
-        "image_url": "media/awesome-house.jpg"
+        "cover_image_url": "media/awesome-house.jpg",
+        "image_array": ["media/awesome-house.jpg", "media/hoarder-house.jpg", "media/shrek.webp"]
     },
 ]
