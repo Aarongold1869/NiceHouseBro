@@ -1,3 +1,60 @@
+{% load static %}
+{% load currency %}
+{% load percentage %}
+{% load comma %}
+
+<style>
+    #property-card {
+        transform: translateX(0) rotate(0);
+        transition: transform 400ms ease;
+    }
+    #property-card[data-status="before"] {
+        transform: translateX(120%) rotate(90deg);
+        
+    }
+    #property-card[data-status="after"] {
+        transform: translateX(-120%) rotate(-90deg);
+    }
+    #property-card[data-status="next"].htmx-added {
+        transform: translateX(120%) rotate(90deg);
+        transition: none;
+    }
+    #property-card[data-status="prev"].htmx-added {
+        transform: translateX(-120%) rotate(-90deg);
+        transition: none;
+    }
+    #property-card-container {
+        width: 100%;
+        height: 420px;
+        overflow: hidden;
+    }
+    #property-card-container a {
+        text-decoration: none;
+        color:white;
+    }
+    @media only screen and (min-width: 600px) {
+        #property-card-container {
+            height:600px;
+        }
+    }
+</style>
+
+<script>
+    const handleNextClick = () => {
+    const currentCard = document.getElementById('property-card');
+    currentCard.dataset.status = "after";
+    setTimeout(() => {
+        currentCard.remove();
+    }, 400);
+    }
+    const handleBackClick = () => {
+    const currentCard = document.getElementById('property-card');
+    currentCard.dataset.status = "before";
+    setTimeout(() => {
+        currentCard.remove();
+    }, 400);
+    }
+</script>
 
 <div class="container" data-bs-theme="dark">
     <div>
@@ -5,7 +62,7 @@
     </div>
 
     <div 
-    class='py-2 position-relative align-items-center' 
+    class='py-3 position-relative align-items-center' 
     style="display: flex; flex-direction: row; overflow-x: scroll; white-space: nowrap; justify-content: flex-start;"
     >
         <button class="btn btn-sm btn-outline-light mx-1">Price</button>
@@ -14,11 +71,78 @@
         <button class="btn btn-sm btn-outline-light mx-1">Bedrooms</button>
         <button class="btn btn-sm btn-outline-light mx-1">Bathrooms</button>
     </div>
-    <div class="py-2" style="display:flex; justify-content: center;">
+    <div id='property-card-container' class="py-2 w-100">
+
         {% if not property %}
             {% include "property/partials/end-of-list.html" %}
         {% else %}
-            {% include "property/partials/property-card.html" %}
-        {% endif %}
+
+        <div id='property-card' class="card w-100" data-status="active">
+            <a href="{% url 'property-detial' property_id=property.id %}">
+                <img src="{% static property.cover_image_url %}" class="card-img-top" alt="...">
+                <div class="card-body text-wrap">
+                    <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.price|currency:0 }}</h5>
+                    <p class="card-subtitle mb-2" style="font-size:1rem;">
+                        Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
+                        bds: <strong>{{ property.bedrooms }}</strong>&ensp;|&ensp;
+                        br: <strong>{{ property.bathrooms }}</strong>&ensp;|&ensp;
+                        <strong>{{ property.area|comma }} sqft.</strong>
+                    </p>
+                    <h6 class="card-subtitle mb-2" style="font-size:1rem;">{{ property.address }}</h6>
+                    <p class="card-text text-muted" style="font-size:.8rem;">This is a short description of the property.</p>  
+                </div>
+            </a>
+        </div>
+
     </div>
+
+        <!-- Controls -->
+        <div id="explore-contrls" class="d-flex justify-content-center py-3">
+            <button 
+            id="back-button" 
+            class="btn mx-4 border-0"
+            hx-post="{% url 'explore' %}"
+            hx-vals='{ "property_id": "{{ property.id }}", "action": "back", "index": "{{ index }}" }'
+            hx-target="#property-card-container"
+            hx-swap="beforeend settle:.4s"
+            onclick="handleBackClick()"
+            >
+                {% include "icons/arrow-left.html" with size=35 %}
+            </button>
+
+            <button 
+            id="hide-button" 
+            class="btn mx-2 border-0"
+            hx-post="{% url 'explore' %}"
+            hx-vals='{ "property_id": "{{ property.id }}", "action": "hide", "index": "{{ index }}" }'
+            hx-target="#property-card"
+            hx-swap="outerHTML"
+            >
+                {% include "icons/x.html" with size=35 %}
+            </button>
+            <button 
+            id="save-button" 
+            class="btn mx-2 border-0"
+            hx-post="{% url 'explore' %}"
+            hx-vals='{ "property_id": "{{ property.id }}", "action": "like", "index": "{{ index }}" }'
+            hx-target="#property-card"
+            hx-swap="outerHTML"
+            >
+                {% include "icons/heart.html" with size=35 %}
+            </button>
+
+            <button 
+            id="next-button" 
+            class="btn mx-4 border-0"
+            hx-post="{% url 'explore' %}"
+            hx-vals='{ "property_id": "{{ property.id }}", "action": "next", "index": "{{ index }}" }'
+            hx-target="#property-card-container"
+            hx-swap="beforeend settle:.4s"
+            onclick="handleNextClick()"
+            >
+                {% include "icons/arrow-right.html" with size=35 %}
+            </button>
+        </div>
+    {% endif %}
+    
 </div> 

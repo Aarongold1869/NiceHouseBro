@@ -3,92 +3,66 @@
 {% load percentage %}
 {% load comma %}
 
-<style>
-    /* #property-card {
-    -webkit-animation: cubic-bezier(0.075, 0.82, 0.165, 1);
-    -webkit-animation-name: run;
-    -webkit-animation-duration: .8s;
-    }
-
-    @-webkit-keyframes run {
-    0% {
-        left: 0;
-    }
-    50% { 
-        left: calc(100% - 100px); 
-    }
-    100% {
-        left: 100;     
-    }
-    } */
-</style>
-
-{% comment %} <a href="{% url "property-detial" property_id=property.id %}"> {% endcomment %}
-<div name="property-card" id='property-card' class="card w-100" style="display: inline-block;">
-    <img src="{% static property.cover_image_url %}" class="card-img-top" alt="...">
-    <div class="card-body text-wrap">
-        <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.price|currency:0 }}</h5>
-        <p class="card-subtitle mb-2" style="font-size:1rem;">
-            Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
-            bds: <strong>{{ property.bedrooms }}</strong>&ensp;|&ensp;
-            br: <strong>{{ property.bathrooms }}</strong>&ensp;|&ensp;
-            <strong>{{ property.area|comma }} sqft.</strong>
-        </p>
-        <h6 class="card-subtitle mb-2" style="font-size:1rem;">{{ property.address }}</h6>
-        <p class="card-text text-muted" style="font-size:.8rem;">This is a short description of the property.</p>  
-    </div>
-    <div class="d-flex justify-content-center py-3">
-        <button 
-        id="back-button" 
-        class="btn mx-4 border-0"
-        hx-post="{% url 'explore' %}"
-        hx-vals='{ "property_id": "{{ property.id }}", "action": "hide", "index": "{{ index }}" }'
-        hx-target="#property-card"
-        hx-swap="outerHTML"
-        >
-            {% include "icons/arrow-left.html" with size=35 %}
-            {% comment %} Hide {% endcomment %}
-        </button>
-        {% comment %} <button 
-        id="dislike-button" 
-        class="btn mx-2 border-0"
-        hx-post="{% url 'explore' %}"
-        hx-vals='{ "property_id": "{{ property.id }}", "action": "hide", "index": "{{ index }}" }'
-        hx-target="#property-card"
-        hx-swap="outerHTML"
-        >
-            {% include "icons/x.html" with size=35 %}
-        </button> {% endcomment %}
-        <a 
-        type="button" 
-        class="btn mx-2 border-0" 
-        href="{% url 'property-detial' property_id=property.id %}"
-        >
-            {% include "icons/eye.html" with size=35 %}
-            {% comment %} View {% endcomment %}
-        </a>
-        <button 
-        id="save-button" 
-        class="btn mx-2 border-0"
-        hx-post="{% url 'explore' %}"
-        hx-vals='{ "property_id": "{{ property.id }}", "action": "save", "index": "{{ index }}" }'
-        hx-target="#property-card"
-        hx-swap="outerHTML"
-        >
-            {% include "icons/heart.html" with size=35 %}
-            {% comment %} Save {% endcomment %}
-        </button>
-        <button 
-        id="next-button" 
-        class="btn mx-4 border-0"
-        hx-post="{% url 'explore' %}"
-        hx-vals='{ "property_id": "{{ property.id }}", "action": "hide", "index": "{{ index }}" }'
-        hx-target="#property-card"
-        hx-swap="outerHTML"
-        >
-            {% include "icons/arrow-right.html" with size=35 %}
-            {% comment %} Hide {% endcomment %}
-        </button>
-    </div>
+<div id='property-card' class="card w-100" data-status="{{data_status}}" >
+    <a href="{% url 'property-detial' property_id=property.id %}">
+        <img src="{% static property.cover_image_url %}" class="card-img-top" alt="...">
+        <div class="card-body text-wrap">
+            <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.price|currency:0 }}</h5>
+            <p class="card-subtitle mb-2" style="font-size:1rem;">
+                Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
+                bds: <strong>{{ property.bedrooms }}</strong>&ensp;|&ensp;
+                br: <strong>{{ property.bathrooms }}</strong>&ensp;|&ensp;
+                <strong>{{ property.area|comma }} sqft.</strong>
+            </p>
+            <h6 class="card-subtitle mb-2" style="font-size:1rem;">{{ property.address }}</h6>
+            <p class="card-text text-muted" style="font-size:.8rem;">This is a short description of the property.</p>  
+        </div>
+    </a>
 </div>
-{% comment %} </a> {% endcomment %}
+
+<div id="explore-contrls" class="d-flex justify-content-center py-3" hx-swap-oob="true">
+    <button 
+    id="back-button" 
+    class="btn mx-4 border-0"
+    hx-post="{% url 'explore' %}"
+    hx-vals='{ "property_id": "{{ property.id }}", "action": "back", "index": "{{ index }}" }'
+    hx-target="#property-card-container"
+    hx-swap="beforeend settle:.4s"
+    onclick="handleBackClick()"
+    >
+        {% include "icons/arrow-left.html" with size=35 %}
+    </button>
+
+    <button 
+    id="hide-button" 
+    class="btn mx-2 border-0"
+    hx-post="{% url 'explore' %}"
+    hx-vals='{ "property_id": "{{ property.id }}", "action": "hide", "index": "{{ index }}" }'
+    hx-target="#property-card"
+    hx-swap="outerHTML"
+    >
+        {% include "icons/x.html" with size=35 %}
+    </button>
+    <button 
+    id="save-button" 
+    class="btn mx-2 border-0"
+    hx-post="{% url 'explore' %}"
+    hx-vals='{ "property_id": "{{ property.id }}", "action": "like", "index": "{{ index }}" }'
+    hx-target="#property-card"
+    hx-swap="outerHTML"
+    >
+        {% include "icons/heart.html" with size=35 %}
+    </button>
+
+    <button 
+    id="next-button" 
+    class="btn mx-4 border-0"
+    hx-post="{% url 'explore' %}"
+    hx-vals='{ "property_id": "{{ property.id }}", "action": "next", "index": "{{ index }}" }'
+    hx-target="#property-card-container"
+    hx-swap="beforeend settle:.4s"
+    onclick="handleNextClick()"
+    >
+        {% include "icons/arrow-right.html" with size=35 %}
+    </button>
+</div>
