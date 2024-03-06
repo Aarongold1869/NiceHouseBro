@@ -5,6 +5,6 @@ hx-get="{% url 'toggle_saved' property_id=property.id %}"
 hx-target="#save-button"
 hx-swap="outerHTML"
 >
-    {% include "icons/heart.html" %}
+    {% include "icons/heart.html" with size=16 %}
     Save
 </button>
