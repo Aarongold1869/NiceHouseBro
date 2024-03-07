@@ -4,34 +4,61 @@
 {% load comma %}
 
 <style>
-    #property-card {
+    .property-card {
+        position: absolute;
         transform: translateX(0) rotate(0);
-        transition: transform 400ms ease;
+        transition: all 400ms ease;
     }
-    #property-card[data-status="before"] {
-        transform: translateX(120%) rotate(90deg);
-        
-    }
-    #property-card[data-status="after"] {
-        transform: translateX(-120%) rotate(-90deg);
-    }
-    #property-card[data-status="next"].htmx-added {
-        transform: translateX(120%) rotate(90deg);
+
+    .property-card[data-status="unknown"] {
+        transform: translateX(120%) rotate(30deg);
         transition: none;
     }
-    #property-card[data-status="prev"].htmx-added {
-        transform: translateX(-120%) rotate(-90deg);
+
+    .property-card[data-status="before"] {
+        transform: translateX(120%) rotate(30deg);
+    }
+
+    .property-card[data-status="active"] {
+        transition-delay: 300ms;
+    }
+
+    .property-card[data-status="after"] {
+        transform: translateX(-120%) rotate(-30deg);
+    }
+
+    .property-card[data-status="becoming-active-from-after"] {
+        display: block;
+        transform: translateX(120%) rotate(30deg);
         transition: none;
     }
+
+    .property-card[data-status="becoming-active-from-before"] {
+        display: block;
+        transform: translateX(-120%) rotate(-30deg);
+        transition: none;
+    }
+
+    .property-card[data-status="saved"] {
+        transform: translateY(-120%);
+    }
+
+    .property-card[data-status="hidden"] {
+        transform: translateY(50%) scale(0.001);
+    }
+
     #property-card-container {
+        position: relative;
         width: 100%;
         height: 420px;
         overflow: hidden;
     }
+
     #property-card-container a {
         text-decoration: none;
         color:white;
     }
+
     @media only screen and (min-width: 600px) {
         #property-card-container {
             height:600px;
@@ -40,20 +67,50 @@
 </style>
 
 <script>
-    const handleNextClick = () => {
-    const currentCard = document.getElementById('property-card');
-    currentCard.dataset.status = "after";
-    setTimeout(() => {
-        currentCard.remove();
-    }, 400);
+
+    let activeIndex = 0;
+    const cards = document.getElementsByClassName("property-card");
+
+    const handleNavigate = (action) => {
+        const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
+        let nextIndex = activeIndex + 1 <= cards.length - 1 ? activeIndex + 1 : 0;
+        let currentCardStatus = "after"
+        let newCardStatus = "becoming-active-from-after";
+        if (action === "back") {
+            nextIndex = activeIndex - 1 >= 0 ? activeIndex - 1 : cards.length - 1;
+            currentCardStatus = "before";
+            newStatus = "becoming-active-from-before";
+        } else if (action === "save") {
+            currentCardStatus = "saved";
+            setTimeout(() => {
+                currentCard.remove();
+            }, 300);  
+            for (let i = 0; i < cards.length; i++) {
+                cards[i].dataset.index = i;
+            }
+        } else if (action === "hide") {
+            currentCardStatus = "hidden";
+            setTimeout(() => {
+                currentCard.remove();
+            }, 300);  
+            for (let i = 0; i < cards.length; i++) {
+                cards[i].dataset.index = i;
+            }
+        }
+        if (cards.length === 1) {
+            console.log('retrieve new cards')
+            // htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
+        }
+        const nextCard = document.querySelector(`[data-index="${nextIndex}"]`);
+        currentCard.dataset.status = currentCardStatus;
+        nextCard.dataset.status = newCardStatus;
+        setTimeout(() => {
+            nextCard.dataset.status = "active";
+            activeIndex = nextIndex;
+        });  
+        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
     }
-    const handleBackClick = () => {
-    const currentCard = document.getElementById('property-card');
-    currentCard.dataset.status = "before";
-    setTimeout(() => {
-        currentCard.remove();
-    }, 400);
-    }
+
 </script>
 
 <div class="container" data-bs-theme="dark">
@@ -62,7 +119,7 @@
     </div>
 
     <div 
-    class='py-3 position-relative align-items-center' 
+    class='py-3 align-items-center' 
     style="display: flex; flex-direction: row; overflow-x: scroll; white-space: nowrap; justify-content: flex-start;"
     >
         <button class="btn btn-sm btn-outline-light mx-1">Price</button>
@@ -73,76 +130,40 @@
     </div>
     <div id='property-card-container' class="py-2 w-100">
 
-        {% if not property %}
+        {% if not property_list %}
             {% include "property/partials/end-of-list.html" %}
         {% else %}
-
-        <div id='property-card' class="card w-100" data-status="active">
-            <a href="{% url 'property-detial' property_id=property.id %}">
-                <img src="{% static property.cover_image_url %}" class="card-img-top" alt="...">
-                <div class="card-body text-wrap">
-                    <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.price|currency:0 }}</h5>
-                    <p class="card-subtitle mb-2" style="font-size:1rem;">
-                        Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
-                        bds: <strong>{{ property.bedrooms }}</strong>&ensp;|&ensp;
-                        br: <strong>{{ property.bathrooms }}</strong>&ensp;|&ensp;
-                        <strong>{{ property.area|comma }} sqft.</strong>
-                    </p>
-                    <h6 class="card-subtitle mb-2" style="font-size:1rem;">{{ property.address }}</h6>
-                    <p class="card-text text-muted" style="font-size:.8rem;">This is a short description of the property.</p>  
-                </div>
-            </a>
-        </div>
-
+            {% for property in property_list %}
+            <div 
+            id='{{ property.id }}' 
+            class="card w-100 property-card" 
+            data-index="{{ forloop.counter0 }}" 
+            data-status="{% if forloop.counter0 == 0 %}active{% else %}unknown{% endif %}"
+            >
+                <a href="{% url 'property-detial' property_id=property.id %}" style="position: relative;">
+                    <img src="{% static property.cover_image_url %}" class="card-img-top" alt="...">
+                    <span class="badge bg-light text-dark fs-6" style="position: absolute; top: 10px; left: 10px;">Great Deal</span>
+                    <div class="card-body text-wrap">
+                        <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.price|currency:0 }}</h5>
+                        <p class="card-subtitle mb-2" style="font-size:1rem;">
+                            Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
+                            bds: <strong>{{ property.bedrooms }}</strong>&ensp;|&ensp;
+                            br: <strong>{{ property.bathrooms }}</strong>&ensp;|&ensp;
+                            <strong>{{ property.area|comma }} sqft.</strong>
+                        </p>
+                        <h6 class="card-subtitle mb-2" style="font-size:1rem;">{{ property.address }}</h6>
+                        <p class="card-text text-muted" style="font-size:.8rem;">This is a short description of the property.</p>  
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
     </div>
 
-        <!-- Controls -->
-        <div id="explore-contrls" class="d-flex justify-content-center py-3">
-            <button 
-            id="back-button" 
-            class="btn mx-4 border-0"
-            hx-post="{% url 'explore' %}"
-            hx-vals='{ "property_id": "{{ property.id }}", "action": "back", "index": "{{ index }}" }'
-            hx-target="#property-card-container"
-            hx-swap="beforeend settle:.4s"
-            onclick="handleBackClick()"
-            >
-                {% include "icons/arrow-left.html" with size=35 %}
-            </button>
+    <!-- Controls -->
+    {% if property_id %}
+        {% include "property/partials/explore-controls.html" %}
+    {% endif %}
 
-            <button 
-            id="hide-button" 
-            class="btn mx-2 border-0"
-            hx-post="{% url 'explore' %}"
-            hx-vals='{ "property_id": "{{ property.id }}", "action": "hide", "index": "{{ index }}" }'
-            hx-target="#property-card"
-            hx-swap="outerHTML"
-            >
-                {% include "icons/x.html" with size=35 %}
-            </button>
-            <button 
-            id="save-button" 
-            class="btn mx-2 border-0"
-            hx-post="{% url 'explore' %}"
-            hx-vals='{ "property_id": "{{ property.id }}", "action": "like", "index": "{{ index }}" }'
-            hx-target="#property-card"
-            hx-swap="outerHTML"
-            >
-                {% include "icons/heart.html" with size=35 %}
-            </button>
-
-            <button 
-            id="next-button" 
-            class="btn mx-4 border-0"
-            hx-post="{% url 'explore' %}"
-            hx-vals='{ "property_id": "{{ property.id }}", "action": "next", "index": "{{ index }}" }'
-            hx-target="#property-card-container"
-            hx-swap="beforeend settle:.4s"
-            onclick="handleNextClick()"
-            >
-                {% include "icons/arrow-right.html" with size=35 %}
-            </button>
-        </div>
     {% endif %}
     
 </div> 

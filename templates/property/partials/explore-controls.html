@@ -1,0 +1,37 @@
+<div id="explore-controls" class="d-flex justify-content-center py-3">
+    <button 
+    id="back-button" 
+    class="btn mx-4 border-0"
+    onclick="handleNavigate('back')"
+    >
+        {% include "icons/arrow-left.html" with size=35 %}
+    </button>
+
+    <button 
+    id="hide-button" 
+    class="btn mx-2 border-0"
+    {% comment %} hx-post="{% url 'save_property_explore' property_id=property_id %}"
+    hx-swap="none"  {% endcomment %}
+    onclick="handleNavigate('hide')"
+    >
+        {% include "icons/x.html" with size=35 %}
+    </button>
+    
+    <button 
+    id="save-button" 
+    class="btn mx-2 border-0"
+    hx-post="{% url 'save_property_explore' property_id=property_id %}"
+    hx-swap="none" 
+    onclick="handleNavigate('save')"
+    >
+        {% include "icons/heart.html" with size=35 %}
+    </button>
+
+    <button 
+    id="next-button" 
+    class="btn mx-4 border-0"
+    onclick="handleNavigate('next')"
+    >
+        {% include "icons/arrow-right.html" with size=35 %}
+    </button>
+</div>
