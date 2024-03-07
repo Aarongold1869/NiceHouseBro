@@ -2,7 +2,7 @@
     <button 
     id="back-button" 
     class="btn mx-4 border-0"
-    onclick="handleNavigate('back')"
+    onclick="handlePrevCard()"
     >
         {% include "icons/arrow-left.html" with size=35 %}
     </button>
@@ -12,7 +12,7 @@
     class="btn mx-2 border-0"
     {% comment %} hx-post="{% url 'save_property_explore' property_id=property_id %}"
     hx-swap="none"  {% endcomment %}
-    onclick="handleNavigate('hide')"
+    onclick="handleHideCard()"
     >
         {% include "icons/x.html" with size=35 %}
     </button>
@@ -22,7 +22,7 @@
     class="btn mx-2 border-0"
     hx-post="{% url 'save_property_explore' property_id=property_id %}"
     hx-swap="none" 
-    onclick="handleNavigate('save')"
+    onclick="handleSaveCard()"
     >
         {% include "icons/heart.html" with size=35 %}
     </button>
@@ -30,7 +30,7 @@
     <button 
     id="next-button" 
     class="btn mx-4 border-0"
-    onclick="handleNavigate('next')"
+    onclick="handleNextCard()"
     >
         {% include "icons/arrow-right.html" with size=35 %}
     </button>
