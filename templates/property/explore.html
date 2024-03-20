@@ -5,12 +5,13 @@
 <style>
     .property-card {
         position: absolute;
-        transform: translateX(0) rotate(0);
-        transition: all 400ms ease;
+        border-radius: 15px;
+        transform: translateX(0) rotate(0) scale(1);
+        transition: transform 400ms ease, box-shadow 300ms ease, border 300ms ease;
     }
 
     .property-card[data-status="unknown"] {
-        transform: translateX(120%) rotate(30deg);
+        transform: translateX(50%) rotate(30deg) scale(0.001);
         transition: none;
     }
 
@@ -36,9 +37,9 @@
         transition: none;
     }
 
-    .property-card[data-status="saved"] {
-        /* transform: translateY(-120%); */
-        border: 2px solid var(--saved);
+    .saved {
+        border: 3px solid var(--saved);
+        box-shadow: 0 0 4px 2px var(--saved)
     }
 
     .property-card[data-status="hidden"] {
@@ -51,7 +52,7 @@
     @keyframes bounce2 {
         0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
         40% {transform: translateY(-30px);}
-        60% {transform: translateY(-15px);}
+        60% {transform: translateY(-10px);}
     }
 
     #property-card-container {
@@ -63,12 +64,12 @@
 
     #property-card-container a {
         text-decoration: none;
-        color:white;
+        color: var(--foreground);
     }
 
     @media only screen and (min-width: 600px) {
         #property-card-container {
-            height:600px;
+            height: 600px;
         }
     }
 </style>
@@ -87,7 +88,7 @@
         setTimeout(() => {
             nextCard.dataset.status = "active";
             activeIndex = nextIndex;
-        });  
+        }, 100);  
         htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
     }
 
@@ -100,19 +101,14 @@
         setTimeout(() => {
             nextCard.dataset.status = "active";
             activeIndex = nextIndex;
-        });  
+        }, 100);  
         htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
     }
 
     const handleSaveCard = () => {
         const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
-        if (currentCard.dataset.status === "saved") {
-            currentCard.dataset.status = "active";
-            currentCard.classList.remove('bounce2');
-        } else if (currentCard.dataset.status === "active") {
-            currentCard.dataset.status = "saved";
-            currentCard.classList.add('bounce2');
-        }
+        currentCard.classList.toggle("saved")
+        currentCard.classList.toggle("bounce2")
     }
 
     const handleHideCard = async () => {
@@ -128,7 +124,7 @@
             cards[i].dataset.index = i;
         } 
         // if no cards left, retrieve new cards
-        if (cards.length === 1) {
+        if (cards.length === 0) {
             console.log('retrieve new cards')
             // htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
             return
@@ -141,7 +137,7 @@
         setTimeout(() => {
             nextCard.dataset.status = "active";
             activeIndex = nextIndex;
-        });   
+        }, 100);   
         // update explore controls
         htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
     }
@@ -149,49 +145,49 @@
 </script>
     
 <div class="d-flex col justify-content-center">
-    <div class="col-sm-4 overflow-scroll">
-        
-        <div class="container" data-bs-theme="dark">
-            <div>
-                <h3 class="text-center pt-3">Explore</h3>
-            </div>
+    <div class="col-sm-4 overflow-scroll p-1 pt-3">
 
-            <div 
-            class='py-3 align-items-center' 
-            style="display: flex; flex-direction: row; overflow-x: scroll; white-space: nowrap; justify-content: flex-start;"
-            >
-                <button class="btn btn-sm btn-outline-light mx-1">Price</button>
-                <button class="btn btn-sm btn-outline-light mx-1">Distance</button>
-                <button class="btn btn-sm btn-outline-light mx-1">Cap Rate</button>
-                <button class="btn btn-sm btn-outline-light mx-1">Bedrooms</button>
-                <button class="btn btn-sm btn-outline-light mx-1">Bathrooms</button>
-            </div>
-            <div id='property-card-container' class="py-2 w-100">
+        <div>
+            <h3 class="text-center">Explore</h3>
+        </div>
 
-                {% if not property_list %}
+        <div 
+        class='py-3 align-items-center' 
+        style="display: flex; flex-direction: row; overflow-x: scroll; white-space: nowrap; justify-content: flex-start;"
+        >
+            <button class="btn btn-sm btn-outline-light mx-1">Price</button>
+            <button class="btn btn-sm btn-outline-light mx-1">Distance</button>
+            <button class="btn btn-sm btn-outline-light mx-1">Cap Rate</button>
+            <button class="btn btn-sm btn-outline-light mx-1">Bedrooms</button>
+            <button class="btn btn-sm btn-outline-light mx-1">Bathrooms</button>
+        </div>
 
-                    {% include "property/partials/end-of-list.html" %}
+        <!-- Swiping Property List -->
+        <div id='property-card-container' class="d-flex justify-content-center p-3">
 
-                {% else %}
+            {% if not property_list %}
 
-                    {% for property in property_list %}
+                {% include "property/partials/end-of-list.html" %}
 
-                        {% if is_saved }
-                        {% include "property/partials/property-card.html" %}
+            {% else %}
 
-                    {% endfor %}
-            </div>
+                {% for property in property_list %}
 
-            <!-- Controls -->
-            {% if property_id %}
-                {% include "property/partials/explore-controls.html" %}
-            {% endif %}
+                    {% include "property/partials/property-card.html" %}
 
-            {% endif %}
-            
-        </div> 
+                {% endfor %}
+        </div>
+
+        <!-- Controls -->
+        {% if property_id %}
+            {% include "property/partials/explore-controls.html" %}
+        {% endif %}
+
+        {% endif %}
 
     </div>
 </div>
+
+{% include "property/explore-filter.html" %}
 
 {% endblock content %}

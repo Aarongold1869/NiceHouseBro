@@ -39,13 +39,13 @@ def toggle_property_saved_explore_view(request, property_id: str):
             account=account,
             property_id=property_id
         )
-        property['is_saved'] = True
+        is_saved = True
         toast = { "type": "success", "header": "Explore", "message": "Property saved!" }
     else:
         saved_qs.delete()
-        property['is_saved'] = False
+        is_saved = False
         toast = { "type": "success", "header": "Explore", "message": "Property unsaved." }
-    return render(request, 'property/partials/explore-save-button.html', {'property_id': property_id, 'toast': toast })
+    return render(request, 'property/partials/explore-save-button.html', {'property_id': property_id, 'toast': toast, 'is_saved':is_saved })
 
 def property_detail_view(request, property_id: str):
     property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)

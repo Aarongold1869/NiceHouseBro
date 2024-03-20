@@ -1,0 +1,100 @@
+<style> 
+    #explore-filter {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 30px 20px;
+        background-color: var(--background);
+    }
+
+    #explore-filter p {
+        font-weight: bold;
+        margin:0;
+    }
+
+    .filter-option-container {
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-evenly;
+        align-items: center;
+        margin: 10px 0;
+    }
+
+    .filter-option-container label {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-weight: bold;
+    }
+    
+    .filter-option-container input {
+        width: 100px;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+</style>
+
+<script>
+    function updateSliderValue() {
+        const slider = document.getElementById("cap-rate-input");
+        const output = document.getElementById("cap-rate-value");
+        output.innerHTML = slider.value;
+    }
+</script>
+
+<div id="explore-filter">
+
+    <div id="cap-rate-filter-container" class="filter-option-container">
+        <label for="cap-rate">Cap Rate</label>
+        <input type="range" min="0" max="100" value="5" class="slider w-50" id="cap-rate-input"
+        oninput="updateSliderValue()"
+        >
+        <div class="d-flex">
+            <p id="cap-rate-value">5</p>
+            <p>%</p>
+        </div>
+    </div>
+
+    <div id="price-filter-container" class="filter-option-container">
+        <label for="min-price">Min Price
+            <input type="number" id="min-price" name="min-price" min="0" max="10000000" placeholder="No Min">
+        </label>
+        <p> - </p>
+        <label for="max-price">Max Price
+            <input type="number" id="max-price" name="max-price" min="0" max="10000000" placeholder="No Max">
+        </label>
+    </div>
+
+    <div id="br-filter-container" class="filter-option-container"> 
+        <label for="bedrooms">Bedrooms
+        <select id="bedrooms" name="bedrooms">
+            <option value="0">Any</option>
+            <option value="1">1+</option>
+            <option value="2">2+</option>
+            <option value="3">3+</option>
+            <option value="4">4+</option>
+            <option value="5">5+</option>
+        </select>
+    </div>
+
+    <div id="bath-filter-container" class="filter-option-container"> 
+        <label for="bedrooms">Bathrooms
+        <select id="bedrooms" name="bedrooms">
+            <option value="0">Any</option>
+            <option value="1">1+</option>
+            <option value="2">2+</option>
+            <option value="3">3+</option>
+            <option value="4">4+</option>
+        </select>
+    </div>
+</div>
