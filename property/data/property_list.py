@@ -66,6 +66,7 @@ class Property(TypedDict):
     cap_rate: float 
     cover_image_url: str 
     image_array: List[str] 
+    is_saved: bool | None
 
 PROPERTY_DATA: List[Property] = [
     {

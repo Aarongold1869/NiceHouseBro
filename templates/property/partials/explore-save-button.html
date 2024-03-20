@@ -1,0 +1,45 @@
+{% if is_saved %}
+    <button 
+    id="save-button" 
+    class="btn mx-2 border-0"
+    hx-post="{% url 'toggle_saved_explore' property_id=property_id %}"
+    hx-swap="outerHTML" 
+    onclick="handleSaveCard()"
+    >
+        {% include "icons/heart-fill.html" with size=35 fill="var(--saved)" %}
+    </button>
+{% else %}
+    <button 
+    id="save-button" 
+    class="btn mx-2 border-0"
+    hx-post="{% url 'toggle_saved_explore' property_id=property_id %}"
+    hx-swap="outerHTML" 
+    onclick="handleSaveCard()"
+    >
+        {% include "icons/heart.html" with size=35 fill="var(--saved)" %}
+    </button>
+{% endif %}
+
+
+
+{% comment %} {% include 'components/partials/toast.html' with toast=toast %} {% endcomment %}
+<div 
+id="toast-0"
+class="toast" 
+role="alert" 
+aria-live="assertive" 
+aria-atomic="true" 
+hx-target="#toast-container" 
+hx-swap="beforeend"
+hx-swap-oob="true" 
+>
+    <div class="toast-header">
+      <img src="..." class="rounded me-2" alt="...">
+      <strong class="me-auto">{{ toast.header }}</strong>
+      <small class="text-muted">just now</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      {{ toast.message }}
+    </div>
+</div>

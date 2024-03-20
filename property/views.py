@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 
 from account.models import Account, SavedProperty
 from .data import PROPERTY_DATA, Property
-from .functions import get_unliked_properties
+from .functions import get_unsaved_properties
 
 from typing import List
 
@@ -17,25 +17,35 @@ def home_view(request):
 @login_required(login_url='/accounts/login/')
 def explore_view(request):
     account = Account.objects.get(user=request.user)
-    property_list: List[Property] = get_unliked_properties(account)
+    property_list: List[Property] = get_unsaved_properties(account)
     template = "property/explore.html"
     property_id = property_list[0]['id'] if property_list else -1
-    return render(request, template, {'property_list': property_list, 'property_id': property_id })
+    return render(request, template, {'property_list': property_list, 'property_id': property_id, 'is_saved': False })
 
 @require_http_methods(['GET'])
 def get_explore_controls_view(request, property_id: str):
-    return render(request, 'property\partials\explore-controls.html', {'property_id': property_id })
+    saved_qs = SavedProperty.objects.filter(Q(account__user=request.user) & Q(property_id=property_id))
+    is_saved = False if not saved_qs.exists() else True
+    return render(request, 'property\partials\explore-controls.html', {'property_id': property_id, 'is_saved': is_saved })
 
 @login_required(login_url='/accounts/login/')
 @require_http_methods(['POST'])
-def save_property_explore_view(request, property_id: str):
-    # property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)
+def toggle_property_saved_explore_view(request, property_id: str):
+    property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)
     account = Account.objects.get(user=request.user)
-    SavedProperty.objects.get_or_create(
-        account=account,
-        property_id=property_id
-    )
-    return HttpResponse(status=201)
+    saved_qs = SavedProperty.objects.filter(Q(account=account) & Q(property_id=property_id))
+    if not saved_qs.exists():
+        SavedProperty.objects.create(
+            account=account,
+            property_id=property_id
+        )
+        property['is_saved'] = True
+        toast = { "type": "success", "header": "Explore", "message": "Property saved!" }
+    else:
+        saved_qs.delete()
+        property['is_saved'] = False
+        toast = { "type": "success", "header": "Explore", "message": "Property unsaved." }
+    return render(request, 'property/partials/explore-save-button.html', {'property_id': property_id, 'toast': toast })
 
 def property_detail_view(request, property_id: str):
     property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)

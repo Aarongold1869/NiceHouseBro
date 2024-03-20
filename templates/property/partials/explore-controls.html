@@ -14,18 +14,30 @@
     hx-swap="none"  {% endcomment %}
     onclick="handleHideCard()"
     >
-        {% include "icons/x.html" with size=35 %}
+        {% include "icons/x.html" with size=35 fill="var(--hidden)" %}
     </button>
     
-    <button 
-    id="save-button" 
-    class="btn mx-2 border-0"
-    hx-post="{% url 'save_property_explore' property_id=property_id %}"
-    hx-swap="none" 
-    onclick="handleSaveCard()"
-    >
-        {% include "icons/heart.html" with size=35 %}
-    </button>
+    {% if is_saved %}
+        <button 
+        id="save-button" 
+        class="btn mx-2 border-0"
+        hx-post="{% url 'toggle_saved_explore' property_id=property_id %}"
+        hx-swap="outerHTML" 
+        onclick="handleSaveCard()"
+        >
+            {% include "icons/heart-fill.html" with size=35 fill="var(--saved)" %}
+        </button>
+    {% else %}
+        <button 
+        id="save-button" 
+        class="btn mx-2 border-0"
+        hx-post="{% url 'toggle_saved_explore' property_id=property_id %}"
+        hx-swap="outerHTML" 
+        onclick="handleSaveCard()"
+        >
+            {% include "icons/heart.html" with size=35 fill="var(--saved)" %}
+        </button>
+    {% endif %}
 
     <button 
     id="next-button" 

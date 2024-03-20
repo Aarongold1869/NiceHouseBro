@@ -11,7 +11,7 @@ def filter_unsaved(account: Account, property_id: int):
     else:
         return True
     
-def get_unliked_properties(account: Account):
+def get_unsaved_properties(account: Account):
     property_list: List[Property] = PROPERTY_DATA
     filtered_list = list(filter(lambda x: filter_unsaved(account, x['id']), property_list))
     return filtered_list

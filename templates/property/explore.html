@@ -1,11 +1,196 @@
 {% extends "base.html" %}
 
-
 {% block content %}
+
+<style>
+    .property-card {
+        position: absolute;
+        transform: translateX(0) rotate(0);
+        transition: all 400ms ease;
+    }
+
+    .property-card[data-status="unknown"] {
+        transform: translateX(120%) rotate(30deg);
+        transition: none;
+    }
+
+    .property-card[data-status="active"] {
+        transition-delay: 300ms;
+    }
+
+    .property-card[data-status="right"] {
+        transform: translateX(50%) rotate(30deg) scale(0.001);
+    }
+
+    .property-card[data-status="left"] {
+        transform: translateX(-50%) rotate(-30deg) scale(0.001);
+    }
+
+    .property-card[data-status="becoming-active-from-right"] {
+        transform: translateX(50%) rotate(30deg) scale(0.001);
+        transition: none;
+    }
+
+    .property-card[data-status="becoming-active-from-left"] {
+        transform: translateX(-50%) rotate(-30deg) scale(0.001);
+        transition: none;
+    }
+
+    .property-card[data-status="saved"] {
+        /* transform: translateY(-120%); */
+        border: 2px solid var(--saved);
+    }
+
+    .property-card[data-status="hidden"] {
+        transform: translateY(50%) scale(0.001);
+    }
+
+    .bounce2 {
+        animation: bounce2 1s ease;
+    }
+    @keyframes bounce2 {
+        0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+        40% {transform: translateY(-30px);}
+        60% {transform: translateY(-15px);}
+    }
+
+    #property-card-container {
+        position: relative;
+        width: 100%;
+        height: 420px;
+        overflow: hidden;
+    }
+
+    #property-card-container a {
+        text-decoration: none;
+        color:white;
+    }
+
+    @media only screen and (min-width: 600px) {
+        #property-card-container {
+            height:600px;
+        }
+    }
+</style>
+
+<script>
+
+    let activeIndex = 0;
+    const cards = document.getElementsByClassName("property-card");
+
+    const handleNextCard = () => {
+        const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
+        let nextIndex = activeIndex + 1 <= cards.length - 1 ? activeIndex + 1 : 0;
+        const nextCard = document.querySelector(`[data-index="${nextIndex}"]`);
+        currentCard.dataset.status = "left";
+        nextCard.dataset.status = "becoming-active-from-right";
+        setTimeout(() => {
+            nextCard.dataset.status = "active";
+            activeIndex = nextIndex;
+        });  
+        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
+    }
+
+    const handlePrevCard = () => {
+        const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
+        let nextIndex = activeIndex - 1 >= 0 ? activeIndex - 1 : cards.length - 1;
+        const nextCard = document.querySelector(`[data-index="${nextIndex}"]`);
+        currentCard.dataset.status = "right";
+        nextCard.dataset.status = "becoming-active-from-left";
+        setTimeout(() => {
+            nextCard.dataset.status = "active";
+            activeIndex = nextIndex;
+        });  
+        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
+    }
+
+    const handleSaveCard = () => {
+        const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
+        if (currentCard.dataset.status === "saved") {
+            currentCard.dataset.status = "active";
+            currentCard.classList.remove('bounce2');
+        } else if (currentCard.dataset.status === "active") {
+            currentCard.dataset.status = "saved";
+            currentCard.classList.add('bounce2');
+        }
+    }
+
+    const handleHideCard = async () => {
+        // get current card
+        const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
+        // set status to hidden -> hidden css transition
+        currentCard.dataset.status = "hidden";
+        // remove card from DOM following transition
+        await new Promise(resolve => setTimeout(resolve, 300));
+        currentCard.remove();
+        // update index of remaining cards
+        for (let i = 0; i < cards.length; i++) {
+            cards[i].dataset.index = i;
+        } 
+        // if no cards left, retrieve new cards
+        if (cards.length === 1) {
+            console.log('retrieve new cards')
+            // htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
+            return
+        }
+        // increment index
+        let nextIndex = activeIndex <= cards.length - 1 ? activeIndex : 0;
+        // get and display next card
+        const nextCard = document.querySelector(`[data-index="${nextIndex}"]`);
+        nextCard.dataset.status = "becoming-active-from-right";
+        setTimeout(() => {
+            nextCard.dataset.status = "active";
+            activeIndex = nextIndex;
+        });   
+        // update explore controls
+        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
+    }
+
+</script>
     
 <div class="d-flex col justify-content-center">
     <div class="col-sm-4 overflow-scroll">
-        {% include "property/partials/swiping-card-list.html" %}
+        
+        <div class="container" data-bs-theme="dark">
+            <div>
+                <h3 class="text-center pt-3">Explore</h3>
+            </div>
+
+            <div 
+            class='py-3 align-items-center' 
+            style="display: flex; flex-direction: row; overflow-x: scroll; white-space: nowrap; justify-content: flex-start;"
+            >
+                <button class="btn btn-sm btn-outline-light mx-1">Price</button>
+                <button class="btn btn-sm btn-outline-light mx-1">Distance</button>
+                <button class="btn btn-sm btn-outline-light mx-1">Cap Rate</button>
+                <button class="btn btn-sm btn-outline-light mx-1">Bedrooms</button>
+                <button class="btn btn-sm btn-outline-light mx-1">Bathrooms</button>
+            </div>
+            <div id='property-card-container' class="py-2 w-100">
+
+                {% if not property_list %}
+
+                    {% include "property/partials/end-of-list.html" %}
+
+                {% else %}
+
+                    {% for property in property_list %}
+
+                        {% if is_saved }
+                        {% include "property/partials/property-card.html" %}
+
+                    {% endfor %}
+            </div>
+
+            <!-- Controls -->
+            {% if property_id %}
+                {% include "property/partials/explore-controls.html" %}
+            {% endif %}
+
+            {% endif %}
+            
+        </div> 
+
     </div>
 </div>
 
