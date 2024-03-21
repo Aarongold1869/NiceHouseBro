@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 
 from account.models import Account, SavedProperty
 from .data import PROPERTY_DATA, Property
-from .functions import get_unsaved_properties
+from .functions import filter_property_list, get_unsaved_properties
 
 from typing import List
 
@@ -22,11 +22,15 @@ def explore_view(request):
     template = "property/explore.html"
     property_id = property_list[0]['id'] if property_list else -1
     if request.htmx:
-        for key, value in request.GET.items():
-            print('Key:', key, 'Value:', value)
-        property_list = []
+        property_list = filter_property_list(request.GET, property_list)
         template = "property/partials/property-card-container.html"
-    return render(request, template, {'property_list': property_list, 'property_id': property_id, 'is_saved': False })
+    context = {
+        'property_list': property_list, 
+        'property_id': property_id, 
+        'is_saved': False,
+        'property_init': property_list[0] if property_list else None
+    }
+    return render(request, template, context)
 
 @require_http_methods(['GET'])
 def get_explore_controls_view(request, property_id: str):

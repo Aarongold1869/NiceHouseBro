@@ -3,7 +3,7 @@
         display: none;
         flex-direction: column;
         position: absolute;
-        top: 0;
+        top: -55px;
         left: 0; 
         right: 0; 
         margin-left: auto; 
@@ -11,20 +11,29 @@
         height: 80vh;
         justify-content: flex-start;
         align-items: center;
-        background-color: var(--background);
-        padding: 50px 0;
         overflow-y: hidden;
-        transform: translateY(0%) scale(1);
+        transform: translateY(0%);
         transition: transform ease 300ms;
     }
 
     .popover-hidden {
-        transform: translateY(100%) scale(0.001);
+        transform: translateY(100%);
+    }
+
+    @media only screen and (min-width: 600px) {
+        #explore-filter-popover {
+            /* height: 100vh; */
+            top: 0;
+        }
     }
 
     #explore-filter {
         width: 100%;
+        height: 100%;
         overflow-y: scroll;
+        padding: 50px 0;
+        position: relative!important;
+        z-index: 0!important;
     }
 
     #explore-filter p {
@@ -58,14 +67,22 @@
             filterPopover.style.display = "none";
         }, 100);  
     }
+
+    function resetFilterForm() {
+        const filterForm = document.getElementById("explore-filter");
+        filterForm.reset();
+        document.getElementById("cap-rate-value").innerHTML = 5;
+    }
 </script>
 
-<div id="explore-filter-popover" class="col-sm-4 mx-auto justify-content-center explore-filter-popover popover-hidden bg-dark">
+<div id="explore-filter-popover" style="z-index:9000" class="col-sm-10 mx-auto justify-content-center bg-dark explore-filter-popover popover-hidden">
+
+    <div class="col-sm-4 h-100 justify-content-center position-relative" style="z-index:10;"> 
 
     <div 
     id="explore-filter-header" 
     class="d-flex justify-content-between align-items-center border-bottom border-light position-absolute top-0 left-0 bg-dark w-100 pt-2 pb-1 px-3"
-    style="z-index: 10; margin-top:-1px;"
+    style="margin-top:-1px; z-index: 999;"
     >
         <p class="mb-0 fs-3">Filter</p>
         <button class="btn btn-lg border-0 fs-2 p-0 m-0" onclick="hideFilterPopover()">
@@ -81,7 +98,7 @@
         </button>
     </div>
 
-    <form id="explore-filter" class="col-sm-4 p-3">
+    <form id="explore-filter" class="col-sm-4 px-3">
 
         <div id="cap-rate-filter-container" class="d-flex justify-content-between my-4">
             <label for="cap-rate">Cap Rate</label>
@@ -351,16 +368,23 @@
     class="d-flex justify-content-between border-top border-light align-items-center position-absolute w-100 bottom-0 left-0 bg-dark py-1 px-3 shadow-sm"
     style="margin-bottom:-1px;"
     >
-        <button class="btn btn-outline-info mt-1" style="width:45%;">Reset Filters</button>
         <button 
-        class="btn btn-light mt-1"
-        style="width:45%;"
+        class="btn btn-outline-info border-2 mt-1" 
+        style="width:45%; font-weight:bold;" 
+        onclick="resetFilterForm()"
+        >Reset Filters</button>
+
+        <button 
+        class="btn btn-outline-light border-2 mt-1"
+        style="width:45%; font-weight:bold;"
         hx-get="{% url 'explore' %}"
         hx-include="#explore-filter"
         hx-target="#property-card-container"
         hx-swap="outerHTML"
         onclick="hideFilterPopover()"
         >Apply Filters</button>
+    </div>
+
     </div>
 
 </div>

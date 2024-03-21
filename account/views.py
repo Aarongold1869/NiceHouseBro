@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -27,3 +28,9 @@ def login_view(request, *args, **kwargs):
 def logout_view(request):
     logout(request)
     return redirect('/')
+
+def locate_view(request, *args, **kwargs):
+    response = HttpResponse(status=200)
+    coordinates = list(request.GET.values())
+    response.set_cookie('coordinates', coordinates)
+    return response

@@ -22,6 +22,27 @@
     <title>Nice House Bro</title>
 </head>
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' data-bs-theme="dark">
+
+    <script data-cookies="{{ request.COOKIES }}">
+        const successCallback = (position) => {
+            console.log(position);
+        };
+          
+        const errorCallback = (error) => {
+            console.log(error);
+        };
+        
+        let cookies = document.currentScript.dataset;
+        console.log(cookies.coordinates)
+        if (!cookies.coordinates) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                localStorage.setItem('location', [position.coords.latitude, position.coords.longitude]);
+                htmx.ajax('GET', `/accounts/locate/`, { swap: "none", values: [position.coords.latitude, position.coords.longitude] })
+            });
+        } 
+        console.log(cookies.coordinates)
+
+    </script>
     
     {% include 'components/nav.html' %}
 

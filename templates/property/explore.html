@@ -67,9 +67,16 @@
         color: var(--foreground);
     }
 
+    #map-container {
+        display: none;
+    }
+
     @media only screen and (min-width: 600px) {
         #property-card-container {
-            height: 600px;
+            height: 650px;
+        }
+        #map-container {
+            display: block;
         }
     }
 </style>
@@ -153,6 +160,15 @@
 </script>
     
 <div class="d-flex col justify-content-center">
+
+    <div id='map-container' class="col-sm-6 p-1 pt-3">
+        <div class="d-flex align-items-center">
+            <h3 class="mb-4 mx-2">Map</h3>
+        </div>
+
+        {% include "components/map.html" with coordinates=request.COOKIES.coordinates map_height=680 %}
+    </div>
+
     <div class="col-sm-4 overflow-scroll p-1 pt-3">
 
         <div class="d-flex align-items-center">
