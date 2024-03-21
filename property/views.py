@@ -15,11 +15,17 @@ def home_view(request):
     return render(request, 'property/home.html', {'property_list': property_list })
 
 @login_required(login_url='/accounts/login/')
+@require_http_methods(['GET'])
 def explore_view(request):
     account = Account.objects.get(user=request.user)
     property_list: List[Property] = get_unsaved_properties(account)
     template = "property/explore.html"
     property_id = property_list[0]['id'] if property_list else -1
+    if request.htmx:
+        for key, value in request.GET.items():
+            print('Key:', key, 'Value:', value)
+        property_list = []
+        template = "property/partials/property-card-container.html"
     return render(request, template, {'property_list': property_list, 'property_id': property_id, 'is_saved': False })
 
 @require_http_methods(['GET'])

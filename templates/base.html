@@ -33,7 +33,7 @@
 
     {% include 'components/toast-container.html' %}
 
-    {% if not request.get_full_path == "/explore/" %}
+    {% if not "/explore/" in request.get_full_path %}
         {% include 'components/footer.html' %}
     {% endif %}
 

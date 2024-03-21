@@ -1,0 +1,17 @@
+<!-- Swiping Property List -->
+<div id='property-card-container' class="d-flex justify-content-center p-3">
+
+    {% if not property_list %}
+
+        {% include "property/partials/end-of-list.html" %}
+
+    {% else %}
+
+        {% for property in property_list %}
+
+            {% include "property/partials/property-card.html" %}
+
+        {% endfor %}
+    
+    {% endif %}
+</div>

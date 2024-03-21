@@ -148,7 +148,6 @@
         setTimeout(() => {
             filterPopover.classList.toggle("popover-hidden");
         }, 10);  
-        // filterPopover.classList.toggle("popover-hidden");
     }
 
 </script>
@@ -177,13 +176,14 @@
                     {% include "property/partials/property-card.html" %}
 
                 {% endfor %}
+                
+            {% endif %}
+
         </div>
 
         <!-- Controls -->
         {% if property_id %}
             {% include "property/partials/explore-controls.html" %}
-        {% endif %}
-
         {% endif %}
 
     </div>
