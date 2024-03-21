@@ -32,7 +32,10 @@
     </div>
 
     {% include 'components/toast-container.html' %}
-    {% include 'components/footer.html' %}
+
+    {% if not request.get_full_path == "/explore/" %}
+        {% include 'components/footer.html' %}
+    {% endif %}
 
 </body>
 </html>

@@ -142,24 +142,25 @@
         htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
     }
 
+    function showFilterPopover() {
+        const filterPopover = document.getElementById("explore-filter-popover");
+        filterPopover.style.display = "flex";
+        setTimeout(() => {
+            filterPopover.classList.toggle("popover-hidden");
+        }, 10);  
+        // filterPopover.classList.toggle("popover-hidden");
+    }
+
 </script>
     
 <div class="d-flex col justify-content-center">
     <div class="col-sm-4 overflow-scroll p-1 pt-3">
 
-        <div>
-            <h3 class="text-center">Explore</h3>
-        </div>
-
-        <div 
-        class='py-3 align-items-center' 
-        style="display: flex; flex-direction: row; overflow-x: scroll; white-space: nowrap; justify-content: flex-start;"
-        >
-            <button class="btn btn-sm btn-outline-light mx-1">Price</button>
-            <button class="btn btn-sm btn-outline-light mx-1">Distance</button>
-            <button class="btn btn-sm btn-outline-light mx-1">Cap Rate</button>
-            <button class="btn btn-sm btn-outline-light mx-1">Bedrooms</button>
-            <button class="btn btn-sm btn-outline-light mx-1">Bathrooms</button>
+        <div class="d-flex align-items-center">
+            <button class="btn" onclick="showFilterPopover()">
+                {% include "icons/filter.html" %}
+            </button>
+            <h3 class="mb-0 mx-2">Explore</h3>
         </div>
 
         <!-- Swiping Property List -->

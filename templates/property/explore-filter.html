@@ -1,43 +1,43 @@
 <style> 
-    #explore-filter {
-        display: flex;
+    .explore-filter-popover {
+        display: none;
         flex-direction: column;
         position: absolute;
         top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        left: 0; 
+        right: 0; 
+        margin-left: auto; 
+        margin-right: auto;
+        height: 80vh;
         justify-content: flex-start;
         align-items: center;
-        padding: 30px 20px;
         background-color: var(--background);
+        padding: 50px 0;
+        overflow-y: hidden;
+        transform: translateY(0%) scale(1);
+        transition: transform ease 300ms;
+    }
+
+    .popover-hidden {
+        transform: translateY(100%) scale(0.001);
+    }
+
+    #explore-filter {
+        width: 100%;
+        overflow-y: scroll;
     }
 
     #explore-filter p {
         font-weight: bold;
         margin:0;
-    }
+    }   
 
-    .filter-option-container {
-        display: flex;
-        width: 100%;
-        flex-direction: row;
-        justify-content: space-evenly;
-        align-items: center;
-        margin: 10px 0;
-    }
-
-    .filter-option-container label {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
+    #explore-filter label {
         font-weight: bold;
     }
     
-    .filter-option-container input {
-        width: 100px;
+    #explore-filter input {
+        width: 100%;
         padding: 5px;
         border: 1px solid #ccc;
         border-radius: 5px;
@@ -50,51 +50,123 @@
         const output = document.getElementById("cap-rate-value");
         output.innerHTML = slider.value;
     }
+
+    function hideFilterPopover() {
+        const filterPopover = document.getElementById("explore-filter-popover");
+        filterPopover.classList.toggle("popover-hidden");
+        setTimeout(() => {
+            filterPopover.style.display = "none";
+        }, 100);  
+    }
 </script>
 
-<div id="explore-filter">
+<div id="explore-filter-popover" class="col-sm-4 mx-auto justify-content-center explore-filter-popover popover-hidden bg-dark">
 
-    <div id="cap-rate-filter-container" class="filter-option-container">
-        <label for="cap-rate">Cap Rate</label>
-        <input type="range" min="0" max="100" value="5" class="slider w-50" id="cap-rate-input"
-        oninput="updateSliderValue()"
-        >
-        <div class="d-flex">
-            <p id="cap-rate-value">5</p>
-            <p>%</p>
+    <div 
+    id="explore-filter-header" 
+    class="d-flex justify-content-between align-items-center border-bottom border-light position-absolute top-0 left-0 bg-dark p-3 w-100"
+    style="z-index: 10;"
+    >
+        <!-- <div class="">
+            <div class="d-flex justify-content-between align-items-center"> -->
+                <p class="mb-0" style="font-weight:bold;">Filter</p>
+                <button class="btn btn-lg border-0 fs-2 p-0 m-0" onclick="hideFilterPopover()">
+                    <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width="20" 
+                    height="20" 
+                    fill="currentColor" 
+                    class="bi bi-x-lg" viewBox="0 0 16 16"
+                    >
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                    </svg>
+                </button>
+            <!-- </div>
+        </div> -->
+    </div>
+
+    <div id="explore-filter" class="col-sm-4 p-3">
+
+        <div id="cap-rate-filter-container" class="d-flex justify-content-evenly my-4">
+            <label for="cap-rate">Cap Rate</label>
+            <input type="range" min="0" max="100" value="5" class="slider w-50" id="cap-rate-input"
+            oninput="updateSliderValue()"
+            >
+            <div class="d-flex">
+                <p id="cap-rate-value">5</p>
+                <p>% +</p>
+            </div>
         </div>
+
+        <div id="price-filter-container" class="d-flex justify-content-evenly my-4">
+            <div style="text-align: left; width:40%;">
+                <label for="min-price">Min Price</label>
+                <input type="number" id="min-price" name="min-price" min="0" max="10000000" placeholder="No Min">
+            </div>
+            <p style="margin: 0 10px;"> - </p>
+            <div style="text-align: left; width:40%;">
+                <label for="max-price">Max Price</label>
+                <input type="number" id="max-price" name="max-price" min="0" max="10000000" placeholder="No Max">
+            </div>
+        </div>
+
+        <div id="br-filter-container" class="d-flex justify-content-start my-4"> 
+            <div style="display:flex; flex-direction: column;">
+                <label for="bedrooms">Bedrooms</label>
+                <select id="bedrooms" name="bedrooms">
+                    <option value="0">Any</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                    <option value="4">4+</option>
+                    <option value="5">5+</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="bath-filter-container" class="d-flex justify-content-evenly my-4"> 
+            <label for="bedrooms">Bathrooms
+            <select id="bedrooms" name="bedrooms">
+                <option value="0">Any</option>
+                <option value="1">1+</option>
+                <option value="2">2+</option>
+                <option value="3">3+</option>
+                <option value="4">4+</option>
+            </select>
+        </div>
+
+        <div id="sqfeet-filter-container" class="d-flex justify-content-evenly my-4" style="flex-direction: column;">
+            <p>Square Feet</p>
+            <div class="d-flex w-100">
+                <input type="number" id="min-sqfeet" name="min-sqfeet" min="0" max="10000000" placeholder="No Min">
+                <p style="margin: 0 10px;"> - </p>
+                <input type="number" id="max-sqfeet" name="max-sqfeet" min="0" max="10000000" placeholder="No Max">
+            </div>
+        </div>
+
+        <div id="lot-size-filter-container" class="d-flex justify-content-evenly my-4" style="flex-direction: column;">
+            <p>Lot Size</p>
+            <div class="d-flex w-100">
+                <input type="number" id="min-lot" name="min-lot" min="0" max="10000000" placeholder="No Min">
+                <p style="margin: 0 10px;"> - </p>
+                <input type="number" id="max-lot" name="max-lot" min="0" max="10000000" placeholder="No Max">
+            </div>
+        </div>
+
+        <div id="year-built-filter-container" class="d-flex justify-content-evenly my-4" style="flex-direction: column;">
+            <p>Year Built</p>
+            <div class="d-flex w-100">
+                <input type="number" id="min-year" name="min-year" min="0" max="10000000" placeholder="No Min">
+                <p style="margin: 0 10px;"> - </p>
+                <input type="number" id="max-year" name="max-year" min="0" max="10000000" placeholder="No Max">
+            </div>
+        </div>
+
     </div>
 
-    <div id="price-filter-container" class="filter-option-container">
-        <label for="min-price">Min Price
-            <input type="number" id="min-price" name="min-price" min="0" max="10000000" placeholder="No Min">
-        </label>
-        <p> - </p>
-        <label for="max-price">Max Price
-            <input type="number" id="max-price" name="max-price" min="0" max="10000000" placeholder="No Max">
-        </label>
+    <div id="explore-filter-submit" class="d-flex justify-content-between border-top border-light align-items-center position-absolute w-100 bottom-0 left-0 bg-dark px-2 py-3">
+        <button class="btn btn-light">Reset Filters</button>
+        <button class="btn btn-outline-light">Apply Selected</button>
     </div>
 
-    <div id="br-filter-container" class="filter-option-container"> 
-        <label for="bedrooms">Bedrooms
-        <select id="bedrooms" name="bedrooms">
-            <option value="0">Any</option>
-            <option value="1">1+</option>
-            <option value="2">2+</option>
-            <option value="3">3+</option>
-            <option value="4">4+</option>
-            <option value="5">5+</option>
-        </select>
-    </div>
-
-    <div id="bath-filter-container" class="filter-option-container"> 
-        <label for="bedrooms">Bathrooms
-        <select id="bedrooms" name="bedrooms">
-            <option value="0">Any</option>
-            <option value="1">1+</option>
-            <option value="2">2+</option>
-            <option value="3">3+</option>
-            <option value="4">4+</option>
-        </select>
-    </div>
 </div>
