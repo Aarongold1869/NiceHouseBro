@@ -1,23 +1,45 @@
 {% extends 'base.html' %}
 
-<style>
-  .form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: red!important;
-    opacity: 1!important; /* Firefox */
-  }
-</style>
-
 {% block content %}
-<div class="bg-dark text-secondary px-4 py-4 text-center">
+
+<script>
+
+  async function getLocation() {
+
+    const getCoords = async () => {
+      const pos = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+      await htmx.ajax('GET', `/accounts/locate/`, { swap: "none", values: { lat: pos.coords.latitude, long: pos.coords.longitude } })
+      return true;
+    };
+
+    const coords = await getCoords();
+    console.log("Location has been set.")
+    window.location.replace('/explore/')
+      
+  }
+
+</script>
+
+<div class="bg-dark px-4 py-4 text-center">
     <div class="py-5">
       <h1 class="display-5 fw-bold text-white">Find your next investment property.</h1>
       <div class="col-12 mx-auto">
-        <p class="fs-5 mb-4">Start Searching</p>
+        <p class="fs-5 mb-4 text-secondary ">Start Searching</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
             <form class="d-flex col-sm-6" role="search">
-                <input class="form-control me-2 bg-white text-dark" type="search" placeholder="Enter an address, city, state, or zip." aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
+                <input class="form-control me-2 border-3 border-white" type="search" placeholder="Enter an address, city, state, or zip." aria-label="Search">
+                <button class="btn btn-outline-info border-3 mx-2" style="font-weight:bold;" type="submit">Search</button>
             </form>
+            <button 
+            id="locate-button"
+            class="btn btn-outline-info border-3 rounded-circle p-2" 
+            style="font-weight:bold;" 
+            onclick="getLocation()"
+            >
+              {% include "icons/location.html" %}
+            </button>
         </div>
       </div>
     </div>

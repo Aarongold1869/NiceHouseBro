@@ -4,6 +4,7 @@
 
 <script>
     let coordinates = JSON.parse(document.getElementById('coordinates').textContent);
+    console.log(coordinates)
     var map = L.map('map').setView(coordinates, 15);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {

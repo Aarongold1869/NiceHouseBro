@@ -9,6 +9,7 @@ from .data import PROPERTY_DATA, Property
 from .functions import filter_property_list, get_unsaved_properties
 
 from typing import List
+import json
 
 def home_view(request):
     property_list: List[Property] = PROPERTY_DATA
@@ -24,11 +25,13 @@ def explore_view(request):
     if request.htmx:
         property_list = filter_property_list(request.GET, property_list)
         template = "property/partials/property-card-container.html"
+    coordinates = json.loads(request.COOKIES.get('coordinates')) if request.COOKIES.get('coordinates') else None
     context = {
         'property_list': property_list, 
         'property_id': property_id, 
         'is_saved': False,
-        'property_init': property_list[0] if property_list else None
+        'property_init': property_list[0] if property_list else None,
+        'coordinates': coordinates
     }
     return render(request, template, context)
 
