@@ -2,25 +2,64 @@
 
 {% block content %}
 
+<style>
+  #search-buttons-sm {
+    display: none!important;
+  }
+  
+  #search-buttons-lg {
+    display: flex!important;
+  }
+
+  @media (max-width: 1000px) {
+    #search-buttons-sm {
+      display: flex!important;
+    }
+    #search-buttons-lg {
+      display: none!important;
+    }
+  }
+</style>
+
 <div class="bg-dark px-4 py-4 text-center">
     <div class="py-5">
       <h1 class="display-5 fw-bold text-white">Find your next investment property.</h1>
-      <div class="col-12 mx-auto">
-        <p class="fs-5 mb-4 text-secondary ">Start Searching</p>
+      <div class="col-sm-6 col-lg-4 mx-auto flex-wrap">
+        <p class="fs-5 mb-4 text-secondary w-100">Start Searching</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-            <form class="d-flex col-sm-6" role="search" onsubmit="submitSearch()">
-                <input id="location-search" name='location-search' class="form-control me-2 border-3 border-white" type="search" placeholder="Enter an address, city, state, or zip." aria-label="Search">
-                <button id="search-button" class="btn btn-outline-info border-3 mx-2" style="font-weight:bold;">Search</button>
-            </form>
-            <button 
-            id="locate-button"
-            class="btn btn-outline-info border-3 rounded-circle p-2" 
-            style="font-weight:bold;" 
-            onclick="getLocation()"
-            >
-              {% include "icons/location.html" %}
-            </button>
+          <form class="d-flex w-100 justify-content-center" role="search" onsubmit="submitSearch()">
+   
+            <input id="location-search" name='location-search' class="form-control border-3 border-white mx-1" type="search" placeholder="Enter an address, city, state, or zip." aria-label="Search">
+
+            <div id="search-buttons-lg" class="d-flex">
+              <button id="search-button-lg" class="btn btn-outline-info border-3 mx-1" style="font-weight:bold;">Search</button>
+              <button 
+              id="locate-button"
+              class="btn btn-outline-info border-3 mx-1" 
+              style="font-weight:bold;" 
+              >
+                {% comment %} Use my location {% endcomment %}
+                {% include "icons/location.html" %}
+              </button>
+            </div>
+
+          </form>    
+
         </div>
+
+        <div id="search-buttons-sm" class="d-flex w-100 justify-content-between mt-2 p-1">
+          <button id="search-button-sm" class="btn btn-outline-info border-3 w-75" style="font-weight:bold;">Search</button>
+          <button 
+          id="locate-button"
+          class="btn btn-outline-info border-3" 
+          style="font-weight:bold;" 
+          >
+            {% comment %} Use my location {% endcomment %}
+            {% include "icons/location.html" %}
+          </button>
+        </div>
+          
+        
       </div>
     </div>
 </div>
@@ -52,8 +91,10 @@
     window.location.replace(`/explore/search=${search}`)
   }
 
-  const searchButton = document.getElementById('search-button');
-  searchButton.addEventListener("click", submitSearch, false);
+  const searchButtonLg = document.getElementById('search-button-lg');
+  searchButtonLg.addEventListener("click", submitSearch, false);
+  const searchButtonSm = document.getElementById('search-button-sm');
+  searchButtonSm.addEventListener("click", submitSearch, false);
 
   function initialize() {
     // var input = document.getElementById('location-search');

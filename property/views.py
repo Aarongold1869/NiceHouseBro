@@ -20,7 +20,8 @@ def home_view(request):
 def explore_view(request, search_str='None', *args, **kwargs):
     account = Account.objects.get(user=request.user)
     coordinates: Coordinates = json.loads(request.COOKIES.get('coordinates')) if request.COOKIES.get('coordinates') else None
-    processed_search = process_search_str(search_str)
+    print(search_str)
+    # processed_search = process_search_str(search_str)
     property_list: List[Property] = get_unsaved_properties(account)
     template = "property/explore.html"
     property_id = property_list[0]['id'] if property_list else -1

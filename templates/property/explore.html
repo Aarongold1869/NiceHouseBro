@@ -70,6 +70,9 @@
     #map-container {
         display: none;
     }
+    #map-container[data-visible="true"] {
+        display: block;
+    }
 
     #map-button {
         display: flex;
@@ -172,12 +175,7 @@
     function toggleMapView() {
         const mapContainer = document.getElementById("map-container");
         const swipingComponent = document.getElementById("swiping-component");
-        // mapContainer.style.display = mapContainer.style.display === "none" ? "block" : "none";
-        if (mapContainer.style.display === "none") {
-            mapContainer.style.setProperty('display', 'block', 'important');
-        } else {
-            mapContainer.style.setProperty('display', 'none', 'important');
-        }
+        mapContainer.dataset.visible = mapContainer.dataset.visible === "false" ? "true" : "false";
         swipingComponent.style.display = swipingComponent.style.display === "none" ? "block" : "none";
     }
 
@@ -185,9 +183,9 @@
     
 <div class="d-flex justify-content-center position-relative">
 
-    <div id='map-container' class="col-12 col-lg-8 h-100 p-1 pt-3" style="display:none;">
-        <div class="d-flex align-items-center">
-            <h3 class="mb-4 mx-2">Map</h3>
+    <div id='map-container' class="col-12 col-lg-8 h-100 p-1 pt-3" data-visible="false">
+        <div class="d-flex align-items-center mx-3 mt-2 mb-4">
+            <h3 class="mb-0 mx-2">Map</h3>
             <button id="map-button" class="btn btn-outline-info border-0 p-1" onclick="toggleMapView()">
                 {% include "icons/map-icon.html" %}
             </button>
