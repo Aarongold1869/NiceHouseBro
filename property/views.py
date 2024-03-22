@@ -17,26 +17,31 @@ def home_view(request):
 
 @login_required(login_url='/accounts/login/')
 @require_http_methods(['GET'])
-def explore_view(request, search_str='None', *args, **kwargs):
+def explore_view(request, search_str=None, *args, **kwargs):
     account = Account.objects.get(user=request.user)
     coordinates: Coordinates = json.loads(request.COOKIES.get('coordinates')) if request.COOKIES.get('coordinates') else None
-    print(search_str)
-    # processed_search = process_search_str(search_str)
+    if not search_str:
+        boundry: BoundryData = {
+            'city': 'Pensacola',
+            'state': 'FL',
+            'zip': '32514',
+            'county': 'Escambia',
+        }
+    else:
+        boundry = process_search_str(search_str)
     property_list: List[Property] = get_unsaved_properties(account)
     template = "property/explore.html"
     property_id = property_list[0]['id'] if property_list else -1
     if request.htmx:
         property_list = filter_property_list(request.GET, property_list)
         template = "property/partials/property-card-container.html"
-    
-    
     context = {
         'property_list': property_list, 
         'property_id': property_id, 
         'is_saved': False,
         'property_init': property_list[0] if property_list else None,
         'coordinates': coordinates,
-        # 'boundry': boundry
+        'boundry': boundry
     }
     return render(request, template, context)
 
