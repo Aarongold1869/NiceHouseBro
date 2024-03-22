@@ -1,10 +1,23 @@
-<div id="map" style="width: 100%; height:{% if not map_height %}400px;{% else %}{{map_height}}px;{% endif %}"></div>
+<div id="map" style="width: 100%; height:{% if not map_height %}400px;{% else %}{{map_height}};{% endif %}"></div>
 
 {{ coordinates|json_script:"coordinates" }}
+{{ boundry|json_script:"boundry" }}
 
 <script>
+
+    function drawCountyBoundary(boundryData)
+    {
+        url = `https://nominatim.openstreetmap.org/search.php?city=${boundryData.city}&county=${boundryData.county}&state=${boundryData.state}&polygon_geojson=1&format=jsonv2`
+        fetch(url).then(function(response) {
+            return response.json();
+        })
+        .then(function(json) {
+            geojsonFeature = json[0].geojson;
+            L.geoJSON(geojsonFeature).addTo(map);
+        });
+    }
+
     let coordinates = JSON.parse(document.getElementById('coordinates').textContent);
-    console.log(coordinates)
     var map = L.map('map').setView(coordinates, 15);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -13,4 +26,10 @@
     }).addTo(map);
 
     var marker = L.marker(coordinates).addTo(map);
+    
+    let boundry = JSON.parse(document.getElementById('boundry').textContent);
+    if (boundry) {
+        drawCountyBoundary(boundry);
+    }
+
 </script>

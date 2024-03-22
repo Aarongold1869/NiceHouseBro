@@ -71,12 +71,24 @@
         display: none;
     }
 
+    #map-button {
+        display: flex;
+        position: absolute;
+        top: 24px;
+        right: 20px;
+    }
+
     @media only screen and (min-width: 600px) {
         #property-card-container {
             height: 650px;
         }
+    }
+    @media only screen and (min-width: 1000px) {
         #map-container {
             display: block;
+        }
+        #map-button {
+            display: none; 
         }
     }
 </style>
@@ -157,25 +169,43 @@
         }, 10);  
     }
 
+    function toggleMapView() {
+        const mapContainer = document.getElementById("map-container");
+        const swipingComponent = document.getElementById("swiping-component");
+        // mapContainer.style.display = mapContainer.style.display === "none" ? "block" : "none";
+        if (mapContainer.style.display === "none") {
+            mapContainer.style.setProperty('display', 'block', 'important');
+        } else {
+            mapContainer.style.setProperty('display', 'none', 'important');
+        }
+        swipingComponent.style.display = swipingComponent.style.display === "none" ? "block" : "none";
+    }
+
 </script>
     
-<div class="d-flex col justify-content-center">
+<div class="d-flex justify-content-center position-relative">
 
-    <div id='map-container' class="col-sm-6 p-1 pt-3">
+    <div id='map-container' class="col-12 col-lg-8 h-100 p-1 pt-3" style="display:none;">
         <div class="d-flex align-items-center">
             <h3 class="mb-4 mx-2">Map</h3>
+            <button id="map-button" class="btn btn-outline-info border-0 p-1" onclick="toggleMapView()">
+                {% include "icons/map-icon.html" %}
+            </button>
         </div>
 
-        {% include "components/map.html" with coordinates=coordinates map_height=680 %}
+        {% include "components/map.html" with coordinates=coordinates map_height='85vh' %}
     </div>
 
-    <div class="col-sm-4 overflow-scroll p-1 pt-3">
+    <div id='swiping-component' class="col-sm-12 col-lg-4 overflow-scroll p-1 pt-3">
 
         <div class="d-flex align-items-center">
             <button class="btn" onclick="showFilterPopover()">
                 {% include "icons/filter.html" %}
             </button>
             <h3 class="mb-0 mx-2">Explore</h3>
+            <button id="map-button" class="btn btn-outline-info border-0 p-1" onclick="toggleMapView()">
+                {% include "icons/map-icon.html" %}
+            </button>
         </div>
 
         <!-- Swiping Property List -->

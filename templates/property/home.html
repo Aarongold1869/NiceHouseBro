@@ -2,35 +2,15 @@
 
 {% block content %}
 
-<script>
-
-  async function getLocation() {
-
-    const getCoords = async () => {
-      const pos = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
-      await htmx.ajax('GET', `/accounts/locate/`, { swap: "none", values: { lat: pos.coords.latitude, long: pos.coords.longitude } })
-      return true;
-    };
-
-    const coords = await getCoords();
-    console.log("Location has been set.")
-    window.location.replace('/explore/')
-      
-  }
-
-</script>
-
 <div class="bg-dark px-4 py-4 text-center">
     <div class="py-5">
       <h1 class="display-5 fw-bold text-white">Find your next investment property.</h1>
       <div class="col-12 mx-auto">
         <p class="fs-5 mb-4 text-secondary ">Start Searching</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-            <form class="d-flex col-sm-6" role="search">
-                <input class="form-control me-2 border-3 border-white" type="search" placeholder="Enter an address, city, state, or zip." aria-label="Search">
-                <button class="btn btn-outline-info border-3 mx-2" style="font-weight:bold;" type="submit">Search</button>
+            <form class="d-flex col-sm-6" role="search" onsubmit="submitSearch()">
+                <input id="location-search" name='location-search' class="form-control me-2 border-3 border-white" type="search" placeholder="Enter an address, city, state, or zip." aria-label="Search">
+                <button id="search-button" class="btn btn-outline-info border-3 mx-2" style="font-weight:bold;">Search</button>
             </form>
             <button 
             id="locate-button"
@@ -47,5 +27,42 @@
 
 {% include 'property/partials/scrolling-card-list.html' %}
 
+
+<script>
+
+  async function getLocation() {
+
+    const getCoords = async () => {
+      const pos = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+      await htmx.ajax('GET', `/accounts/locate/`, { swap: "none", values: { lat: pos.coords.latitude, long: pos.coords.longitude } })
+      return true;
+    };
+
+    const coords = await getCoords();
+    console.log("Location has been set.")
+    window.location.replace('/explore/')
+  }
+
+  function submitSearch(event) {
+    event.preventDefault();
+    console.log('search')
+    const search = document.querySelector('input[name="location-search"]').value;
+    window.location.replace(`/explore/search=${search}`)
+  }
+
+  const searchButton = document.getElementById('search-button');
+  searchButton.addEventListener("click", submitSearch, false);
+
+  function initialize() {
+    // var input = document.getElementById('location-search');
+    new google.maps.places.Autocomplete(searchInput);
+  }
+
+  const searchInput = document.getElementById('location-search');
+  searchInput.addEventListener('keypress', initialize);
+
+</script>
 
 {% endblock content %}

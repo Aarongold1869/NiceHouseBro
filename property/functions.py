@@ -1,6 +1,7 @@
 from account.models import Account, SavedProperty
 from property.data import PROPERTY_DATA, Property
 
+import re
 from typing import List
 
 def filter_unsaved(account: Account, property_id: int)-> bool:
@@ -18,3 +19,9 @@ def get_unsaved_properties(account: Account)-> List[Property]:
 
 def filter_property_list(get, property_list)-> List[Property]:
     ...
+
+def process_search_str(search_str: str)-> str:
+    zip_regex = r'^\d{5}(?:[-\s]\d{4})?$'
+    zip = re.search(zip_regex, search_str)
+    print('zip', zip)
+    return zip
