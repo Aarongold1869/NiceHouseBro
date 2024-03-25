@@ -33,15 +33,13 @@
 
             <div id="search-buttons-lg" class="d-flex">
               <button id="search-button-lg" class="btn btn-outline-info border-3 mx-1" style="font-weight:bold;">Search</button>
-              <button 
-              id="locate-button"
-              class="btn btn-outline-info border-3 mx-1" 
-              style="font-weight:bold;" 
-              onclick="getLocation()" 
-              >
-                {% comment %} Use my location {% endcomment %}
-                {% include "icons/location.html" %}
-              </button>
+              <a 
+              href="/explore/" 
+              class="btn btn-outline-info border-3" 
+              style="font-weight:bold;"> 
+                  {% comment %} Use my location {% endcomment %}
+                  {% include "icons/location.html" %}
+              </a>
             </div>
 
           </form>    
@@ -50,15 +48,16 @@
 
         <div id="search-buttons-sm" class="d-flex w-100 justify-content-between mt-2 p-1">
           <button id="search-button-sm" class="btn btn-outline-info border-3 w-75" style="font-weight:bold;">Search</button>
-          <button 
-          id="locate-button"
-          class="btn btn-outline-info border-3" 
-          style="font-weight:bold;" 
-          onclick="getLocation()"
-          >
-            {% comment %} Use my location {% endcomment %}
-            {% include "icons/location.html" %}
-          </button>
+          <a href="/explore/"> 
+            <button 
+            id="locate-button"
+            class="btn btn-outline-info border-3" 
+            style="font-weight:bold;" 
+            >
+              {% comment %} Use my location {% endcomment %}
+              {% include "icons/location.html" %}
+            </button>
+          </a>
         </div>
           
         
@@ -68,21 +67,23 @@
 
 {% include 'property/partials/scrolling-card-list.html' %}
 
+{% comment %} <!-- Google location search complete -->
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{API_KEY}}&libraries=places"></script> {% endcomment %}
 
 <script>
 
   async function getLocation() {
 
-    const getCoords = async () => {
-      const pos = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
-      await htmx.ajax('GET', `/accounts/locate/`, { swap: "none", values: { lat: pos.coords.latitude, long: pos.coords.longitude } })
-      return true;
-    };
+    // const getCoords = async () => {
+    //   const pos = await new Promise((resolve, reject) => {
+    //     navigator.geolocation.getCurrentPosition(resolve, reject);
+    //   });
+    //   await htmx.ajax('GET', `/accounts/locate/`, { swap: "none", values: { lat: pos.coords.latitude, long: pos.coords.longitude } })
+    //   return true;
+    // };
 
-    const coords = await getCoords();
-    console.log("Location has been set.")
+    // const coords = await getCoords();
+    // console.log("Location has been set.")
     window.location.replace('/explore/')
   }
 
@@ -95,6 +96,7 @@
 
   const searchButtonLg = document.getElementById('search-button-lg');
   searchButtonLg.addEventListener("click", submitSearch, false);
+
   const searchButtonSm = document.getElementById('search-button-sm');
   searchButtonSm.addEventListener("click", submitSearch, false);
 
@@ -102,7 +104,6 @@
     // var input = document.getElementById('location-search');
     new google.maps.places.Autocomplete(searchInput);
   }
-
   const searchInput = document.getElementById('location-search');
   searchInput.addEventListener('keypress', initialize);
 

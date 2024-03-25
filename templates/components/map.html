@@ -5,8 +5,30 @@
 
 <script>
 
-    function drawCountyBoundary(boundryData)
-    {
+    // Initialize Map Global View 
+    var map = L.map('map').fitWorld();
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // get coordinates from django context
+    let coordinates = JSON.parse(document.getElementById('coordinates').textContent);
+    if (coordinates) { // if coordinates are provided, set the map view to the coordinates
+        map.setView(coordinates, 16);
+        var marker = L.marker(coordinates).addTo(map);
+    } else { // if no coordinates are provided, set the map view to the user's location
+        map.locate({setView: true, maxZoom: 16});
+        function onLocationFound(e) {
+            var radius = e.accuracy;
+            L.marker(e.latlng).addTo(map)
+                .bindPopup("You are within " + radius + " meters from this point").openPopup();
+            L.circle(e.latlng, radius).addTo(map);
+        }
+        map.on('locationfound', onLocationFound);
+    }
+
+    function drawCountyBoundary(boundryData) {
         url = `https://nominatim.openstreetmap.org/search.php?city=${boundryData.city}&county=${boundryData.county}&state=${boundryData.state}&polygon_geojson=1&format=jsonv2`
         fetch(url).then(function(response) {
             return response.json();
@@ -17,19 +39,23 @@
         });
     }
 
-    let coordinates = JSON.parse(document.getElementById('coordinates').textContent);
-    var map = L.map('map').setView(coordinates, 15);
+    function onLocationError(e) {
+        const defaultBoundry = {
+            city: "Pensacola",
+            state: "Fl",
+            zip: "",
+            county: ""
+        }
+        drawCountyBoundary(defaultBoundry);
+        const defaultCoordinates = [30.455170859580093, -87.19574372032461];
+        map.setView(defaultCoordinates, 13);
+        // var marker = L.marker(defaultCoordinates).addTo(map);
+    }
+    // if coordinates or user location not provided and boundry  not provided, set the map view to the default location
+    map.on('locationerror', onLocationError);     
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-
-    var marker = L.marker(coordinates).addTo(map);
-    
-    let boundry = JSON.parse(document.getElementById('boundry').textContent);
     if (boundry) {
         drawCountyBoundary(boundry);
-    }
+    } 
 
 </script>

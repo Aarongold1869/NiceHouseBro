@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http import HttpResponse
+from django.conf import settings
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
@@ -13,22 +13,19 @@ import json
 
 def home_view(request):
     property_list: List[Property] = PROPERTY_DATA
-    return render(request, 'property/home.html', {'property_list': property_list })
+    return render(request, 'property/home.html', {'property_list': property_list, 'API_KEY': settings.GOOGLE_MAPS_API_KEY, })
+
 
 @login_required(login_url='/accounts/login/')
 @require_http_methods(['GET'])
-def explore_view(request, search_str=None, *args, **kwargs):
+def explore_view(request, search_str=None):
     account = Account.objects.get(user=request.user)
-    coordinates: Coordinates = json.loads(request.COOKIES.get('coordinates')) if request.COOKIES.get('coordinates') else None
-    if not search_str:
-        boundry: BoundryData = {
-            'city': 'Pensacola',
-            'state': 'FL',
-            'zip': '32514',
-            'county': 'Escambia',
-        }
-    else:
-        boundry = process_search_str(search_str)
+    if request.COOKIES.get('coordinates'):  
+        # coordinates: Coordinates = json.loads(request.COOKIES.get('coordinates'))
+        ...
+    if search_str:
+       ...
+    
     property_list: List[Property] = get_unsaved_properties(account)
     template = "property/explore.html"
     property_id = property_list[0]['id'] if property_list else -1
@@ -40,8 +37,9 @@ def explore_view(request, search_str=None, *args, **kwargs):
         'property_id': property_id, 
         'is_saved': False,
         'property_init': property_list[0] if property_list else None,
-        'coordinates': coordinates,
-        'boundry': boundry
+        # 'coordinates': coordinates,
+        # 'boundry': boundry,
+        'API_KEY': settings.GOOGLE_MAPS_API_KEY,
     }
     return render(request, template, context)
 

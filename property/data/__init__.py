@@ -4,7 +4,7 @@ from .property_list import *
 
 class Coordinates(TypedDict):
     lat: float
-    long: float
+    lng: float
 
 class BoundryData(TypedDict): 
     city: str

@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+dotenv_path = '.env'
+load_dotenv(dotenv_path)
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,10 +25,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-6!%eix9owo2p7*gc1g3vul1sq62k#d2k4ujtd6_0ms0r1!1ovf'
+SECRET_KEY = os.getenv('DJANGO_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
@@ -33,6 +37,8 @@ ALLOWED_HOSTS = ['*']
 # SESSION_COOKIE_SECURE = True
 # CSRF_COOKIE_SAMESITE = 'None'
 # SESSION_COOKIE_SAMESITE = 'None'
+
+GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY')
 
 # Application definition
 
