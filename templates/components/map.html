@@ -1,9 +1,13 @@
 <div id="map" style="width: 100%; height:{% if not map_height %}400px;{% else %}{{map_height}};{% endif %}"></div>
 
-{{ coordinates|json_script:"coordinates" }}
-{{ boundry|json_script:"boundry" }}
+{{ map_data|json_script:"map_data" }}
 
 <script>
+    // Get the map data from the django context
+    const map_data = JSON.parse(document.getElementById('map_data').textContent);
+    const coordinates = map_data.coordinates;
+    const boundry = map_data.boundry;
+    const zoom = map_data.zoom;
 
     // Initialize Map Global View 
     var map = L.map('map').fitWorld();
@@ -12,32 +16,13 @@
         attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    // get coordinates from django context
-    let coordinates = JSON.parse(document.getElementById('coordinates').textContent);
-    if (coordinates) { // if coordinates are provided, set the map view to the coordinates
-        map.setView(coordinates, 16);
-        var marker = L.marker(coordinates).addTo(map);
-    } else { // if no coordinates are provided, set the map view to the user's location
-        map.locate({setView: true, maxZoom: 16});
-        function onLocationFound(e) {
-            var radius = e.accuracy;
-            L.marker(e.latlng).addTo(map)
-                .bindPopup("You are within " + radius + " meters from this point").openPopup();
-            L.circle(e.latlng, radius).addTo(map);
-        }
-        map.on('locationfound', onLocationFound);
+    function onLocationFound(e) {
+        var radius = e.accuracy;
+        L.marker(e.latlng).addTo(map)
+            // .bindPopup("You are within " + radius + " meters from this point").openPopup();
+        L.circle(e.latlng, radius).addTo(map);
     }
-
-    function drawCountyBoundary(boundryData) {
-        url = `https://nominatim.openstreetmap.org/search.php?city=${boundryData.city}&county=${boundryData.county}&state=${boundryData.state}&polygon_geojson=1&format=jsonv2`
-        fetch(url).then(function(response) {
-            return response.json();
-        })
-        .then(function(json) {
-            geojsonFeature = json[0].geojson;
-            L.geoJSON(geojsonFeature).addTo(map);
-        });
-    }
+    map.on('locationfound', onLocationFound);
 
     function onLocationError(e) {
         const defaultBoundry = {
@@ -48,14 +33,22 @@
         }
         drawCountyBoundary(defaultBoundry);
         const defaultCoordinates = [30.455170859580093, -87.19574372032461];
-        map.setView(defaultCoordinates, 13);
+        map.setView(defaultCoordinates, zoom);
         // var marker = L.marker(defaultCoordinates).addTo(map);
     }
     // if coordinates or user location not provided and boundry  not provided, set the map view to the default location
     map.on('locationerror', onLocationError);     
 
+    // get coordinates from django context
+    if (coordinates) { // if coordinates are provided, set the map view to the coordinates
+        map.setView(coordinates, zoom);
+        var marker = L.marker(coordinates).addTo(map);
+    } else { // if no coordinates are provided, set the map view to the user's location
+        map.locate({setView: true, maxZoom: zoom});
+    }
+
     if (boundry) {
-        drawCountyBoundary(boundry);
+        L.geoJSON(boundry).addTo(map);
     } 
 
 </script>

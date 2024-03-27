@@ -5,41 +5,36 @@ from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
 from account.models import Account, SavedProperty
-from .data import BoundryData, Coordinates, PROPERTY_DATA, Property
-from .functions import filter_property_list, get_unsaved_properties, process_search_str
+from .api.property_list import PROPERTY_DATA
+from .types import MapData, Property
+from .functions import retrieve_map_data_from_search_str, filter_properties_by_search
 
 from typing import List
-import json
 
 def home_view(request):
     property_list: List[Property] = PROPERTY_DATA
     return render(request, 'property/home.html', {'property_list': property_list, 'API_KEY': settings.GOOGLE_MAPS_API_KEY, })
 
-
 @login_required(login_url='/accounts/login/')
 @require_http_methods(['GET'])
 def explore_view(request, search_str=None):
-    account = Account.objects.get(user=request.user)
-    if request.COOKIES.get('coordinates'):  
-        # coordinates: Coordinates = json.loads(request.COOKIES.get('coordinates'))
-        ...
+    # account = Account.objects.get(user=request.user)
+    map_data: MapData = {'zoom': 13}
     if search_str:
-       ...
-    
-    property_list: List[Property] = get_unsaved_properties(account)
+        map_data = retrieve_map_data_from_search_str(search_str)
+    property_list: List[Property] = filter_properties_by_search(map_data)
     template = "property/explore.html"
     property_id = property_list[0]['id'] if property_list else -1
-    if request.htmx:
-        property_list = filter_property_list(request.GET, property_list)
-        template = "property/partials/property-card-container.html"
+    # if request.htmx:
+    #     property_list = filter_property_list(request.GET, property_list)
+    #     template = "property/partials/property-card-container.html"
     context = {
         'property_list': property_list, 
         'property_id': property_id, 
         'is_saved': False,
         'property_init': property_list[0] if property_list else None,
-        # 'coordinates': coordinates,
-        # 'boundry': boundry,
         'API_KEY': settings.GOOGLE_MAPS_API_KEY,
+        'map_data': map_data
     }
     return render(request, template, context)
 

@@ -40,6 +40,8 @@ ALLOWED_HOSTS = ['*']
 
 GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY')
 
+POSITION_STACK_API_KEY = os.getenv('POSITION_STACK_API_KEY')
+
 # Application definition
 
 INSTALLED_APPS = [

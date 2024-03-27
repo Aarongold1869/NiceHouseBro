@@ -183,24 +183,13 @@
     
 <div class="d-flex justify-content-center position-relative">
 
-    <div id='map-container' class="col-12 col-lg-8 h-100 p-1 pt-3" data-visible="false">
-        <div class="d-flex align-items-center mx-3 mt-2 mb-4">
-            <h3 class="mb-0 mx-1">Map</h3>
-            <button id="map-button" class="btn btn-outline-light border-0 p-1" onclick="toggleMapView()">
-                {% include "icons/map-icon.html" %}
-            </button>
-        </div>
-
-        {% include "components/map.html" with coordinates=coordinates map_height='85vh' %}
-    </div>
-
     <div id='swiping-component' class="col-sm-12 col-lg-4 overflow-scroll p-1 pt-3">
 
         <div class="d-flex align-items-center">
-            <button class="btn" onclick="showFilterPopover()">
+            <button class="btn mx-3 my-0 p-0" onclick="showFilterPopover()">
                 {% include "icons/filter.html" %}
             </button>
-            <h3 class="mb-0 mx-2">Explore</h3>
+            <h3 class="mb-0">Explore</h3>
             <button id="map-button" class="btn btn-outline-light border-0 p-1" onclick="toggleMapView()">
                 {% include "icons/map-icon.html" %}
             </button>
@@ -231,6 +220,18 @@
         {% endif %}
 
     </div>
+
+    <div id='map-container' class="col-12 col-lg-8 h-100 p-0 pt-2" data-visible="false">
+        <div class="d-flex align-items-center mx-3 mt-2 mb-3">
+            <h3 class="mb-0 mx-1">Map</h3>
+            <button id="map-button" class="btn btn-outline-light border-0 p-1" onclick="toggleMapView()">
+                {% include "icons/map-icon.html" %}
+            </button>
+        </div>
+
+        {% include "components/map.html" with coordinates=coordinates map_height='85vh' %}
+    </div>
+
 </div>
 
 {% include "property/explore-filter.html" %}
