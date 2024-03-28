@@ -6,9 +6,7 @@ from .types import Coordinates, MapData, Property
 
 from functools import cache
 from geopy.geocoders import Nominatim
-# import http.client, urllib.parse
-# import json
-# import re
+import shapely.geometry as sg
 from typing import List
 
 def filter_unsaved(account: Account, property_id: int)-> bool:
@@ -46,12 +44,14 @@ def nominatim_boundry_api(search_str: str)-> str:
 LOCATION_TYPE_ZOOM_HASH = {
     'venue':  17,
     'address': 18,
+    'building': 18,
     'street': 16,
     'neighbourhood': 14,
+    'village': 13,
     'borough': 12,
     'localadmin': 12,
     'city': 11,
-    'county': 8,
+    'county': 9,
     'macrocounty': 16,
     'region': 5,
     'macroregion': 5,
@@ -60,17 +60,25 @@ LOCATION_TYPE_ZOOM_HASH = {
     'postalcode': 10,
 }
 
-def retrieve_map_data_from_search_str(search_str: str)-> MapData:
+def retrieve_map_data_from_search_str(search_str: str)-> MapData | None:
     geocode_data = nominatim_boundry_api(search_str)
+    if not geocode_data:
+        return None
     addresstype = geocode_data.raw['addresstype']
+    print(addresstype)
     map_data: MapData = MapData( 
         coordinates=[geocode_data.latitude, geocode_data.longitude],
         boundry=geocode_data.raw['geojson'], 
-        zoom=LOCATION_TYPE_ZOOM_HASH.get(addresstype, 11)
+        zoom=LOCATION_TYPE_ZOOM_HASH.get(addresstype, 11),
+        bounding_box=geocode_data.raw['boundingbox']
     )
     return map_data
 
-def filter_properties_by_search(map_data: MapData)-> List[Property]:
-    property_list: List[Property] = PROPERTY_DATA
-    # filtered_list = list(filter(lambda x: x['coordinates'] == map_data['coordinates'], property_list))
-    return property_list
+def filter_properties_by_search_boundry(boundry: List[List[str]])-> List[Property]:
+    def coordinates_are_in_polygon(coordinates, boundry):
+        point = sg.Point(coordinates)
+        polygon = sg.Polygon(boundry)
+        return point.within(polygon)
+    inverted_boundry = [(elem2, elem1) for elem1, elem2 in boundry]
+    filtered_list = list(filter(lambda x: coordinates_are_in_polygon(x['Coordinates'], inverted_boundry), PROPERTY_DATA))
+    return filtered_list

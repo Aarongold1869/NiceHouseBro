@@ -8,6 +8,7 @@ class MapData(TypedDict):
     coordinates: Coordinates
     boundry: List[str]
     zoom: int
+    bounding_box: List[str]
 
 class Property(TypedDict):
     # Zillow zestimate API

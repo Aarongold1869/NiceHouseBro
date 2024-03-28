@@ -1,13 +1,14 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.conf import settings
+from django.http import Http404
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
 from account.models import Account, SavedProperty
 from .api.property_list import PROPERTY_DATA
 from .types import MapData, Property
-from .functions import retrieve_map_data_from_search_str, filter_properties_by_search
+from .functions import retrieve_map_data_from_search_str, filter_properties_by_search_boundry
 
 from typing import List
 
@@ -19,10 +20,12 @@ def home_view(request):
 @require_http_methods(['GET'])
 def explore_view(request, search_str=None):
     # account = Account.objects.get(user=request.user)
-    map_data: MapData = {'zoom': 13}
+    map_data: MapData = {'zoom': 12}
     if search_str:
         map_data = retrieve_map_data_from_search_str(search_str)
-    property_list: List[Property] = filter_properties_by_search(map_data)
+        if not map_data:
+            raise Http404("Invalid search string.")
+    property_list: List[Property] = filter_properties_by_search_boundry(boundry=map_data['boundry']['coordinates'][0])
     template = "property/explore.html"
     property_id = property_list[0]['id'] if property_list else -1
     # if request.htmx:

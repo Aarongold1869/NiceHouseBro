@@ -3,7 +3,7 @@
         display: none;
         flex-direction: column;
         position: absolute;
-        top: -58px;
+        top: 0;
         left: 0; 
         right: 0; 
         margin-left: auto; 
@@ -14,6 +14,7 @@
         overflow-y: hidden;
         transform: translateY(0%);
         transition: transform ease 300ms;
+        z-index: 9999;
     }
 
     .popover-hidden {
@@ -73,7 +74,7 @@
     }
 </script>
 
-<div id="explore-filter-popover" style="z-index:9000" class="col-sm-12 mx-auto justify-content-center bg-dark explore-filter-popover popover-hidden">
+<div id="explore-filter-popover" class="col-sm-12 mx-auto justify-content-center bg-dark explore-filter-popover popover-hidden">
 
     <div class="col-sm-4 h-100 justify-content-center position-relative" style="z-index:10;"> 
 

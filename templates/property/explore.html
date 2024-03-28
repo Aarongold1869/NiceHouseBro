@@ -55,6 +55,11 @@
         60% {transform: translateY(-10px);}
     }
 
+    #explore-container {
+        height:80vh;
+        overflow: hidden;
+    }
+
     #property-card-container {
         position: relative;
         width: 100%;
@@ -68,17 +73,18 @@
     }
 
     #map-container {
-        display: none;
+        position: absolute;
+        z-index: 99;
+        transition: none;
+        transform: translateX(100%);
     }
     #map-container[data-visible="true"] {
-        display: block;
+        transform: translateX(0%);
+        transition: transform 300ms ease;
     }
-
-    #map-button {
-        display: flex;
-        position: absolute;
-        top: 24px;
-        right: 20px;
+    #map-container[data-visible="false"] {
+        transform: translateX(100%);
+        transition: transform 300ms ease;
     }
 
     @media only screen and (min-width: 600px) {
@@ -87,7 +93,12 @@
         }
     }
     @media only screen and (min-width: 1000px) {
+        #explore-container {
+            height: 95vh;
+        }
         #map-container {
+            position: relative;
+            transform: translateX(0%)!important;
             display: block;
         }
         #map-button {
@@ -174,23 +185,30 @@
 
     function toggleMapView() {
         const mapContainer = document.getElementById("map-container");
-        const swipingComponent = document.getElementById("swiping-component");
+        // const swipingComponent = document.getElementById("swiping-component");
         mapContainer.dataset.visible = mapContainer.dataset.visible === "false" ? "true" : "false";
-        swipingComponent.style.display = swipingComponent.style.display === "none" ? "block" : "none";
+        // swipingComponent.style.display = swipingComponent.style.display === "none" ? "block" : "none";
     }
 
 </script>
     
-<div class="d-flex justify-content-center position-relative">
+<div id='explore-container' class="d-flex justify-content-center position-relative" >
 
-    <div id='swiping-component' class="col-sm-12 col-lg-4 overflow-scroll p-1 pt-3">
+    <div id='swiping-component' class="col-sm-12 col-lg-4 overflow-hidden p-1 pt-3">
 
-        <div class="d-flex align-items-center">
-            <button class="btn mx-3 my-0 p-0" onclick="showFilterPopover()">
-                {% include "icons/filter.html" %}
-            </button>
-            <h3 class="mb-0">Explore</h3>
-            <button id="map-button" class="btn btn-outline-light border-0 p-1" onclick="toggleMapView()">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <button class="btn mx-3 my-0 p-0" onclick="showFilterPopover()">
+                    {% include "icons/filter.html" %}
+                </button>
+                <h3 class="mb-0">Explore</h3>
+            </div>
+
+            <button 
+            id="map-button" 
+            class="btn border-0 p-0 mx-3 my-0" 
+            onclick="toggleMapView()"
+            >
                 {% include "icons/map-icon.html" %}
             </button>
         </div>
@@ -221,15 +239,20 @@
 
     </div>
 
-    <div id='map-container' class="col-12 col-lg-8 h-100 p-0 pt-2" data-visible="false">
-        <div class="d-flex align-items-center mx-3 mt-2 mb-3">
-            <h3 class="mb-0 mx-1">Map</h3>
-            <button id="map-button" class="btn btn-outline-light border-0 p-1" onclick="toggleMapView()">
-                {% include "icons/map-icon.html" %}
+    <div id='map-container' class="col-12 col-lg-8 p-1 pt-2 h-100" data-visible="false">
+        <div class="d-flex align-items-center justify-content-between px-3 pt-2 pb-3 bg-dark">
+            <h3 class="mb-0">Map</h3>
+            <button 
+            id="map-button" 
+            class="btn border-0 p-0 m-0" 
+            onclick="toggleMapView()"
+            >
+                {% include "icons/arrows.html" %}
             </button>
         </div>
-
-        {% include "components/map.html" with coordinates=coordinates map_height='85vh' %}
+        
+        {% include "components/map.html" %}
+       
     </div>
 
 </div>
