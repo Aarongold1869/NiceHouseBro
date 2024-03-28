@@ -22,19 +22,6 @@ def get_unsaved_properties(account: Account)-> List[Property]:
     filtered_list = list(filter(lambda x: filter_unsaved(account, x['id']), property_list))
     return filtered_list
 
-# def position_stack_api(search_str: str)-> str:
-#     conn = http.client.HTTPConnection('api.positionstack.com')
-#     params = urllib.parse.urlencode({
-#         'access_key': settings.POSITION_STACK_API_KEY,
-#         'query': search_str,
-#         # 'region': 'Rio de Janeiro',
-#         'limit': 1,
-#         })
-#     conn.request('GET', '/v1/forward?{}'.format(params))
-#     res = conn.getresponse()
-#     data = res.read()
-#     return json.loads(data)["data"][0]
-
 @cache
 def nominatim_boundry_api(search_str: str)-> str:
     app = Nominatim(user_agent="NHB")
@@ -74,11 +61,14 @@ def retrieve_map_data_from_search_str(search_str: str)-> MapData | None:
     )
     return map_data
 
-def filter_properties_by_search_boundry(boundry: List[List[str]])-> List[Property]:
-    def coordinates_are_in_polygon(coordinates, boundry):
+def filter_properties_by_search_boundry(boundry: List[Coordinates])-> List[Property]:
+    def coordinates_are_in_polygon(coordinates: Coordinates, boundry: List[Coordinates])-> bool:
         point = sg.Point(coordinates)
         polygon = sg.Polygon(boundry)
         return point.within(polygon)
-    inverted_boundry = [(elem2, elem1) for elem1, elem2 in boundry]
-    filtered_list = list(filter(lambda x: coordinates_are_in_polygon(x['Coordinates'], inverted_boundry), PROPERTY_DATA))
+    try:
+        inverted_boundry: List[Coordinates] = [(elem2, elem1) for elem1, elem2 in boundry]
+    except ValueError:
+        inverted_boundry: List[Coordinates] = [(elem2, elem1) for elem1, elem2 in boundry[0]]
+    filtered_list: List[Property] = list(filter(lambda x: coordinates_are_in_polygon(x['Coordinates'], inverted_boundry), PROPERTY_DATA))
     return filtered_list

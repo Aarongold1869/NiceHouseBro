@@ -1,0 +1,77 @@
+<style>
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+        background: #212529;
+        color: white;
+        font-size: 14px;
+        line-height: 1.5;
+        border-radius: 5px;
+        box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
+    }
+    
+    .leaflet-popup-content-wrapper .leaflet-popup-content {
+    }
+    
+    .leaflet-popup-tip-container {
+    }
+</style>
+
+<div id="map" style="width: 100%; height: 100%"></div>
+
+{{ map_data|json_script:"map_data" }}
+{{ property_list|json_script:"property_list" }}
+
+<script>
+    // Get the map data from the django context
+    let coordinates = null;
+    let boundry = null;
+    let zoom = 16;
+    const map_data = JSON.parse(document.getElementById('map_data').textContent);
+    if (map_data) {
+        coordinates = map_data.coordinates;
+        boundry = map_data.boundry;
+        zoom = map_data.zoom;
+    }
+
+    // Initialize Map Global View 
+    var map = L.map('map').fitWorld();
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    function onLocationFound(e) {
+        var radius = e.accuracy;
+        L.marker(e.latlng).addTo(map)
+            // .bindPopup("You are within " + radius + " meters from this point").openPopup();
+        L.circle(e.latlng, radius).addTo(map);
+    }
+    map.on('locationfound', onLocationFound);
+
+    function onLocationError(e) {
+      // no location provided, redirect to default location
+      window.location.href = '/explore/search%3DPensacola, FL, USA/';
+    }
+    // if coordinates or user location not provided and boundry  not provided, set the map view to the default location
+    map.on('locationerror', onLocationError);     
+
+    // get coordinates from django context
+    if (coordinates) { // if coordinates are provided, set the map view to the coordinates
+        map.setView(coordinates, zoom);
+        // var marker = L.marker(coordinates).addTo(map);
+    } else { // if no coordinates are provided, set the map view to the user's location
+        map.locate({setView: true, maxZoom: zoom});
+    }
+
+    if (boundry) {
+        L.geoJSON(boundry).addTo(map);
+    } 
+
+    // Get the property list from the django context
+    const propertyList = JSON.parse(document.getElementById('property_list').textContent);
+    propertyList.forEach(function (property) {
+        L.marker(property.Coordinates).addTo(map)
+            .on('click', function(e) { window.open(`/property/${property.id}`) })
+            .bindPopup(`$${property.price}`,{closeOnClick: false, autoClose: false}).openPopup();
+    });
+
+</script>

@@ -20,12 +20,13 @@ def home_view(request):
 @require_http_methods(['GET'])
 def explore_view(request, search_str=None):
     # account = Account.objects.get(user=request.user)
-    map_data: MapData = {'zoom': 12}
+    map_data = None
+    property_list: List[Property] = []
     if search_str:
         map_data = retrieve_map_data_from_search_str(search_str)
         if not map_data:
             raise Http404("Invalid search string.")
-    property_list: List[Property] = filter_properties_by_search_boundry(boundry=map_data['boundry']['coordinates'][0])
+        property_list = filter_properties_by_search_boundry(boundry=map_data['boundry']['coordinates'][0])
     template = "property/explore.html"
     property_id = property_list[0]['id'] if property_list else -1
     # if request.htmx:
