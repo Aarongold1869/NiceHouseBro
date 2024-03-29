@@ -9,6 +9,8 @@ django-htmx = "*"
 python-dotenv = "*"
 geopy = "*"
 shapely = "*"
+django-crispy-forms = "*"
+crispy-bootstrap5 = "*"
 
 [dev-packages]
 

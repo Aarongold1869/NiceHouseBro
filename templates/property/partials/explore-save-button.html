@@ -1,26 +1,16 @@
 
-<div>
-{% if is_saved %}
-    <button 
+<button 
     id="save-button" 
     class="btn mx-2 border-0"
     hx-post="{% url 'toggle_saved_explore' property_id=property_id %}"
     hx-swap="outerHTML" 
     onclick="handleSaveCard()"
     >
-        {% include "icons/heart-fill.html" with size=35 fill="var(--love)"  %}
-    </button>
-{% else %}
-    <button 
-    id="save-button" 
-    class="btn mx-2 border-0"
-    hx-post="{% url 'toggle_saved_explore' property_id=property_id %}"
-    hx-swap="outerHTML" 
-    onclick="handleSaveCard()"
-    >
+    {% if is_saved %}
+        {% include "icons/heart-fill.html" with size=35 fill="var(--love)" %}
+    {% else %}
         {% include "icons/heart.html" with size=35 fill="var(--love)" %}
-    </button>
-{% endif %}
-</div>
+    {% endif %}
+</button>
 
 

@@ -16,7 +16,6 @@ def home_view(request):
     property_list: List[Property] = PROPERTY_DATA
     return render(request, 'property/home.html', {'property_list': property_list, 'API_KEY': settings.GOOGLE_MAPS_API_KEY, })
 
-@login_required(login_url='/accounts/login/')
 @require_http_methods(['GET'])
 def explore_view(request, search_str=None):
     # account = Account.objects.get(user=request.user)

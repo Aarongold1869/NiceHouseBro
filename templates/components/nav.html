@@ -7,14 +7,25 @@
         <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
             <ul class="navbar-nav mb-2 mb-lg-0">
                 <li class="nav-item">
-                <a class="nav-link active text-light" aria-current="page" href="/">Home</a>
+                    <a class="nav-link active text-light" aria-current="page" href="/">
+                        Home
+                        {% comment %} <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-house mx-1" viewBox="0 0 16 16">
+                            <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+                        </svg> {% endcomment %}
+                    </a>
                 </li>
                 <li class="nav-item">
-                <a class="nav-link text-light" href="/explore/">Explore</a>
+                    <a class="nav-link text-light" href="/explore/">
+                        Explore
+                        {% comment %} <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-compass mx-1" viewBox="0 0 16 16">
+                            <path d="M8 16.016a7.5 7.5 0 0 0 1.962-14.74A1 1 0 0 0 9 0H7a1 1 0 0 0-.962 1.276A7.5 7.5 0 0 0 8 16.016m6.5-7.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0"/>
+                            <path d="m6.94 7.44 4.95-2.83-2.83 4.95-4.949 2.83 2.828-4.95z"/>
+                         </svg> {% endcomment %}
+                    </a>
                 </li>
                 {% if not user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link text-light" href="/accounts/login/">Log in</a>
+                    <a class="nav-link text-light" href="/accounts/register/">Login / Signup</a>
                 </li>
                 {% else %}
                 <li class="nav-item dropdown">
@@ -23,7 +34,9 @@
                     </a>    
                     <ul class="dropdown-menu bg-dark" >
                         <li><a class="dropdown-item text-light" href="/property/saved-properties/">Saved Properties</a></li>
-                        <li><a class="dropdown-item text-light" href="#">Another action</a></li>
+                        <li><a class="dropdown-item text-light" href="#">Account</a></li>
+                        <li><a class="dropdown-item text-light" href="#">Preferences</a></li>
+                        <li><a class="dropdown-item text-light" href="#">Privacy</a></li>
                         <li><hr class="dropdown-divider bg-light"></li>
                         <li><a class="dropdown-item text-light" href="/accounts/logout/">Log Out</a></li>
                     </ul>

@@ -190,6 +190,10 @@
         // swipingComponent.style.display = swipingComponent.style.display === "none" ? "block" : "none";
     }
 
+    function promptLogin() {
+        document.getElementById("register-modal").style.display = "flex";
+    }
+
 </script>
     
 <div id='explore-container' class="d-flex justify-content-center position-relative" >
@@ -258,5 +262,7 @@
 </div>
 
 {% include "property/explore-filter.html" %}
+
+{% include "components/register-modal.html" %}
 
 {% endblock content %}

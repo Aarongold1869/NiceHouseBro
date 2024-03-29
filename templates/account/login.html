@@ -1,18 +1,22 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% load crispy_forms_tags %}
 
-<div class='container col-sm-6 p-5 text-center'>
+<div class='container col-sm-4 p-5 text-center'>
     {% if user.is_authenticated %}
     <p class='text-light'> You are already logged in </p>
     {% else %}
+
+    <h1 class='mb-5'>Login</h1>
+
     <form method='post'>
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form|crispy }}
         {% if form_error %}
             <p class='text-danger'>{{ form_error }}</p>
         {% endif %}
-        <input type='submit' class='btn btn-outline-light w-25' value='Login'>
+        <input type='submit' class='btn love border-3' style="font-weight:bold;" value='Login'>
     </form>
     {% endif %}
 </div>

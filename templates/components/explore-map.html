@@ -12,10 +12,7 @@
 		text-align: center;
 		border-radius: 15px;
 		top: -1.6rem;
-		/* left: -2rem; */
-		/* transform: rotate(-45deg); */
-		/* border: 1px solid #FFFFFF; */
-		/* box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4); */
+		box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
 	}
 	.markerDiv {
 		background-color: transparent;
@@ -24,6 +21,7 @@
 		border-top: 10px solid var(--love);
 		display: flex;
 		justify-content: center;
+        box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
 	}
 
     .leaflet-popup-content-wrapper, .leaflet-popup-tip {
@@ -47,7 +45,7 @@
 {{ map_data|json_script:"map_data" }}
 {{ property_list|json_script:"property_list" }}
 
-<script>
+<script data-loc-cookie="{{ request.COOKIES.coordinates }}">
     // Get the map data from the django context
     let coordinates = null;
     let boundry = null;
@@ -69,8 +67,8 @@
     function onLocationFound(e) {
         var radius = e.accuracy;
         L.marker(e.latlng).addTo(map)
-            // .bindPopup("You are within " + radius + " meters from this point").openPopup();
         L.circle(e.latlng, radius).addTo(map);
+        htmx.ajax('GET', '/accounts/locate/', {values: e.latlng, swap:'none'})
     }
     map.on('locationfound', onLocationFound);
 
@@ -86,7 +84,14 @@
         map.setView(coordinates, zoom);
         // var marker = L.marker(coordinates).addTo(map);
     } else { // if no coordinates are provided, set the map view to the user's location
-        map.locate({setView: true, maxZoom: zoom});
+        var cookieCoordinates = document.currentScript.getAttribute('data-loc-cookie')
+        if (cookieCoordinates !== '') {
+            var parsedCookie = JSON.parse(cookieCoordinates);
+            map.setView(parsedCookie, zoom);
+            L.marker(parsedCookie).addTo(map)
+        } else {
+            map.locate({setView: true, maxZoom: zoom});
+        }
     }
 
     if (boundry) {

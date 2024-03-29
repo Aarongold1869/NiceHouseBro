@@ -1,0 +1,52 @@
+<!-- a modal that covers the screen and prompts user to navigate to /accounts/register/ to create an account -->
+<!-- the modal should have a 80% opacity and be centered on the screen  -->
+<!-- the modal should have a close button that closes the modal when clicked -->
+<style>
+    #register-modal {
+        position: fixed;
+        z-index: 1000;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    #modal-blur {
+        position: absolute;
+        background-color: var(--background);
+        opacity: 0.3;
+        width: 100vw;
+        height: 100vh;
+    }
+
+    #modal-content {
+        opacity: 1;
+        background-color: var(--background);
+        padding: 50px;
+        border-radius: 15px;
+        margin: auto;
+        width: fit-content;
+        text-align: center;
+    }
+
+    .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    function hideModal() {
+        document.getElementById('register-modal').style.display = 'none';
+    }
+</script>
+
+<div id="register-modal" class="modal">
+    <span id="modal-blur" class="modal-blur"></span>
+    <div id="modal-content" class="modal-content">
+        <span class="close-button" onclick="hideModal()">&times;</span>
+        <h2 class="mb-4">Login or Create an Account</h2>
+        <p>Click <a href="/accounts/register/">here</a> to create an account.</p>
+    </div>
+</div>
