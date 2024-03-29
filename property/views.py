@@ -22,7 +22,8 @@ def explore_view(request, search_str=None):
     # account = Account.objects.get(user=request.user)
     map_data = None
     property_list: List[Property] = []
-    if search_str:
+    print('search', search_str)
+    if search_str and search_str != '':
         map_data = retrieve_map_data_from_search_str(search_str)
         if not map_data:
             raise Http404("Invalid search string.")

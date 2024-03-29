@@ -7,6 +7,20 @@
 
 {% block content %}
 
+<style>
+    .carousel-item img {
+        height: 300px;
+        object-fit: cover;
+    }
+
+    @media (min-width: 768px) {
+        .carousel-item img {
+            height: 500px;
+        }
+    }
+
+</style>
+
 <div id='property-detail' class="d-flex flex-column align-items-center justify-content-center position-relative">
     <div class="col-sm-6">
     
@@ -34,24 +48,24 @@
         
         {% comment %} image carousel {% endcomment %}
         <div>
-            <div id="carouselExample" class="carousel slide">
+            <div id="imgCarousel" class="carousel slide">
                 <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                    {% for image_url in property.image_array %}
+                    <button type="button" data-bs-target="#imgCarouselIndicators" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %} class="active" {% endif %} aria-label="Slide {{ forloop.counter }}"></button>
+                    {% endfor %}
                 </div>        
                 <div class="carousel-inner">
                     {% for image_url in property.image_array %}
                     <div class="carousel-item {% if forloop.counter0 == 0 %} active {% endif %}">
-                        <img src="{% static image_url %}" class="d-block w-100 h-100" alt="">
+                        <img src="{% static image_url %}" class="d-block w-100" alt="">
                     </div>
                     {% endfor %}
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                <button class="carousel-control-prev" type="button" data-bs-target="#imgCarousel" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                <button class="carousel-control-next" type="button" data-bs-target="#imgCarousel" data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
                 </button>
@@ -80,7 +94,7 @@
         </div>
 
         {% comment %} Map {% endcomment %}
-        {% comment %} {% include "components/map.html" with coordinates=property.Coordinates %} {% endcomment %}
+        {% include "components/detail-map.html" with coordinates=property.Coordinates %}
         
     </div>
 </div>

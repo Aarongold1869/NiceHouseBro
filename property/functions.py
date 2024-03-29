@@ -34,6 +34,7 @@ LOCATION_TYPE_ZOOM_HASH = {
     'building': 18,
     'street': 16,
     'neighbourhood': 14,
+    'suburb': 13,
     'village': 13,
     'borough': 12,
     'localadmin': 12,

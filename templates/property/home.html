@@ -32,10 +32,14 @@
             <input id="location-search" name='location-search' class="form-control border-3 border-white mx-1" type="search" placeholder="Enter an address, city, state, or zip." aria-label="Search">
 
             <div id="search-buttons-lg" class="d-flex">
-              <button id="search-button-lg" class="btn btn-outline-info border-3 mx-1" style="font-weight:bold;">Search</button>
+              <button 
+              id="search-button-lg" 
+              class="btn love border-3 mx-1" 
+              style="font-weight:bold;"
+              >Search</button>
               <a 
               href="/explore/" 
-              class="btn btn-outline-info border-3" 
+              class="btn love border-3" 
               style="font-weight:bold;"> 
                   {% comment %} Use my location {% endcomment %}
                   {% include "icons/location.html" %}
@@ -47,11 +51,11 @@
         </div>
 
         <div id="search-buttons-sm" class="d-flex w-100 justify-content-between mt-2 p-1">
-          <button id="search-button-sm" class="btn btn-outline-info border-3 w-75" style="font-weight:bold;">Search</button>
+          <button id="search-button-sm" class="btn love border-3 w-75" style="font-weight:bold;">Search</button>
           <a href="/explore/"> 
             <button 
             id="locate-button"
-            class="btn btn-outline-info border-3" 
+            class="btn love border-3" 
             style="font-weight:bold;" 
             >
               {% comment %} Use my location {% endcomment %}
@@ -73,24 +77,15 @@
 <script>
 
   async function getLocation() {
-
-    // const getCoords = async () => {
-    //   const pos = await new Promise((resolve, reject) => {
-    //     navigator.geolocation.getCurrentPosition(resolve, reject);
-    //   });
-    //   await htmx.ajax('GET', `/accounts/locate/`, { swap: "none", values: { lat: pos.coords.latitude, long: pos.coords.longitude } })
-    //   return true;
-    // };
-
-    // const coords = await getCoords();
-    // console.log("Location has been set.")
     window.location.replace('/explore/')
   }
 
   function submitSearch(event) {
     event.preventDefault();
-    console.log('search')
     const search = document.querySelector('input[name="location-search"]').value;
+    if (search === '') {
+      return;
+    }
     window.location.replace(`/explore/search=${search}`)
   }
 
