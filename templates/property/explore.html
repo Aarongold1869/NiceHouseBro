@@ -196,67 +196,75 @@
 
 </script>
     
-<div id='explore-container' class="d-flex justify-content-center position-relative" >
+<div id='explore-container' class="d-flex flex-column align-items-center position-relative" >
 
-    <div id='swiping-component' class="col-sm-12 col-lg-4 overflow-hidden p-1 pt-3">
-
-        <div class="d-flex align-items-center justify-content-between">
-            <div class="d-flex align-items-center">
-                <button class="btn mx-3 my-0 p-0" onclick="showFilterPopover()">
-                    {% include "icons/filter.html" %}
-                </button>
-                <h3 class="mb-0">Explore</h3>
-            </div>
-
-            <button 
-            id="map-button" 
-            class="btn border-0 p-0 mx-3 my-0" 
-            onclick="toggleMapView()"
-            >
-                {% include "icons/map-icon.html" %}
+    <div id='current-search' class="d-flex w-100 pt-4 px-3 mb-3">
+        <div class="d-flex col-12 col-lg-4">
+            <input type="text" class="form-control border-light border-2 me-2" placeholder="Current Location" value="{{ search_str }}" >
+            <button class="btn love border-3 me-2">Search</button>
+            <button class="btn btn-outline-info border-3" onclick="showFilterPopover()">
+                {% include "icons/filter.html" %}
             </button>
         </div>
+    </div>
 
-        <!-- Swiping Property List -->
-        <div id='property-card-container' class="d-flex justify-content-center p-3">
+    <div class="d-flex justify-content-center w-100">
 
-            {% if not property_list %}
+        <div id='swiping-component' class="col-sm-12 col-lg-4 overflow-hidden p-1">
 
-                {% include "property/partials/end-of-list.html" %}
+            <div class="d-flex align-items-center justify-content-between px-3 pt-1 pb-3 bg-dark">
+                <h3 class="mb-0">Explore</h3>
+                <button 
+                id="map-button" 
+                class="btn border-0 p-0 m-0" 
+                onclick="toggleMapView()"
+                >
+                    {% include "icons/map-icon.html" %}
+                </button>
+            </div>
 
-            {% else %}
+            <!-- Swiping Property List -->
+            <div id='property-card-container' class="d-flex justify-content-center p-3 pt-2">
 
-                {% for property in property_list %}
+                {% if not property_list %}
 
-                    {% include "property/partials/property-card.html" %}
+                    {% include "property/partials/end-of-list.html" %}
 
-                {% endfor %}
-                
+                {% else %}
+
+                    {% for property in property_list %}
+
+                        {% include "property/partials/property-card.html" %}
+
+                    {% endfor %}
+                    
+                {% endif %}
+
+            </div>
+
+            <!-- Controls -->
+            {% if property_id %}
+                {% include "property/partials/explore-controls.html" %}
             {% endif %}
 
         </div>
 
-        <!-- Controls -->
-        {% if property_id %}
-            {% include "property/partials/explore-controls.html" %}
-        {% endif %}
-
-    </div>
-
-    <div id='map-container' class="col-12 col-lg-8 p-1 pt-2 h-100" data-visible="false">
-        <div class="d-flex align-items-center justify-content-between px-3 pt-2 pb-3 bg-dark">
-            <h3 class="mb-0">Map</h3>
-            <button 
-            id="map-button" 
-            class="btn border-0 p-0 m-0" 
-            onclick="toggleMapView()"
-            >
-                {% include "icons/arrows.html" %}
-            </button>
-        </div>
+        <div id='map-container' class="col-12 col-lg-8 p-1 h-100" data-visible="false">
+            <div class="d-flex align-items-center justify-content-between px-3 pt-1 pb-3 bg-dark">
+                <h3 class="mb-0">Map</h3>
+                <button 
+                id="map-button" 
+                class="btn border-0 p-0 m-0" 
+                onclick="toggleMapView()"
+                >
+                    {% include "icons/arrows.html" %}
+                </button>
+            </div>
+            
+            {% include "components/explore-map.html" %}
         
-        {% include "components/explore-map.html" %}
-       
+        </div>
+    
     </div>
 
 </div>

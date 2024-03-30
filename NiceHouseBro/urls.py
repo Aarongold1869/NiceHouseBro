@@ -10,6 +10,7 @@ urlpatterns = [
     path('', property_views.home_view, name='home'),
     path('explore/', property_views.explore_view, name='explore'),
     path('explore/search=<str:search_str>/', property_views.explore_view, name='explore-search'),
+    path('explore/reverse/lng=<str:lng>lat=<str:lat>/', property_views.explore_view, name='explore-search'),
     
     path('accounts/', include('account.urls')),
     path('property/', include('property.urls'))

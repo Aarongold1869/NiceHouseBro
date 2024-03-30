@@ -6,7 +6,7 @@
         </button>
         <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
             <ul class="navbar-nav mb-2 mb-lg-0">
-                <li class="nav-item">
+                <li class="nav-item me-2">
                     <a class="nav-link active text-light" aria-current="page" href="/">
                         Home
                         {% comment %} <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-house mx-1" viewBox="0 0 16 16">
@@ -14,7 +14,7 @@
                         </svg> {% endcomment %}
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item me-2">
                     <a class="nav-link text-light" href="/explore/">
                         Explore
                         {% comment %} <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-compass mx-1" viewBox="0 0 16 16">
@@ -24,11 +24,11 @@
                     </a>
                 </li>
                 {% if not user.is_authenticated %}
-                <li class="nav-item">
+                <li class="nav-item me-2">
                     <a class="nav-link text-light" href="/accounts/register/">Login / Signup</a>
                 </li>
                 {% else %}
-                <li class="nav-item dropdown">
+                <li class="nav-item me-2 dropdown">
                     <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Profile
                     </a>    
