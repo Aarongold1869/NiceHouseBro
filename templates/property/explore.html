@@ -3,11 +3,37 @@
 {% block content %}
 
 <style>
+
+    #explore-container {
+        height:100vh;
+        padding: 0 10px;
+        overflow: hidden;
+    }
+
+    #property-card-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 4px;
+        position: relative;
+        /* width: 100%; */
+        height: 500px;
+        overflow: hidden;
+    }
+
+    #property-card-container a {
+        text-decoration: none;
+        color: var(--foreground);
+    }
+
     .property-card {
         position: absolute;
+        top: 8px;
         border-radius: 15px;
         transform: translateX(0) rotate(0) scale(1);
         transition: transform 400ms ease, box-shadow 300ms ease, border 300ms ease;
+        width: auto;
     }
 
     .property-card[data-status="unknown"] {
@@ -55,23 +81,6 @@
         60% {transform: translateY(-10px);}
     }
 
-    #explore-container {
-        height:80vh;
-        overflow: hidden;
-    }
-
-    #property-card-container {
-        position: relative;
-        width: 100%;
-        height: 420px;
-        overflow: hidden;
-    }
-
-    #property-card-container a {
-        text-decoration: none;
-        color: var(--foreground);
-    }
-
     #map-container {
         position: absolute;
         z-index: 99;
@@ -96,6 +105,9 @@
         #explore-container {
             height: 95vh;
         }
+        #property-card-container {
+            height: 700px;
+        }
         #map-container {
             position: relative;
             transform: translateX(0%)!important;
@@ -106,6 +118,83 @@
         }
     }
 </style>
+    
+<div id='explore-container' class="d-flex flex-column align-items-center position-relative" >
+
+    <div id='current-search' class="d-flex w-100 pt-4 px-3 mb-3">
+        <div class="d-flex col-12 col-lg-4">
+            <input id="location-search" type="text" class="form-control border-light border-2 me-2" placeholder="{{ search_str }}" >
+            <button id="search-button" class="btn love border-3 me-2">Search</button>
+            <button class="btn btn-outline-info border-3" onclick="showFilterPopover()">
+                {% include "icons/filter.html" %}
+            </button>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center w-100 h-100">
+
+        <div id='swiping-component' class="col-12 col-md-8 col-lg-4 overflow-hidden p-1">
+
+            <div class="d-flex align-items-center justify-content-between px-3 pt-1 pb-3 bg-dark">
+                <h3 class="mb-0">Explore</h3>
+                <button 
+                id="map-button" 
+                class="btn border-0 p-0 m-0" 
+                onclick="toggleMapView()"
+                >
+                    {% include "icons/map-icon.html" %}
+                </button>
+            </div>
+
+            <!-- Swiping Property List -->
+            <div id='property-card-container'>
+
+                {% if not property_list %}
+
+                    {% include "property/partials/end-of-list.html" %}
+
+                {% else %}
+
+                    {% for property in property_list %}
+
+                        {% include "property/partials/property-card.html" %}
+
+                    {% endfor %}
+                    
+                {% endif %}
+
+                 <!-- Controls -->
+                {% if property_list %}
+                    {% include "property/partials/explore-controls.html" %}
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div id='map-container' class="col-12 col-lg-8 p-1 h-100" data-visible="false">
+            <div id="map-header" class="d-flex align-items-center justify-content-between px-3 pt-1 pb-3 bg-dark">
+                <h3 class="mb-0">Map</h3>
+                <button 
+                id="map-button" 
+                class="btn border-0 p-0 m-0" 
+                onclick="toggleMapView()"
+                >
+                    {% include "icons/arrows.html" %}
+                </button>
+            </div>
+            
+            {% include "components/explore-map.html" %}
+        
+        </div>
+    
+    </div>
+
+</div>
+
+{% include "property/explore-filter.html" %}
+
+{% include "components/register-modal.html" %}
 
 <script>
 
@@ -194,83 +283,24 @@
         document.getElementById("register-modal").style.display = "flex";
     }
 
+    function submitSearch(event) {
+        event.preventDefault();
+        const search = document.getElementById('location-search').value;
+        if (search === '') {
+          return;
+        }
+        window.location.replace(`/explore/search=${search}`)
+      }
+    
+      const searchButton = document.getElementById('search-button');
+      searchButton.addEventListener("click", submitSearch, false);
+    
+      function initialize() {
+        new google.maps.places.Autocomplete(searchInput);
+      }
+      const searchInput = document.getElementById('location-search');
+      searchInput.addEventListener('keypress', initialize);
+
 </script>
-    
-<div id='explore-container' class="d-flex flex-column align-items-center position-relative" >
-
-    <div id='current-search' class="d-flex w-100 pt-4 px-3 mb-3">
-        <div class="d-flex col-12 col-lg-4">
-            <input type="text" class="form-control border-light border-2 me-2" placeholder="Current Location" value="{{ search_str }}" >
-            <button class="btn love border-3 me-2">Search</button>
-            <button class="btn btn-outline-info border-3" onclick="showFilterPopover()">
-                {% include "icons/filter.html" %}
-            </button>
-        </div>
-    </div>
-
-    <div class="d-flex justify-content-center w-100">
-
-        <div id='swiping-component' class="col-sm-12 col-lg-4 overflow-hidden p-1">
-
-            <div class="d-flex align-items-center justify-content-between px-3 pt-1 pb-3 bg-dark">
-                <h3 class="mb-0">Explore</h3>
-                <button 
-                id="map-button" 
-                class="btn border-0 p-0 m-0" 
-                onclick="toggleMapView()"
-                >
-                    {% include "icons/map-icon.html" %}
-                </button>
-            </div>
-
-            <!-- Swiping Property List -->
-            <div id='property-card-container' class="d-flex justify-content-center p-3 pt-2">
-
-                {% if not property_list %}
-
-                    {% include "property/partials/end-of-list.html" %}
-
-                {% else %}
-
-                    {% for property in property_list %}
-
-                        {% include "property/partials/property-card.html" %}
-
-                    {% endfor %}
-                    
-                {% endif %}
-
-            </div>
-
-            <!-- Controls -->
-            {% if property_id %}
-                {% include "property/partials/explore-controls.html" %}
-            {% endif %}
-
-        </div>
-
-        <div id='map-container' class="col-12 col-lg-8 p-1 h-100" data-visible="false">
-            <div class="d-flex align-items-center justify-content-between px-3 pt-1 pb-3 bg-dark">
-                <h3 class="mb-0">Map</h3>
-                <button 
-                id="map-button" 
-                class="btn border-0 p-0 m-0" 
-                onclick="toggleMapView()"
-                >
-                    {% include "icons/arrows.html" %}
-                </button>
-            </div>
-            
-            {% include "components/explore-map.html" %}
-        
-        </div>
-    
-    </div>
-
-</div>
-
-{% include "property/explore-filter.html" %}
-
-{% include "components/register-modal.html" %}
 
 {% endblock content %}

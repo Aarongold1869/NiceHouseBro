@@ -1,11 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 from .forms import RegisterForm
-import json
+from profiles.models import Profile
 
 # Create your views here.
 
@@ -18,6 +17,7 @@ def register_view(request, *args, **kwargs):
             user = authenticate(request, username=request.POST.get('username'), password=request.POST.get('password1'))
             if user is not None:
                 login(request, user)
+                profile = Profile.objects.create(user=user)
                 return redirect("/")
         else:
             return render(request, "account/register.html", {"form":form})
@@ -47,9 +47,4 @@ def login_view(request, *args, **kwargs):
 @login_required
 def logout_view(request):
     logout(request)
-    return redirect('/accounts/login/')
-
-def locate_view(request, *args, **kwargs):
-    response = HttpResponse(status=200)
-    response.set_cookie('coordinates', json.dumps(request.GET))
-    return response
+    return redirect('/account/login/')

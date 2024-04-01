@@ -1,20 +1,15 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.conf import settings
-from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
-from account.models import Account, SavedProperty
+from profiles.models import Profile, SavedProperty
 from .api.property_list import PROPERTY_DATA
-from .types import MapData, Property
+from .types import Property
 from .functions import retrieve_map_data_from_search_str, retrieve_map_data_from_reverse_search, filter_properties_by_search_boundry
 
 from typing import List
-
-def home_view(request):
-    property_list: List[Property] = PROPERTY_DATA
-    return render(request, 'property/home.html', {'property_list': property_list, 'API_KEY': settings.GOOGLE_MAPS_API_KEY, })
 
 @require_http_methods(['GET'])
 def explore_view(request, search_str=None, lat=None, lng=None):
@@ -39,10 +34,6 @@ def explore_view(request, search_str=None, lat=None, lng=None):
     template = "property/explore.html"
     property_id = property_list[0]['id'] if property_list else -1
 
-    # if request.htmx:
-    #     property_list = filter_property_list(request.GET, property_list)
-    #     template = "property/partials/property-card-container.html"
-
     context = {
         'property_list': property_list, 
         'property_id': property_id, 
@@ -56,37 +47,43 @@ def explore_view(request, search_str=None, lat=None, lng=None):
 
 @require_http_methods(['GET'])
 def get_explore_controls_view(request, property_id: str):
-    saved_qs = SavedProperty.objects.filter(Q(account__user=request.user) & Q(property_id=property_id))
+    saved_qs = SavedProperty.objects.filter(Q(profile__user=request.user) & Q(property_id=property_id))
     is_saved = False if not saved_qs.exists() else True
     return render(request, 'property\partials\explore-controls.html', {'property_id': property_id, 'is_saved': is_saved })
 
-@login_required(login_url='/accounts/login/')
+@login_required(login_url='/auth/login/')
 @require_http_methods(['POST'])
 def toggle_property_saved_explore_view(request, property_id: str):
-    property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)
-    account = Account.objects.get(user=request.user)
-    saved_qs = SavedProperty.objects.filter(Q(account=account) & Q(property_id=property_id))
+    # property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)
+    profile = Profile.objects.get(user=request.user)
+    saved_qs = SavedProperty.objects.filter(Q(profile=profile) & Q(property_id=property_id))
     if not saved_qs.exists():
         SavedProperty.objects.create(
-            account=account,
+            profile=profile,
             property_id=property_id
         )
         is_saved = True
-        toast = { "type": "success", "header": "Explore", "message": "Property saved!" }
+        # toast = { "type": "success", "header": "Explore", "message": "Property saved!" }
     else:
         saved_qs.delete()
         is_saved = False
-        toast = { "type": "success", "header": "Explore", "message": "Property unsaved." }
-    return render(request, 'property/partials/explore-save-button.html', {'property_id': property_id, 'toast': toast, 'is_saved':is_saved })
+        # toast = { "type": "success", "header": "Explore", "message": "Property unsaved." }
+    context = {
+        'property_id': property_id,
+        'is_saved': is_saved,
+        # 'toast': toast,
+    }
+    return render(request, 'property/partials/explore-save-button.html', context)
 
 def property_detail_view(request, property_id: str):
     property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)
     if request.user.is_authenticated:
-        saved_qs = SavedProperty.objects.filter(Q(account__user=request.user) & Q(property_id=property_id))
+        saved_qs = SavedProperty.objects.filter(Q(profile__user=request.user) & Q(property_id=property_id))
         if saved_qs.exists():
             property['saved'] = True
     return render(request, 'property/property-detail.html', {'property': property })
 
+@require_http_methods(['GET'])
 def toggle_property_descripton(request, property_id: str, action: str):
     property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)
     if action == 'show':
@@ -95,12 +92,14 @@ def toggle_property_descripton(request, property_id: str, action: str):
         template = "property/partials/truncated-desc.html"
     return render(request, template, {'property': property })
 
+@login_required(login_url='/auth/login/')
+@require_http_methods(['POST'])
 def toggle_property_saved(request, property_id: str):
     property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)
-    account = Account.objects.get(user=request.user)
-    saved_qs = SavedProperty.objects.filter(Q(account=account) & Q(property_id=property_id))
+    profile = Profile.objects.get(user=request.user)
+    saved_qs = SavedProperty.objects.filter(Q(profile=profile) & Q(property_id=property_id))
     if not saved_qs.exists():
-        SavedProperty.objects.create(account=account, property_id=property_id)
+        SavedProperty.objects.create(profile=profile, property_id=property_id)
         property['saved'] = True
         template = "property/partials/button-saved.html"
     else:

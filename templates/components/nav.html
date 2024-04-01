@@ -1,6 +1,6 @@
 <nav id="navbar" class="navbar navbar-dark navbar-expand-lg bg-dark-subtle px-sm-5 position-fixed w-100" style="z-index: 9998;">
     <div class="container-fluid">
-        <a class="navbar-brand text-light" href="#">icon</a>
+        <a class="navbar-brand text-light" href="/">NHB</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         </button>
@@ -25,7 +25,7 @@
                 </li>
                 {% if not user.is_authenticated %}
                 <li class="nav-item me-2">
-                    <a class="nav-link text-light" href="/accounts/register/">Login / Signup</a>
+                    <a class="nav-link text-light" href="/account/register/">Login / Signup</a>
                 </li>
                 {% else %}
                 <li class="nav-item me-2 dropdown">
@@ -38,7 +38,7 @@
                         <li><a class="dropdown-item text-light" href="#">Preferences</a></li>
                         <li><a class="dropdown-item text-light" href="#">Privacy</a></li>
                         <li><hr class="dropdown-divider bg-light"></li>
-                        <li><a class="dropdown-item text-light" href="/accounts/logout/">Log Out</a></li>
+                        <li><a class="dropdown-item text-light" href="/account/logout/">Log Out</a></li>
                     </ul>
                 </li>
                 {% endif %}

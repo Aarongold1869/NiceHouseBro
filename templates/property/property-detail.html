@@ -76,16 +76,21 @@
         <div class="container p-4 bg-dark-subtle">
             <h2 class="fw-bold mb-3">{{ property.price|currency:0 }}</h2>
             <h5 class="mb-3">
-                <strong>{{ property.cap_rate|percentage }}</strong> Cap Rate 
-                <strong>{{ property.bedrooms }}</strong> Beds 
-                <strong>{{ property.bathrooms }}</strong> Baths 
+                <strong>{{ property.cap_rate|percentage }}</strong> Cap Rate |
+                <strong>{{ property.bedrooms }}</strong> Beds |
+                <strong>{{ property.bathrooms }}</strong> Baths |
                 <strong>{{ property.area|comma }}</strong> square feet
             </h5>
             <h5 class="mb-3">{{ property.address }}</h5>
+            <a 
+            class="btn love border-2 mb-3"
+            href="tel:757-652-3262"
+            >Get in Touch</a>
             <div id="description-container">
+                <h5 class="fw-bold">Description</h5>
                 <p id="property-description" class='fs-6'>{% lorem 40 w %}...</p>  
                 <button 
-                class="btn btn-dark"
+                class="btn btn-outline-info border-2"
                 hx-get="{% url 'toggle_desc_visible' property_id=property.id action='show' %}"
                 hx-target="#description-container"
                 hx-swap="outerHTML"
