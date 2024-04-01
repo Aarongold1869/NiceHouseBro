@@ -123,7 +123,7 @@
 
     <div id='current-search' class="d-flex w-100 pt-4 px-3 mb-3">
         <div class="d-flex col-12 col-lg-4">
-            <input id="location-search" type="text" class="form-control border-light border-2 me-2" placeholder="{{ search_str }}" >
+            <input id="location-search" type="text" class="form-control me-2" style="border:3px solid var(--bs-secondary-color);" placeholder="{{ search_str }}" >
             <button id="search-button" class="btn love border-3 me-2">Search</button>
             <button class="btn btn-outline-info border-3" onclick="showFilterPopover()">
                 {% include "icons/filter.html" %}
@@ -133,9 +133,9 @@
 
     <div class="d-flex justify-content-center w-100 h-100">
 
-        <div id='swiping-component' class="col-12 col-md-8 col-lg-4 overflow-hidden p-1">
+        <div id='swiping-component' class="col-12 col-md-8 col-lg-4 overflow-hidden p-1 {% if not user.is_authenticated %}bg-dark{% else %}bg-{{ request.user.profile_set.first.theme }}{% endif %}">
 
-            <div class="d-flex align-items-center justify-content-between px-3 pt-1 pb-3 bg-dark">
+            <div class="d-flex align-items-center justify-content-between px-3 pt-1 pb-3">
                 <h3 class="mb-0">Explore</h3>
                 <button 
                 id="map-button" 
@@ -172,8 +172,8 @@
 
         </div>
 
-        <div id='map-container' class="col-12 col-lg-8 p-1 h-100" data-visible="false">
-            <div id="map-header" class="d-flex align-items-center justify-content-between px-3 pt-1 pb-3 bg-dark">
+        <div id='map-container' class="col-12 col-lg-8 p-1 h-100 {% if not user.is_authenticated %}bg-dark{% else %}bg-{{ request.user.profile_set.first.theme }}{% endif %}" data-visible="false">
+            <div id="map-header" class="d-flex align-items-center justify-content-between px-3 pt-1 pb-3">
                 <h3 class="mb-0">Map</h3>
                 <button 
                 id="map-button" 

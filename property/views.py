@@ -78,10 +78,11 @@ def toggle_property_saved_explore_view(request, property_id: str):
 def property_detail_view(request, property_id: str):
     property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)
     if request.user.is_authenticated:
+        is_saved = False
         saved_qs = SavedProperty.objects.filter(Q(profile__user=request.user) & Q(property_id=property_id))
         if saved_qs.exists():
-            property['saved'] = True
-    return render(request, 'property/property-detail.html', {'property': property })
+            is_saved = True
+    return render(request, 'property/property-detail.html', {'property': property, "is_saved": is_saved })
 
 @require_http_methods(['GET'])
 def toggle_property_descripton(request, property_id: str, action: str):
@@ -100,10 +101,10 @@ def toggle_property_saved(request, property_id: str):
     saved_qs = SavedProperty.objects.filter(Q(profile=profile) & Q(property_id=property_id))
     if not saved_qs.exists():
         SavedProperty.objects.create(profile=profile, property_id=property_id)
-        property['saved'] = True
-        template = "property/partials/button-saved.html"
+        # property['saved'] = True
+        is_saved = True
     else:
         saved_qs.delete()
-        property['saved'] = False
-        template = "property/partials/button-unsaved.html"
-    return render(request, template, {'property': property })
+        # property['saved'] = False
+        is_saved = False
+    return render(request, "property/partials/detail-save-button.html", {'property': property, 'is_saved': is_saved  })

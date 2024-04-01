@@ -1,13 +1,18 @@
-<nav id="navbar" class="navbar navbar-dark navbar-expand-lg bg-dark-subtle px-sm-5 position-fixed w-100" style="z-index: 9998;">
+<nav 
+id="navbar" 
+class="navbar navbar-expand-lg px-sm-5 position-fixed w-100" 
+style="z-index: 9998; background-color: var(--love);"
+data-bs-theme="dark"
+>
     <div class="container-fluid">
-        <a class="navbar-brand text-light" href="/">NHB</a>
+        <a class="navbar-brand" href="/">NHB</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+        <span class="navbar-toggler-icon" ></span>
         </button>
         <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
             <ul class="navbar-nav mb-2 mb-lg-0">
                 <li class="nav-item me-2">
-                    <a class="nav-link active text-light" aria-current="page" href="/">
+                    <a class="nav-link {% if request.get_full_path == '/' %}active{% endif %}" aria-current="page" href="/">
                         Home
                         {% comment %} <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-house mx-1" viewBox="0 0 16 16">
                             <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
@@ -15,7 +20,7 @@
                     </a>
                 </li>
                 <li class="nav-item me-2">
-                    <a class="nav-link text-light" href="/explore/">
+                    <a class="nav-link {% if '/explore/' in request.get_full_path %}active{% endif %}" href="/explore/">
                         Explore
                         {% comment %} <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-compass mx-1" viewBox="0 0 16 16">
                             <path d="M8 16.016a7.5 7.5 0 0 0 1.962-14.74A1 1 0 0 0 9 0H7a1 1 0 0 0-.962 1.276A7.5 7.5 0 0 0 8 16.016m6.5-7.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0"/>
@@ -25,20 +30,20 @@
                 </li>
                 {% if not user.is_authenticated %}
                 <li class="nav-item me-2">
-                    <a class="nav-link text-light" href="/account/register/">Login / Signup</a>
+                    <a class="nav-link" href="/account/register/">Login / Signup</a>
                 </li>
                 {% else %}
                 <li class="nav-item me-2 dropdown">
-                    <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle {% if '/profile/' in request.get_full_path %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Profile
                     </a>    
-                    <ul class="dropdown-menu bg-dark" >
-                        <li><a class="dropdown-item text-light" href="/property/saved-properties/">Saved Properties</a></li>
-                        <li><a class="dropdown-item text-light" href="#">Account</a></li>
-                        <li><a class="dropdown-item text-light" href="#">Preferences</a></li>
-                        <li><a class="dropdown-item text-light" href="#">Privacy</a></li>
-                        <li><hr class="dropdown-divider bg-light"></li>
-                        <li><a class="dropdown-item text-light" href="/account/logout/">Log Out</a></li>
+                    <ul class="dropdown-menu" >
+                        <li><a class="dropdown-item" href="/property/saved-properties/">Saved Properties</a></li>
+                        <li><a class="dropdown-item" href="#">Account</a></li>
+                        <li><a class="dropdown-item" href="#">Preferences</a></li>
+                        <li><a class="dropdown-item" href="#">Privacy</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/account/logout/">Log Out</a></li>
                     </ul>
                 </li>
                 {% endif %}

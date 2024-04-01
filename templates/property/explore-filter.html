@@ -31,7 +31,7 @@
         width: 100%;
         height: 100%;
         overflow-y: scroll;
-        padding: 50px 0 200px 0;
+        padding: 75px 20px 200px 20px;
         /* position: relative!important; */
     }
 
@@ -74,14 +74,14 @@
     }
 </script>
 
-<div id="explore-filter-popover" class="col-sm-12 mx-auto justify-content-center bg-dark explore-filter-popover popover-hidden">
+<div id="explore-filter-popover" class="col-sm-12 mx-auto justify-content-center explore-filter-popover popover-hidden" style="background-color: var(--bs-body-bg);">
 
     <div class="col-sm-4 h-100 justify-content-center position-relative" style="z-index:10;"> 
 
     <div 
     id="explore-filter-header" 
-    class="d-flex justify-content-center align-items-center border-bottom border-light fixed-top bg-dark w-100 py-2 px-3"
-    style="margin-top:-1px; z-index: 999;"
+    class="d-flex justify-content-center align-items-center border-bottom border-light fixed-top w-100 py-2 px-3"
+    style="margin-top:-1px; z-index: 999; background-color: var(--bs-secondary-bg);"
     >
         <div class="col-12 col-sm-4">
             <div class="d-flex justify-content-between w-100">
@@ -101,7 +101,7 @@
         </div>
     </div>
 
-    <form id="explore-filter" class="col-sm-4 px-3">
+    <form id="explore-filter" class="col-sm-4">
 
         <div id="cap-rate-filter-container" class="d-flex justify-content-between my-4">
             <label for="cap-rate">Cap Rate</label>
@@ -368,24 +368,20 @@
 
     <div 
     id="explore-filter-submit" 
-    class="d-flex justify-content-center border-top border-light align-items-center fixed-bottom w-100 bg-dark py-1 px-3"
-    style="margin-bottom:-1px; bottom:100px;"
+    class="d-flex justify-content-center border-top border-light align-items-center fixed-bottom w-100 pt-1 pb-5 px-3"
+    style="margin-bottom:-1px; background-color: var(--bs-secondary-bg);"
     >
         <div class="col-12 col-sm-4">
             <div class="d-flex justify-content-between w-100">
                 <button 
-                class="btn btn-outline-info border-2 mt-1" 
+                class="btn btn-outline-info border-3 mt-1" 
                 style="width:45%; font-weight:bold;" 
                 onclick="resetFilterForm()"
                 >Reset Filters</button>
 
                 <button 
-                class="btn btn-outline-light border-2 mt-1"
+                class="btn love border-3 mt-1"
                 style="width:45%; font-weight:bold;"
-                hx-get="{% url 'explore' %}"
-                hx-include="#explore-filter"
-                hx-target="#property-card-container"
-                hx-swap="outerHTML"
                 onclick="hideFilterPopover()"
                 >Apply Filters</button>
             </div>

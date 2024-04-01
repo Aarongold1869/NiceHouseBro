@@ -25,7 +25,7 @@
     <title>Nice House Bro</title>
 </head>
 
-<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' data-bs-theme="dark">
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' data-bs-theme="{% if not user.is_authenticated %}dark{% else %}{{ request.user.profile_set.first.theme }}{% endif %}">
     
     {% include 'components/nav.html' %}
 

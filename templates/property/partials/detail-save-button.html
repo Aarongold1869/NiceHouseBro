@@ -1,0 +1,15 @@
+<button 
+id="save-button" 
+class='btn bg-transparent border-2'
+style="color: var(--love);"
+hx-post="{% url 'toggle_saved' property_id=property.id %}"
+hx-swap="outerHTML"
+>
+{% if is_saved %}
+    {% include "icons/heart-fill.html" with size=16 %}
+    Saved
+{% else %}
+    {% include "icons/heart.html" with size=16 %}
+    Save
+{% endif %}
+</button>
