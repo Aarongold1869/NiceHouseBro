@@ -11,7 +11,6 @@ from .functions import retrieve_map_data_from_search_str, retrieve_map_data_from
 
 from typing import List
 
-@require_http_methods(['GET'])
 def explore_view(request, search_str=None, lat=None, lng=None):
     map_data = None
     property_list: List[Property] = []
@@ -51,7 +50,7 @@ def get_explore_controls_view(request, property_id: str):
     is_saved = False if not saved_qs.exists() else True
     return render(request, 'property\partials\explore-controls.html', {'property_id': property_id, 'is_saved': is_saved })
 
-@login_required(login_url='/auth/login/')
+@login_required(login_url='/account/login/')
 @require_http_methods(['POST'])
 def toggle_property_saved_explore_view(request, property_id: str):
     # property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)
@@ -93,7 +92,7 @@ def toggle_property_descripton(request, property_id: str, action: str):
         template = "property/partials/truncated-desc.html"
     return render(request, template, {'property': property })
 
-@login_required(login_url='/auth/login/')
+@login_required(login_url='/account/login/')
 @require_http_methods(['POST'])
 def toggle_property_saved(request, property_id: str):
     property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)

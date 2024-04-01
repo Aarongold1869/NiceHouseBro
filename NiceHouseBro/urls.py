@@ -14,6 +14,6 @@ urlpatterns = [
     path('explore/reverse/lng=<str:lng>lat=<str:lat>/', property_views.explore_view, name='explore-search'),
     
     path('account/', include('account.urls')),
-    path('profiles/', include('profiles.urls')),
+    path('profile/', include('profiles.urls')),
     path('property/', include('property.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

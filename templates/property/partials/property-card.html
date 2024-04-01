@@ -10,7 +10,7 @@ data-index="{{ forloop.counter0 }}"
 data-status="{% if forloop.counter0 == 0 %}active{% else %}unknown{% endif %}"
 >
     <a href="{% url 'property-detial' property_id=property.id %}" style="position: relative;">
-        <img src="{% static property.cover_image_url %}" class="card-img-top" alt="..." style="border-top-left-radius:10px;border-top-right-radius:10px;">
+        <img src="{% static property.cover_image_url %}" class="img-fluid card-img-top" alt="..." style="border-top-left-radius:10px;border-top-right-radius:10px;">
         <span class="badge bg-light text-dark fs-6" style="position: absolute; top: 10px; left: 10px;">Great Deal</span>
         <div class="card-body text-wrap" style="color:var(--bs-body-color);">
             <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.price|currency:0 }}</h5>
