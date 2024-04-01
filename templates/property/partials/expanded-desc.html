@@ -1,9 +1,0 @@
-<div id="description-container">
-    <p id="property-description">{% lorem 140 w %}</p>  
-    <button 
-    class="btn btn-outline-info border-2"
-    hx-get="{% url 'toggle_desc_visible' property_id=property.id action='hide' %}"
-    hx-target="#description-container"
-    hx-swap="outerHTML"
-    >See Less</button>
-</div>

@@ -84,7 +84,13 @@
 
         {% comment %} property details {% endcomment %}
         <div class="container p-4" style="background-color: var(--bs-tertiary-bg);">
-            <h2 class="fw-bold mb-3">{{ property.price|currency:0 }}</h2>
+            <div class="d-flex justify-content-between">
+                <h2 class="fw-bold mb-3">{{ property.price|currency:0 }}</h2>
+                <a 
+                class="btn love border-2 mb-3"
+                href="tel:757-652-3262"
+                >Get in Touch</a>
+            </div>  
             <h5 class="mb-3">
                 <strong>{{ property.cap_rate|percentage }}</strong> Cap Rate |
                 <strong>{{ property.bedrooms }}</strong> Beds |
@@ -92,26 +98,40 @@
                 <strong>{{ property.area|comma }}</strong> square feet
             </h5>
             <h5 class="mb-3">{{ property.address }}</h5>
-            <a 
-            class="btn love border-2 mb-3"
-            href="tel:757-652-3262"
-            >Get in Touch</a>
-            <div id="description-container">
+            
+            <div id="description-container-trunc" style="display:block;">
                 <h5 class="fw-bold">Description</h5>
-                <p id="property-description" class='fs-6'>{% lorem 40 w %}...</p>  
-                <button 
-                class="btn btn-outline-info border-2"
-                hx-get="{% url 'toggle_desc_visible' property_id=property.id action='show' %}"
-                hx-target="#description-container"
-                hx-swap="outerHTML"
-                >See More</button>
+                <p id="property-description" class='fs-6'> {% lorem 40 w %}... </p>  
+                <a style="cursor:pointer; color:var(--love);" onclick="toggleDescExpand()">Show More</a>
+            </div>
+            <div id="description-container-expand" style="display:none;">
+                <h5 class="fw-bold">Description</h5>
+                <p id="property-description"> {% lorem 140 w %} </p>  
+                <a style="cursor:pointer; color:var(--love);" onclick="toggleDescExpand()">Show Less</a>
             </div>
         </div>
 
         {% comment %} Map {% endcomment %}
         {% include "components/detail-map.html" with coordinates=property.Coordinates %}
         
+        {% comment %} Comment Section {% endcomment %}
+        {% comment %} {% include "property/partials/comment-section.html" with comments=property.comments %} {% endcomment %}
+
     </div>
 </div>
+
+<script>
+    function toggleDescExpand() {
+        var trunc = document.getElementById('description-container-trunc');
+        var expand = document.getElementById('description-container-expand');
+        if (trunc.style.display === 'block') {
+            trunc.style.display = 'none';
+            expand.style.display = 'block';
+        } else {
+            trunc.style.display = 'block';
+            expand.style.display = 'none';
+        }
+    }
+</script>
 
 {% endblock content %}

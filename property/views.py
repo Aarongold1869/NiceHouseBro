@@ -83,15 +83,6 @@ def property_detail_view(request, property_id: str):
             is_saved = True
     return render(request, 'property/property-detail.html', {'property': property, "is_saved": is_saved })
 
-@require_http_methods(['GET'])
-def toggle_property_descripton(request, property_id: str, action: str):
-    property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)
-    if action == 'show':
-        template = "property/partials/expanded-desc.html"
-    elif action == 'hide':
-        template = "property/partials/truncated-desc.html"
-    return render(request, template, {'property': property })
-
 @login_required(login_url='/account/login/')
 @require_http_methods(['POST'])
 def toggle_property_saved(request, property_id: str):
