@@ -1,7 +1,7 @@
 
 <div id="map" style="width: 100%; height:400px;"></div>
 
-{{ coordinates|json_script:"coordinates" }}
+{{ property|json_script:"property" }}
 
 <script>
     // Get the map data from the django context
@@ -11,10 +11,10 @@
         attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    let coordinates = JSON.parse(document.getElementById('coordinates').textContent);
-    if (coordinates) { // if coordinates are provided, set the map view to the coordinates
-        map.setView(coordinates, 16);
-        var marker = L.marker(coordinates).addTo(map);
+    let property = JSON.parse(document.getElementById('property').textContent);
+    if (property) { // if coordinates are provided, set the map view to the coordinates
+        map.setView([property.latitude, property.longitude], 16);
+        var marker = L.marker([property.latitude, property.longitude]).addTo(map);
     } 
 
 </script>

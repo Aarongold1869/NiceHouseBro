@@ -5,7 +5,7 @@ from . import views
 urlpatterns = [
     
     # Detail Views
-    path('<str:property_id>/', views.property_detail_view, name='property-detial'),
+    path('<str:address>/', views.property_detail_view, name='property_detail'),
     path('detail-toggle-saved/<str:property_id>/', views.toggle_property_saved, name='toggle_saved'),
 
     # Explore Views

@@ -65,11 +65,14 @@
                     {% endfor %}
                 </div>        
                 <div class="carousel-inner">
-                    {% for image_url in property.image_array %}
+                    <div class="carousel-item active">
+                        <img src="{% static image %}" class="d-block w-100" alt="">
+                    </div>
+                    {% comment %} {% for image_url in property.image_array %}
                     <div class="carousel-item {% if forloop.counter0 == 0 %} active {% endif %}">
                         <img src="{% static image_url %}" class="d-block w-100" alt="">
                     </div>
-                    {% endfor %}
+                    {% endfor %} {% endcomment %}
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#imgCarousel" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -85,7 +88,7 @@
         {% comment %} property details {% endcomment %}
         <div class="container p-4" style="background-color: var(--bs-tertiary-bg);">
             <div class="d-flex justify-content-between">
-                <h2 class="fw-bold mb-3">{{ property.price|currency:0 }}</h2>
+                <h2 class="fw-bold mb-3">{{ property.estimatedValue|currency:0 }}</h2>
                 <a 
                 class="btn love border-2 mb-3"
                 href="tel:757-652-3262"
@@ -95,9 +98,9 @@
                 <strong>{{ property.cap_rate|percentage }}</strong> Cap Rate |
                 <strong>{{ property.bedrooms }}</strong> Beds |
                 <strong>{{ property.bathrooms }}</strong> Baths |
-                <strong>{{ property.area|comma }}</strong> square feet
+                <strong>{{ property.area }}</strong> square feet
             </h5>
-            <h5 class="mb-3">{{ property.address }}</h5>
+            <h5 class="mb-3">{{ property.address.address }}</h5>
             
             <div id="description-container-trunc" style="display:block;">
                 <h5 class="fw-bold">Description</h5>
@@ -112,7 +115,7 @@
         </div>
 
         {% comment %} Map {% endcomment %}
-        {% include "components/detail-map.html" with coordinates=property.Coordinates %}
+        {% include "components/detail-map.html" with property=property %}
         
         {% comment %} Comment Section {% endcomment %}
         {% comment %} {% include "property/partials/comment-section.html" with comments=property.comments %} {% endcomment %}

@@ -33,11 +33,6 @@
         box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
     }
     
-    .leaflet-popup-content-wrapper .leaflet-popup-content {
-    }
-    
-    .leaflet-popup-tip-container {
-    }
 </style>
 
 <div id="map" class="w-100 h-100 mt-2" ></div>
@@ -86,32 +81,32 @@
         map.setView(coordinates, zoom);
         // var marker = L.marker(coordinates).addTo(map);
     } else { // if no coordinates are provided, set the map view to the user's location
-        var cookieCoordinates = document.currentScript.getAttribute('data-loc-cookie')
-        if (cookieCoordinates !== '') {
-            var parsedCookie = JSON.parse(cookieCoordinates);
-            console.log(parsedCookie)
-            window.location.replace(`/explore/reverse/lng=${parsedCookie.lng}lat=${parsedCookie.lat}/`)
-            // map.setView(parsedCookie, zoom);
-            // L.marker(parsedCookie).addTo(map)
-        } else {
-            map.locate({setView: true, maxZoom: zoom});
-        }
+        // var cookieCoordinates = document.currentScript.getAttribute('data-loc-cookie')
+        // if (cookieCoordinates !== '') {
+        //     var parsedCookie = JSON.parse(cookieCoordinates);
+        //     console.log(parsedCookie)
+        //     window.location.replace(`/explore/reverse/lng=${parsedCookie.lng}lat=${parsedCookie.lat}/`)
+        //     // map.setView(parsedCookie, zoom);
+        //     // L.marker(parsedCookie).addTo(map)
+        // } else {
+        //     map.locate({setView: true, maxZoom: zoom});
+        // }
     }
 
-    if (boundry) {
-        L.geoJSON(boundry).addTo(map);
-    } 
+    // if (boundry) {
+    //     L.geoJSON(boundry).addTo(map);
+    // } 
 
     // Get the property list from the django context
     const propertyList = JSON.parse(document.getElementById('property_list').textContent);
     propertyList.forEach(function (property) {
-        L.marker(property.Coordinates, {
+        L.marker([property.latitude, property.longitude], {
 			icon: L.divIcon({
 				className: 'markerDiv', 
-				html: `<span class="map-marker">${property.price.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })}</span>`
+				html: `<span class="map-marker">${property.estimatedValue.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })}</span>`
 			})
 		}).addTo(map)
-        .on('click', function(e) { window.location.replace(`/property/${property.id}`) })
+        .on('click', function(e) { window.location.replace(`/property/${property.address.address.replace('/','|')}`) })
         // .bindPopup(`$${property.price}`,{closeOnClick: false, autoClose: false}).openPopup();
     });
 

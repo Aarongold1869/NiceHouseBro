@@ -40,7 +40,7 @@ ALLOWED_HOSTS = ['*']
 # SESSION_COOKIE_SAMESITE = 'None'
 
 GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY')
-
+NOTION_API_KEY = os.getenv('NOTION_API_KEY')
 # POSITION_STACK_API_KEY = os.getenv('POSITION_STACK_API_KEY')
 
 # Application definition
