@@ -12,6 +12,7 @@ class Profile(models.Model):
 class SavedProperty(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     property_id = models.CharField(max_length=100)
+    address = models.CharField(max_length=250)
     
     class Meta:
         constraints = [

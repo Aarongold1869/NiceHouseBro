@@ -5,46 +5,63 @@
 
 <style>
     @media (max-width: 1000px) {
-        #card-button-container {
+        /* #card-button-container {
             flex-direction: column!important;
+        }  */
+
+        h5 {
+            font-size: .9rem!important;
         }
 
-        .property-card-details {
-            display: none;
+        h6 {
+            font-size: .8rem!important;
         }
+
+        p {
+            font-size: .7rem!important;
+        }
+
+        #card-button-container .btn {
+            font-size: .7rem!important;
+        }
+
+        /* .property-card-details {
+            display: none;
+        } */
 
         .card-image {
-            border-top-right-radius: 6px!important;
-            border-bottom-left-radius: 0px!important;
+            object-fit: cover!important;
+            max-height: 200px!important;
         }
-        .card {
+
+        /* .card {
             flex-direction: column!important;   
-        }
+        } */
     }
 </style>
 
 <div id="property-card-{{property.id}}" class="card mb-3 w-auto">
     <div class="row g-0">
-        <div class="col-md-4">
+        <div class="col-4 col-md-4">
             <img src="{% static property.cover_image_url %}" class="img-fluid rounded-start h-100 card-image" alt="...">
         </div>
-        <div class="col-md-8">
+        <div class="col-8 col-md-8">
             <div class="card-body">
-                <h5 class="card-title">{{ property.address }}</h5>
+                <h5>{{ property.address }}</h5>
                 <div class="property-card-details">
-                    <h6 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.price|currency:0 }}</h6>
-                    <p class="card-subtitle mb-2" style="font-size:1rem;">
+                    <h6 style="font-weight:600;">{{ property.price|currency:0 }}</h6>
+                    <p class="mb-2" style="font-size:1rem;">
                         Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
                         bds: <strong>{{ property.bedrooms }}</strong>&ensp;|&ensp;
                         br: <strong>{{ property.bathrooms }}</strong>&ensp;|&ensp;
                         <strong>{{ property.area|comma }} sqft.</strong>
                     </p>
                 </div>
-                <div id="card-button-container" class="d-flex py-3">
-                    <a href="/property/{{property.id}}/" class="btn btn-sm btn-outline-info border-3 me-1 mb-2" style="width:100%;">View Property</a>
-                    <a href="#" class="btn btn-sm love border-3 me-2 mb-2" style="width:100%;">Contact Agent</a>
+                <div id="card-button-container" class="d-flex py-2">
+                    <a href="/property/{{property.id}}/" class="btn btn-sm btn-outline-info border-3 me-1" style="width:100%;">View Property</a>
+                    <a href="#" class="btn btn-sm love border-3 me-2" style="width:100%;">Contact Agent</a>
                     <button 
-                    class="btn btn-sm border-3 border-secondary me-2 mb-2"
+                    class="btn btn-sm border-3 border-secondary me-2"
                     style="background-color: var(--bs-secondary-bg); width:100%;"
                     hx-post="{% url 'toggle_saved_profile' property_id=property.id %}"
                     hx-target="#property-card-{{property.id}}"

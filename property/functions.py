@@ -175,7 +175,7 @@ def google_street_view_api(address:str):
     params = {
         "key": settings.GOOGLE_MAPS_API_KEY,
         "location": address,
-        "size": "600x300"
+        "size": "1000x500"
     }
     res = requests.get('https://maps.googleapis.com/maps/api/streetview', params=params)
     if res.ok:

@@ -93,7 +93,7 @@ def property_detail_view(request, address:str='5663 Dunridge Drive, Pace FL 3257
 @login_required(login_url='/account/login/')
 @require_http_methods(['POST'])
 def toggle_property_saved(request, property_id: str):
-    property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)
+    # property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)
     profile = Profile.objects.get(user=request.user)
     saved_qs = SavedProperty.objects.filter(Q(profile=profile) & Q(property_id=property_id))
     if not saved_qs.exists():
@@ -104,4 +104,4 @@ def toggle_property_saved(request, property_id: str):
         saved_qs.delete()
         # property['saved'] = False
         is_saved = False
-    return render(request, "property/partials/detail-save-button.html", {'property': property, 'is_saved': is_saved  })
+    return render(request, "property/partials/detail-save-button.html", {'property_id': property_id, 'is_saved': is_saved  })
