@@ -76,8 +76,8 @@ def toggle_property_saved_explore_view(request, property_id: str):
 
 def property_detail_view(request, property_id: str):
     property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)
+    is_saved = False
     if request.user.is_authenticated:
-        is_saved = False
         saved_qs = SavedProperty.objects.filter(Q(profile__user=request.user) & Q(property_id=property_id))
         if saved_qs.exists():
             is_saved = True
