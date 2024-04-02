@@ -81,16 +81,16 @@
         map.setView(coordinates, zoom);
         // var marker = L.marker(coordinates).addTo(map);
     } else { // if no coordinates are provided, set the map view to the user's location
-        // var cookieCoordinates = document.currentScript.getAttribute('data-loc-cookie')
-        // if (cookieCoordinates !== '') {
-        //     var parsedCookie = JSON.parse(cookieCoordinates);
-        //     console.log(parsedCookie)
-        //     window.location.replace(`/explore/reverse/lng=${parsedCookie.lng}lat=${parsedCookie.lat}/`)
-        //     // map.setView(parsedCookie, zoom);
-        //     // L.marker(parsedCookie).addTo(map)
-        // } else {
-        //     map.locate({setView: true, maxZoom: zoom});
-        // }
+        var cookieCoordinates = document.currentScript.getAttribute('data-loc-cookie')
+        if (cookieCoordinates !== '') {
+            var parsedCookie = JSON.parse(cookieCoordinates);
+            console.log(parsedCookie)
+            // window.location.replace(`/explore/reverse/lng=${parsedCookie.lng}lat=${parsedCookie.lat}/`)
+            // map.setView(parsedCookie, zoom);
+            // L.marker(parsedCookie).addTo(map)
+        } else {
+            map.locate({setView: true, maxZoom: zoom});
+        }
     }
 
     // if (boundry) {
