@@ -105,6 +105,8 @@ class Property(TypedDict):
     yearBuilt: str
     yearsOwned: int
     
+    image: str
+    
     ###### Zillow zestimate API
     # id: str
     # city: str

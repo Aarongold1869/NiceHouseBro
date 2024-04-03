@@ -24,6 +24,7 @@
         id="save-button" 
         class="btn mx-2 border-0"
         hx-post="{% url 'toggle_saved_explore' property_id=property_id %}"
+        {% comment %} hx-vals='{"address": "{{ property.address.address }}"}' {% endcomment %}
         hx-swap="outerHTML" 
         onclick="handleSaveCard()"
         >

@@ -40,31 +40,32 @@
     }
 </style>
 
-<div id="property-card-{{property.id}}" class="card mb-3 w-auto">
+<div id="property-card-{{property.propertyId}}" class="card mb-3 w-auto" style="box-shadow: 0 0 4px 2px var(--bs-dark-bg-subtle);">
     <div class="row g-0">
         <div class="col-4 col-md-4">
-            <img src="{% static property.cover_image_url %}" class="img-fluid rounded-start h-100 card-image" alt="...">
+            <img src="{{property.image}}" class="img-fluid rounded-start h-100 card-image" alt="...">
         </div>
         <div class="col-8 col-md-8">
             <div class="card-body">
-                <h5>{{ property.address }}</h5>
+                <h5>{{ property.address.address }}</h5>
                 <div class="property-card-details">
                     <h6 style="font-weight:600;">{{ property.price|currency:0 }}</h6>
                     <p class="mb-2" style="font-size:1rem;">
                         Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
                         bds: <strong>{{ property.bedrooms }}</strong>&ensp;|&ensp;
                         br: <strong>{{ property.bathrooms }}</strong>&ensp;|&ensp;
-                        <strong>{{ property.area|comma }} sqft.</strong>
+                        <strong>{{ property.area }} sqft.</strong>
                     </p>
                 </div>
                 <div id="card-button-container" class="d-flex py-2">
-                    <a href="/property/{{property.id}}/" class="btn btn-sm btn-outline-info border-3 me-1" style="width:100%;">View Property</a>
+                    <a href="/property/{{property.propertyId}}/" class="btn btn-sm btn-outline-info border-3 me-1" style="width:100%;">View Property</a>
                     <a href="#" class="btn btn-sm love border-3 me-2" style="width:100%;">Contact Agent</a>
                     <button 
                     class="btn btn-sm border-3 border-secondary me-2"
                     style="background-color: var(--bs-secondary-bg); width:100%;"
-                    hx-post="{% url 'toggle_saved_profile' property_id=property.id %}"
-                    hx-target="#property-card-{{property.id}}"
+                    hx-post="{% url 'toggle_saved_profile' property_id=property.propertyId %}"
+                    hx-target="#property-card-{{property.propertyId}}"
+                    hx-vals='{"property_obj":"{{ property }}"}'
                     hx-swap="outerHTML"
                     >Unsave</button>
                 </div>

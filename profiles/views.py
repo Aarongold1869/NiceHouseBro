@@ -4,9 +4,10 @@ from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
 from .models import Profile, SavedProperty
-from property.api.property_list import PROPERTY_DATA
+from property.functions import google_street_view_api, property_detail_api
 from property.types import Property
 
+import ast
 import json
 
 # Create your views here.
@@ -14,24 +15,29 @@ import json
 
 def saved_property_list_view(request, *args, **kwargs):
     profile = Profile.objects.get(user=request.user)
-    saved_properties = SavedProperty.objects.filter(profile=profile)
-    saved_properties_list = [x.property_id for x in saved_properties]
-    saved_properties_data = [x for x in PROPERTY_DATA if x['id'] in saved_properties_list]
-    return render(request, 'profile/saved-properties.html', {'saved_properties': saved_properties_data })
+    saved_properties_qs = SavedProperty.objects.filter(profile=profile).filter(archived=False).order_by('-timestamp')
+    property_list = list(map(lambda x: {
+                                **property_detail_api(address=x.address), 
+                                'image': x.image
+                            }, saved_properties_qs ))
+    return render(request, 'profile/saved-properties.html', {'saved_properties': property_list })
 
 @login_required(login_url='/account/login/')
 @require_http_methods(['POST'])
-def toggle_saved(request, property_id: str, *args, **kwargs):
-    property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)
+def toggle_saved_property_archived(request, property_id: str, *args, **kwargs):
     profile = Profile.objects.get(user=request.user)
     saved_qs = SavedProperty.objects.filter(profile=profile, property_id=property_id)
-    if saved_qs.exists():
-        saved_qs.delete()
+    property_obj = ast.literal_eval(request.POST.get('property_obj', None))
+    if not saved_qs.exists():
+        return HttpResponse(status=500)
+    saved_property = saved_qs.first()
+    saved_property.archived = not saved_property.archived
+    saved_property.save()
+    if saved_property.archived:
         template = 'profile/partials/property-removed.html'
     else:
-        SavedProperty.objects.create(profile=profile, property_id=property_id)
         template = 'profile/partials/saved-property-card.html'
-    return render(request, template, {"property": property})
+    return render(request, template, {"property": property_obj })
 
 @login_required(login_url='/account/login/')
 @require_http_methods(['GET'])
@@ -43,7 +49,6 @@ def toggle_theme(request, *args, **kwargs):
         profile.theme = 'light'
     profile.save()
     return HttpResponse(status=200)
-
 
 def locate_view(request, *args, **kwargs):
     response = HttpResponse(status=200)

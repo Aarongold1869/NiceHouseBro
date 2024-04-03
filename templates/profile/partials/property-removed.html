@@ -1,9 +1,10 @@
-<div id="property-card-{{property.id}}">
+<div id="property-card-{{ property.propertyId }}" class='p-2'>
     <p>Property Unsaved. 
         <a 
         style="color:var(--love); cursor:pointer;" 
-        hx-post="{% url 'toggle_saved_profile' property_id=property.id %}"
-        hx-target="#property-card-{{property.id}}"
+        hx-post="{% url 'toggle_saved_profile' property_id=property.propertyId %}"
+        hx-target="#property-card-{{property.propertyId}}"
+        hx-vals='{"property_obj":"{{ property }}"}'
         hx-swap="outerHTML"
         >Undo
         </a> 

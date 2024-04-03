@@ -66,7 +66,8 @@ def toggle_property_saved_explore_view(request, property_id: str):
     if not saved_qs.exists():
         SavedProperty.objects.create(
             profile=profile,
-            property_id=property_id
+            property_id=property_id,
+            address=request.POST.get('address')
         )
         is_saved = True
         # toast = { "type": "success", "header": "Explore", "message": "Property saved!" }
@@ -98,7 +99,12 @@ def toggle_property_saved(request, property_id: str):
     profile = Profile.objects.get(user=request.user)
     saved_qs = SavedProperty.objects.filter(Q(profile=profile) & Q(property_id=property_id))
     if not saved_qs.exists():
-        SavedProperty.objects.create(profile=profile, property_id=property_id)
+        SavedProperty.objects.create(
+            profile=profile, 
+            property_id=property_id,
+            address=request.POST.get('address'),
+            image=request.POST.get('image')
+        )
         # property['saved'] = True
         is_saved = True
     else:

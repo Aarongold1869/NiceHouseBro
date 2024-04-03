@@ -13,6 +13,9 @@ class SavedProperty(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     property_id = models.CharField(max_length=100)
     address = models.CharField(max_length=250)
+    image = models.CharField(max_length=99999, blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    archived = models.BooleanField(default=False)
     
     class Meta:
         constraints = [
