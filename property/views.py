@@ -28,7 +28,8 @@ def explore_view(request, search_str=None, lat=None, lng=None):
             raise Exception("Map data not found.")
         # currently only notion api is used
         property_list = property_search_api(address=map_data['address'])
-    
+        # property_list = list(map(lambda x: {**x , 'image': google_street_view_api(address=x['address']['address'])}, property_list[:10]))
+
     if lat and lng:
         map_data = retrieve_map_data_from_reverse_search(search_str=f"{lng}, {lat}")
         if not map_data:

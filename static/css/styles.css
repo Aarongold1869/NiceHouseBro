@@ -30,7 +30,7 @@ body {
 .love a:hover {
   background-color: var(--love) !important;
   border-color: var(--love)  !important;
-  color: var(--background) !important;
+  color: var(--bs-body-bg) !important;
 }
 
  /* The switch - the box around the slider */

@@ -13,7 +13,11 @@ data-status="{% if forloop.counter0 == 0 %}active{% else %}unknown{% endif %}"
     <a 
     href="{% url 'property_detail' address=property.address.address|remove_slashes %}" 
     style="position: relative;">
-        <img src="{% static 'media/awesome-house.jpg' %}" class="img-fluid card-img-top" alt="..." style="border-top-left-radius:10px;border-top-right-radius:10px;">
+        <img src="{% if property.image %}{{ property.image }}{% else %}{% static 'media/awesome-house.jpg' %}{% endif %}" 
+        class="img-fluid card-img-top" 
+        alt="..." 
+        style="border-top-left-radius:10px;border-top-right-radius:10px;"
+        >
         <span class="badge bg-light text-dark fs-6" style="position: absolute; top: 10px; left: 10px;">Great Deal</span>
         <div class="card-body text-wrap" style="color:var(--bs-body-color);">
             <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.estimatedValue|currency:0 }}</h5>
