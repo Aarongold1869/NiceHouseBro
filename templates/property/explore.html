@@ -6,7 +6,6 @@
 
     #explore-container {
         height:100vh;
-        padding: 0 10px;
         overflow: hidden;
     }
 
@@ -33,7 +32,8 @@
         border-radius: 15px;
         transform: translateX(0) rotate(0) scale(1);
         transition: transform 400ms ease, box-shadow 300ms ease, border 300ms ease;
-        width: auto;
+        width: 95%;
+        box-shadow: 0 0 4px 2px var(--bs-dark-bg-subtle);
     }
 
     .property-card[data-status="unknown"] {
@@ -121,7 +121,7 @@
     
 <div id='explore-container' class="d-flex flex-column align-items-center position-relative" >
 
-    <div id='current-search' class="d-flex w-100 pt-4 px-3 mb-3">
+    <div id='current-search' class="d-flex w-100 pt-4 pb-3 px-3 m-0 mb-1" style="background-color: var(--bs-dark-bg-subtle)">
         <div class="d-flex col-12 col-lg-4">
             <input id="location-search" type="text" class="form-control me-2" style="border:3px solid var(--bs-secondary-color);" placeholder="{{ search_str }}" >
             <button id="search-button" class="btn love border-3 me-2">Search</button>
@@ -133,9 +133,9 @@
 
     <div class="d-flex justify-content-center w-100 h-100">
 
-        <div id='swiping-component' class="col-12 col-md-8 col-lg-4 overflow-hidden p-1 {% if not user.is_authenticated %}bg-dark{% else %}bg-{{ request.user.profile_set.first.theme }}{% endif %}">
+        <div id='swiping-component' class="col-12 col-md-8 col-lg-4 overflow-hidden p-1 px-2">
 
-            <div class="d-flex align-items-center justify-content-between px-3 pt-1 pb-3">
+            <div class="d-flex align-items-center justify-content-between px-3 pt-1 pb-2">
                 <h3 class="mb-0">Explore</h3>
                 <button 
                 id="map-button" 
@@ -172,8 +172,8 @@
 
         </div>
 
-        <div id='map-container' class="col-12 col-lg-8 p-1 h-100 {% if not user.is_authenticated %}bg-dark{% else %}bg-{{ request.user.profile_set.first.theme }}{% endif %}" data-visible="false">
-            <div id="map-header" class="d-flex align-items-center justify-content-between px-3 pt-1 pb-3">
+        <div id='map-container' class="col-12 col-lg-8 p-1 h-100" style="background-color: var(--bs-body-bg);" data-visible="false">
+            <div id="map-header" class="d-flex align-items-center justify-content-between px-3 pt-1 pb-2">
                 <h3 class="mb-0">Map</h3>
                 <button 
                 id="map-button" 

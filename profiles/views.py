@@ -33,6 +33,17 @@ def toggle_saved(request, property_id: str, *args, **kwargs):
         template = 'profile/partials/saved-property-card.html'
     return render(request, template, {"property": property})
 
+@login_required(login_url='/account/login/')
+@require_http_methods(['GET'])
+def toggle_theme(request, *args, **kwargs):
+    profile = Profile.objects.get(user=request.user)
+    if profile.theme == 'light':
+        profile.theme = 'dark'
+    else:
+        profile.theme = 'light'
+    profile.save()
+    return HttpResponse(status=200)
+
 
 def locate_view(request, *args, **kwargs):
     response = HttpResponse(status=200)

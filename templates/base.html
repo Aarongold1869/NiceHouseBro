@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="{% if not user.is_authenticated %}dark{% else %}{{ request.user.profile_set.first.theme }}{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -15,6 +15,9 @@
     <!-- htmx -->
     <script type="text/javascript" src="{% static 'js/htmx.min.js' %}" defer></script>
 
+    <!-- jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
     <!-- Leafletjs -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -25,7 +28,7 @@
     <title>Nice House Bro</title>
 </head>
 
-<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' data-bs-theme="{% if not user.is_authenticated %}dark{% else %}{{ request.user.profile_set.first.theme }}{% endif %}">
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' >
     
     {% include 'components/nav.html' %}
 

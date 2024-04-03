@@ -4,13 +4,13 @@ from profiles.models import Profile, SavedProperty
 from .api.property_list import PROPERTY_DATA
 from .types import Address, Coordinates, MapData, Property
 
-from functools import cache, reduce
+import base64
+from functools import cache
 from geopy.geocoders import GoogleV3, Nominatim
 import shapely.geometry as sg
-from typing import List
-
-import urllib.request, urllib.parse, urllib.error
 import requests
+from typing import List
+import urllib.request, urllib.parse, urllib.error
 
 def filter_unsaved(profile: Profile, property_id: int)-> bool:
     saved_qs = SavedProperty.objects.filter(profile=profile)
@@ -52,6 +52,7 @@ LOCATION_TYPE_ZOOM_HASH = {
     'county': 9,
     'macrocounty': 16,
     'region': 5,
+    'state': 7,
     'macroregion': 5,
     'country': 3,
     'coarse': 3,
@@ -100,6 +101,7 @@ def filter_properties_by_search_boundry(boundry: List[Coordinates])-> List[Prope
 def remove_slashes_from_address(address: str)-> str:
     return address.replace('/', '|')
 
+
 def property_search_api(address: Address)-> List[Property]:
     url = 'https://api.realestateapi.com/v2/PropertySearch'
     headers = {
@@ -115,7 +117,6 @@ def property_search_api(address: Address)-> List[Property]:
         # "Latitude": coordinates[0],
         # "Longitude": coordinates[1],
         # "radius": 50,
-        "city": address['city'],
         "state": address['ISO3166-2-lvl4'][3:],
         # "negative_equity": True,
         # "equity": True,
@@ -131,6 +132,8 @@ def property_search_api(address: Address)-> List[Property]:
         # "beds_min": 2,
         # "beds_max": 4
     }
+    if 'city' in address.keys():
+        payload['city'] = address['city']
     property_list = []
     try: 
         res = requests.post(url, headers=headers, json=payload)
@@ -144,6 +147,7 @@ def property_search_api(address: Address)-> List[Property]:
         print(e)
     return property_list
 
+@cache
 def property_detail_api(address: str)-> Property:
     url = "https://api.realestateapi.com/v2/PropertySearch"
     payload = {
@@ -170,7 +174,7 @@ def property_detail_api(address: str)-> Property:
         print(e)
     return property
 
-
+@cache
 def google_street_view_api(address:str):
     params = {
         "key": settings.GOOGLE_MAPS_API_KEY,
@@ -179,8 +183,9 @@ def google_street_view_api(address:str):
     }
     res = requests.get('https://maps.googleapis.com/maps/api/streetview', params=params)
     if res.ok:
-        f_path = f'static/media/property-images/{address}.jpg'
-        with open(f_path, 'wb') as file:
-            file.write(res.content)
+        uri = f"data:{res.headers['Content-Type']};base64,{base64.b64encode(res.content).decode('utf-8')}"
+        # f_path = f'static/media/property-images/{address}.jpg'
+        # with open(f_path, 'wb') as file:
+        #     file.write(res.content)
         res.close()
-    return f_path.split('static/')[1]
+    return uri
