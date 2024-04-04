@@ -164,8 +164,59 @@
                 {% endif %}
 
                  <!-- Controls -->
-                {% if property_list %}
-                    {% include "property/partials/explore-controls.html" %}
+                {% if property_obj %}
+                <div id="explore-controls" class="d-flex justify-content-center py-3 position-absolute bottom-0">
+                    <button 
+                    id="back-button" 
+                    class="btn mx-4 border-0"
+                    onclick="handlePrevCard()"
+                    style="color: var(--bs-secondary-color);"
+                    >
+                        {% include "icons/arrow-left.html" with size=35 %}
+                    </button>
+                
+                    <button 
+                    id="hide-button" 
+                    class="btn mx-2 border-0"
+                    onclick="handleHideCard()"
+                    >
+                        {% include "icons/x.html" with size=35 fill="var(--hidden)" %}
+                    </button>
+                    
+                
+                    {% if request.user.is_authenticated %}
+                        <button 
+                        id="save-button" 
+                        class="btn mx-2 border-0"
+                        hx-post="{% url 'toggle_saved_explore' property_id=property_obj.propertyId %}"
+                        hx-vals='{"address": "{{ property_obj.address.address }}", "image": "{{ image }}"}'
+                        hx-swap="outerHTML" 
+                        onclick="handleSaveCard()"
+                        >
+                        {% if is_saved %}
+                            {% include "icons/heart-fill.html" with size=35 fill="var(--love)" %}
+                        {% else %}
+                            {% include "icons/heart.html" with size=35 fill="var(--love)" %}
+                        {% endif %}
+                        </button>
+                    {% else %}
+                        <button 
+                        id="save-button" 
+                        class="btn mx-2 border-0"
+                        onclick="promptLogin()"
+                        > {% include "icons/heart.html" with size=35 fill="var(--love)" %}
+                        </button>
+                    {% endif %}
+                
+                    <button 
+                    id="next-button" 
+                    class="btn mx-4 border-0"
+                    onclick="handleNextCard()"
+                    style="color: var(--bs-secondary-color);"
+                    >
+                        {% include "icons/arrow-right.html" with size=35 %}
+                    </button>
+                </div>
                 {% endif %}
 
             </div>
@@ -205,26 +256,29 @@
         const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
         let nextIndex = activeIndex + 1 <= cards.length - 1 ? activeIndex + 1 : 0;
         const nextCard = document.querySelector(`[data-index="${nextIndex}"]`);
+        const nextCardAddress = document.getElementById(`property-address-${nextCard.id}`).innerText;
         currentCard.dataset.status = "left";
         nextCard.dataset.status = "becoming-active-from-right";
         setTimeout(() => {
             nextCard.dataset.status = "active";
             activeIndex = nextIndex;
         }, 100);  
-        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
+        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, { target:'#explore-controls', swap:'outerHTML', values: { address: nextCardAddress}  })
     }
 
     const handlePrevCard = () => {
         const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
         let nextIndex = activeIndex - 1 >= 0 ? activeIndex - 1 : cards.length - 1;
         const nextCard = document.querySelector(`[data-index="${nextIndex}"]`);
+        console.log(nextCard.id)
+        const nextCardAddress = document.getElementById(`property-address-${nextCard.id}`).innerText;
         currentCard.dataset.status = "right";
         nextCard.dataset.status = "becoming-active-from-left";
         setTimeout(() => {
             nextCard.dataset.status = "active";
             activeIndex = nextIndex;
         }, 100);  
-        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
+        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, { target:'#explore-controls', swap:'outerHTML', values: `{"address": "${nextCardAddress}"}` })
     }
 
     const handleSaveCard = () => {

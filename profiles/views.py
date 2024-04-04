@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
 from .models import Profile, SavedProperty
-from property.functions import google_street_view_api, property_detail_api
+from property.api.notion_api import property_detail_api
 from property.types import Property
 
 import ast

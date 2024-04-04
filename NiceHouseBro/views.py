@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.shortcuts import render
 
-from property.api.property_list import PROPERTY_DATA
+from property.api.test_api import PROPERTY_DATA
 from property.types import Property
 
 from typing import List

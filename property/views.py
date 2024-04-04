@@ -5,30 +5,22 @@ from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
 from profiles.models import Profile, SavedProperty
-from .api.property_list import PROPERTY_DATA
+from .api.notion_api import property_search_api, property_detail_api
+from .api.google_api import google_street_view_api
 from .types import Address, Property
-from .functions import (
-    retrieve_map_data_from_search_str, 
-    retrieve_map_data_from_reverse_search, 
-    filter_properties_by_search_boundry, 
-    google_street_view_api,
-    property_detail_api,
-    property_search_api,
-)
+from .functions import retrieve_map_data_from_search_str, retrieve_map_data_from_reverse_search
 
 from typing import List
 
-def explore_view(request, search_str=None, lat=None, lng=None):
+def explore_view(request, search_str:str='', lat=None, lng=None):
     map_data = None
     property_list: List[Property] = []
     
-    if search_str and search_str != '':
+    if search_str != '':
         map_data = retrieve_map_data_from_search_str(search_str=search_str)
         if not map_data:
             raise Exception("Map data not found.")
-        # currently only notion api is used
-        property_list = property_search_api(address=map_data['address'])
-        # property_list = list(map(lambda x: {**x , 'image': google_street_view_api(address=x['address']['address'])}, property_list[:10]))
+        property_list = property_search_api(address=map_data['address']) # currently notion api is used
 
     if lat and lng:
         map_data = retrieve_map_data_from_reverse_search(search_str=f"{lng}, {lat}")
@@ -36,27 +28,42 @@ def explore_view(request, search_str=None, lat=None, lng=None):
             response = render(request, '500.html', {})
             response.delete_cookie('coordinates')
             return response
-        # currently only notion api is used
-        property_list = property_search_api(address=map_data['address'])
-
-    template = "property/explore.html"
+        property_list = property_search_api(address=map_data['address']) # currently notion api is used
+    
+    property_init = property_list[0] if property_list else None
+    is_saved = False
+    image = None
+    if property_init:
+        saved_qs = SavedProperty.objects.filter(Q(profile__user=request.user) & Q(property_id=property_init['propertyId']))
+        if saved_qs.exists():
+            is_saved = True
+            image = saved_qs[0].image if saved_qs[0].image else google_street_view_api(address=property_init['address']['address'])
+        else:
+            is_saved = False
+            image = google_street_view_api(address=property_init['address']['address'])
 
     context = {
         'property_list': property_list, 
-        'property_id': property_list[0]['propertyId'] if property_list else -1, 
-        'is_saved': False,
-        'property_init': property_list[0] if property_list else None,
+        'property_obj': property_init,
+        'image': image,
+        'is_saved': is_saved,
         'API_KEY': settings.GOOGLE_MAPS_API_KEY,
         'map_data': map_data,
         'search_str': search_str if search_str else ''
     }
-    return render(request, template, context)
+    return render(request, "property/explore.html", context)
 
 @require_http_methods(['GET'])
 def get_explore_controls_view(request, property_id: str):
+    address = request.GET.get('address')
     saved_qs = SavedProperty.objects.filter(Q(profile__user=request.user) & Q(property_id=property_id))
-    is_saved = False if not saved_qs.exists() else True
-    return render(request, 'property\partials\explore-controls.html', {'property_id': property_id, 'is_saved': is_saved })
+    if saved_qs.exists():
+        is_saved = True
+        image = saved_qs[0].image if saved_qs[0].image else google_street_view_api(address=address)
+    else:
+        is_saved = False
+        image = google_street_view_api(address=address)
+    return render(request, 'property\partials\explore-controls.html', { 'property_obj': { 'propertyId': property_id, "address": { "address": address } }, 'is_saved': is_saved, 'image': image })
 
 @login_required(login_url='/account/login/')
 @require_http_methods(['POST'])
@@ -67,7 +74,8 @@ def toggle_property_saved_explore_view(request, property_id: str):
         SavedProperty.objects.create(
             profile=profile,
             property_id=property_id,
-            address=request.POST.get('address')
+            address=request.POST.get('address'),
+            image=request.POST.get('image')
         )
         is_saved = True
         # toast = { "type": "success", "header": "Explore", "message": "Property saved!" }

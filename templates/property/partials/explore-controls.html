@@ -11,8 +11,6 @@
     <button 
     id="hide-button" 
     class="btn mx-2 border-0"
-    {% comment %} hx-post="{% url 'save_property_explore' property_id=property_id %}"
-    hx-swap="none"  {% endcomment %}
     onclick="handleHideCard()"
     >
         {% include "icons/x.html" with size=35 fill="var(--hidden)" %}
@@ -23,8 +21,8 @@
         <button 
         id="save-button" 
         class="btn mx-2 border-0"
-        hx-post="{% url 'toggle_saved_explore' property_id=property_id %}"
-        {% comment %} hx-vals='{"address": "{{ property.address.address }}"}' {% endcomment %}
+        hx-post="{% url 'toggle_saved_explore' property_id=property_obj.propertyId %}"
+        hx-vals='{"address": "{{ property_obj.address.address }}", "image": "{{ image }}"}'
         hx-swap="outerHTML" 
         onclick="handleSaveCard()"
         >
@@ -52,3 +50,14 @@
         {% include "icons/arrow-right.html" with size=35 %}
     </button>
 </div>
+
+
+{% load static %}
+<img 
+id="property-card-image"
+src="{% if image %}{{ image }}{% else %}{% static 'media/awesome-house.jpg' %}{% endif %}" 
+class="img-fluid card-img-top" 
+alt="..." 
+style="border-top-left-radius:10px;border-top-right-radius:10px;"
+hx-swap-oob="true"
+>
