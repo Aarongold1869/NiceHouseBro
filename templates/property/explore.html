@@ -165,58 +165,7 @@
 
                  <!-- Controls -->
                 {% if property_obj %}
-                <div id="explore-controls" class="d-flex justify-content-center py-3 position-absolute bottom-0">
-                    <button 
-                    id="back-button" 
-                    class="btn mx-4 border-0"
-                    onclick="handlePrevCard()"
-                    style="color: var(--bs-secondary-color);"
-                    >
-                        {% include "icons/arrow-left.html" with size=35 %}
-                    </button>
-                
-                    <button 
-                    id="hide-button" 
-                    class="btn mx-2 border-0"
-                    onclick="handleHideCard()"
-                    >
-                        {% include "icons/x.html" with size=35 fill="var(--hidden)" %}
-                    </button>
-                    
-                
-                    {% if request.user.is_authenticated %}
-                        <button 
-                        id="save-button" 
-                        class="btn mx-2 border-0"
-                        hx-post="{% url 'toggle_saved_explore' property_id=property_obj.propertyId %}"
-                        hx-vals='{"address": "{{ property_obj.address.address }}", "image": "{{ image }}"}'
-                        hx-swap="outerHTML" 
-                        onclick="handleSaveCard()"
-                        >
-                        {% if is_saved %}
-                            {% include "icons/heart-fill.html" with size=35 fill="var(--love)" %}
-                        {% else %}
-                            {% include "icons/heart.html" with size=35 fill="var(--love)" %}
-                        {% endif %}
-                        </button>
-                    {% else %}
-                        <button 
-                        id="save-button" 
-                        class="btn mx-2 border-0"
-                        onclick="promptLogin()"
-                        > {% include "icons/heart.html" with size=35 fill="var(--love)" %}
-                        </button>
-                    {% endif %}
-                
-                    <button 
-                    id="next-button" 
-                    class="btn mx-4 border-0"
-                    onclick="handleNextCard()"
-                    style="color: var(--bs-secondary-color);"
-                    >
-                        {% include "icons/arrow-right.html" with size=35 %}
-                    </button>
-                </div>
+                    {% include "property/partials/explore-controls.html" %}
                 {% endif %}
 
             </div>
@@ -256,35 +205,56 @@
         const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
         let nextIndex = activeIndex + 1 <= cards.length - 1 ? activeIndex + 1 : 0;
         const nextCard = document.querySelector(`[data-index="${nextIndex}"]`);
-        const nextCardAddress = document.getElementById(`property-address-${nextCard.id}`).innerText;
         currentCard.dataset.status = "left";
         nextCard.dataset.status = "becoming-active-from-right";
         setTimeout(() => {
             nextCard.dataset.status = "active";
             activeIndex = nextIndex;
         }, 100);  
-        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, { target:'#explore-controls', swap:'outerHTML', values: { address: nextCardAddress}  })
+        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, { target:'#explore-controls', swap:'outerHTML' })
+        
+        let nextNextIndex = nextIndex + 1 <= cards.length - 1 ? nextIndex + 1 : 0;
+        if (nextNextIndex === 0) {
+            return
+        }
+        const nextNextCard = document.querySelector(`[data-index="${nextNextIndex}"]`);
+        if (nextNextCard.dataset.imgdidset === "true") {
+            return
+        }
+        const nextNextCardAddress = document.getElementById(`property-address-${nextNextCard.id}`).innerText.replace('/','|');
+        htmx.ajax('GET', `/property/get-card-image/`, { target:`#property-card-image-${ nextNextCard.id }`, swap:'outerHTML', values: { address: nextNextCardAddress, property_id: nextNextCard.id } })
+        nextNextCard.dataset.imgdidset = "true";
     }
 
     const handlePrevCard = () => {
         const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
         let nextIndex = activeIndex - 1 >= 0 ? activeIndex - 1 : cards.length - 1;
         const nextCard = document.querySelector(`[data-index="${nextIndex}"]`);
-        console.log(nextCard.id)
-        const nextCardAddress = document.getElementById(`property-address-${nextCard.id}`).innerText;
         currentCard.dataset.status = "right";
         nextCard.dataset.status = "becoming-active-from-left";
         setTimeout(() => {
             nextCard.dataset.status = "active";
             activeIndex = nextIndex;
         }, 100);  
-        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, { target:'#explore-controls', swap:'outerHTML', values: `{"address": "${nextCardAddress}"}` })
+        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, { target:'#explore-controls', swap:'outerHTML' })
+    
+        let nextNextIndex = nextIndex - 1 >= 0 ? nextIndex - 1 : cards.length - 2;
+        const nextNextCard = document.querySelector(`[data-index="${nextNextIndex}"]`);
+        if (nextNextCard.dataset.imgdidset === "true") {
+            return
+        }
+        const nextNextCardAddress = document.getElementById(`property-address-${nextNextCard.id}`).innerText.replace('/','|');
+        htmx.ajax('GET', `/property/get-card-image/`, { target:`#property-card-image-${ nextNextCard.id }`, swap:'outerHTML', values: { address: nextNextCardAddress, property_id: nextNextCard.id } })
+        nextNextCard.dataset.imgdidset = "true";
     }
 
     const handleSaveCard = () => {
         const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
         currentCard.classList.toggle("saved")
         currentCard.classList.toggle("bounce2")
+        let imageStr = document.getElementById(`property-card-image-${currentCard.id}`).src;
+        let addressStr = document.getElementById(`property-address-${currentCard.id}`).innerText;
+        htmx.ajax('POST', `/property/explore-toggle-saved/${currentCard.id}/`, {target:'#save-button', swap:'outerHTML', values: { address: addressStr, image: imageStr } })
     }
 
     const handleHideCard = async () => {
@@ -316,6 +286,18 @@
         }, 100);   
         // update explore controls
         htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
+
+        let nextNextIndex = nextIndex + 1 <= cards.length - 1 ? nextIndex + 1 : 0;
+        if (nextNextIndex === 0) {
+            return
+        }
+        const nextNextCard = document.querySelector(`[data-index="${nextNextIndex}"]`);
+        if (nextNextCard.dataset.imgdidset === "true") {
+            return
+        }
+        const nextNextCardAddress = document.getElementById(`property-address-${nextNextCard.id}`).innerText.replace('/','|');
+        htmx.ajax('GET', `/property/get-card-image/`, { target:`#property-card-image-${ nextNextCard.id }`, swap:'outerHTML', values: { address: nextNextCardAddress, property_id: nextNextCard.id } })
+        nextNextCard.dataset.imgdidset = "true";
     }
 
     function showFilterPopover() {

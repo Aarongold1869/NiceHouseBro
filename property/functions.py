@@ -1,10 +1,11 @@
 from profiles.models import Profile, SavedProperty
 # from .api.test_api import PROPERTY_DATA
+from .api.google_api import google_street_view_api
 from .api.nominatim_api import nominatim_boundry_api
 from .types import Coordinates, MapData, Property
 
 import shapely.geometry as sg
-from typing import List
+from typing import List, TypedDict
 
 # def filter_unsaved(profile: Profile, property_id: int)-> bool:
 #     saved_qs = SavedProperty.objects.filter(profile=profile)
@@ -78,3 +79,22 @@ def retrieve_map_data_from_reverse_search(search_str: str)-> MapData | None:
 #         return point.within(polygon)
 #     filtered_list: List[Property] = list(filter(lambda x: coordinates_are_in_polygon(x['Coordinates'], boundry), PROPERTY_DATA))
 #     return filtered_list
+
+class ImageDict(TypedDict):
+    propertyId: str
+    image: str
+
+def get_card_image_arr(property_list: List[Property])-> List[str]:
+    image_arr = []
+    for i in range(len(property_list)):
+        if i <= 1 or i == len(property_list) - 1:
+            property_obj = property_list[i]
+            saved_qs = SavedProperty.objects.filter(property_id=property_obj['propertyId'])
+            if saved_qs.exists():
+                image = saved_qs[0].image if saved_qs[0].image else google_street_view_api(address=property_obj['address']['address'])
+            else:
+                image = google_street_view_api(address=property_obj['address']['address'])
+            image_arr.append(image)
+        else:
+            image_arr.append(None)
+    return image_arr
