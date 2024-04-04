@@ -84,10 +84,10 @@ class ImageDict(TypedDict):
     propertyId: str
     image: str
 
-def get_card_image_arr(property_list: List[Property])-> List[str]:
+def get_card_image_arr(property_list: List[Property], get_all:bool=False)-> List[str]:
     image_arr = []
     for i in range(len(property_list)):
-        if i <= 1 or i == len(property_list) - 1:
+        if (i <= 1 or i == len(property_list) - 1) or get_all:
             property_obj = property_list[i]
             saved_qs = SavedProperty.objects.filter(property_id=property_obj['propertyId'])
             if saved_qs.exists():

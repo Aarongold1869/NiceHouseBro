@@ -30,7 +30,6 @@ def explore_view(request, search_str:str='', lat=None, lng=None):
             return response
         property_list = property_search_api(address=map_data['address']) # currently notion api is used
     
-
     property_init = None
     is_saved = False
     image_arr = None

@@ -106,7 +106,7 @@
 				html: `<span class="map-marker">${property.estimatedValue.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })}</span>`
 			})
 		}).addTo(map)
-        .on('click', function(e) { window.location.replace(`/property/${property.address.address.replace('/','|')}`) })
+        .on('click', function(e) { window.location.replace(`/property/detail/${property.address.address.replace('/','|')}`) })
         // .bindPopup(`$${property.price}`,{closeOnClick: false, autoClose: false}).openPopup();
     });
 

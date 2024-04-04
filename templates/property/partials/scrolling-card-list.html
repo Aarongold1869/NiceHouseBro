@@ -2,17 +2,19 @@
 {% load currency %}
 {% load percentage %}
 {% load comma %}
+{% load index %}
+{% load remove_slashes %}
 
 <!-- horizontal scrolling conatiner containing cards. Cards include a full width image and text below and link to another
 page containing additional information about the property. on desktop 3 and a half cards are visible, on mobile only 1 card is visible
 initially -->
 
 <style>
-    .flex-row {
+    /* .flex-row {
         display: flex;
         flex-direction: row;
-        /* flex-wrap: wrap; */
         justify-content: space-between;
+        padding: 5px;
     }
     .horizontal-scrollable > .flex-row { 
             overflow-x: scroll; 
@@ -22,39 +24,39 @@ initially -->
     .horizontal-scrollable > .row > .col-xs-4 { 
         display: inline-block; 
         float: none; 
-    } 
+    }  */
     .shadow {
-        box-shadow: 0 0 10px 0 gray!important;
+        box-shadow: 0 0 4px 2px var(--bs-dark-bg-subtle);
+        transform: translateY(0%);
+        transition: transform .2s ease;
     }
     .shadow:hover {
-        box-shadow: 0 0 10px 0 black!important;
-    
+        transform: translateY(-5%);
+        /* transiton: transform .2s ease; */
     }
+
 </style>
 
 <div class="container-fluid py-4" style="background-color: var(--bs-secondary-bg)">
     <div class="col-12 py-2">
         <h2 class="text-center fs-5">Featured Properties in Pensacola, FL</h2>
     </div>
-    <div class="col-12 py-2" style="display:flex; justify-content: center;">
-        <div class='col-sm-8 py-2' style="display: flex; flex-direction: row; overflow-x: scroll; white-space: nowrap; justify-content: flex-start;" >
+    <div class="col-12" style="display:flex; justify-content: center;">
+        <div class='col-sm-8 py-3' style="display: flex; flex-direction: row; overflow-x: scroll; white-space: nowrap; justify-content: flex-start;" >
             {% for property in property_list %}
-            <a 
-            href="#"
-            {% comment %} href="{% url "property-detial" property_id=property.id %}" {% endcomment %}
-            >
+            <a href="{% url "property_detail" address=property.address.address|remove_slashes %}" >
                 <div class="card mx-2 shadow" style="display: inline-block; min-width: 18rem; cursor:pointer;">
-                    <img src="{{ property.cover_image_url }}" class="card-img-top" alt="...">
+                    <img src="{{ image_arr|index:forloop.counter0 }}" class="card-img-top" alt="...">
                     <div class="card-body text-wrap">
-                        <h5 class="card-title" style='font-weight:600;'>{{ property.price|currency:0 }}</h5>
+                        <h5 class="card-title" style='font-weight:600;'>{{ property.estimatedValue|currency:0 }}</h5>
                         <p class='card-subtitle mb-2' style="font-size:.7rem;">
                             Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
                             bds: <strong>{{ property.bedrooms }}</strong>&ensp;|&ensp;
                             br: <strong>{{ property.bathrooms }}</strong>&ensp;|&ensp;
-                            <strong>{{ property.area|comma }} sqft.</strong>
+                            <strong>{{ property.squareFeet }} sqft.</strong>
                         </p>
-                        <h6 class="card-subtitle mb-2 text-muted" style="font-size:.7rem;">{{ property.address }}</h6>
-                        <p class="card-text text-muted" style='font-size:.5rem;'>This is a short description of the property.</p>  
+                        <h6 class="card-subtitle mb-2 text-muted" style="font-size:.7rem;">{{ property.address.address }}</h6>
+                        {% comment %} <p class="card-text text-muted" style='font-size:.5rem;'>This is a short description of the property.</p>   {% endcomment %}
                     </div>
                 </div>
             </a>
