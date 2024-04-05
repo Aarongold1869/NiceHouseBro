@@ -5,6 +5,65 @@
 {% load remove_slashes %}
 {% load index %}
 
+<style>
+
+.property-card {
+    position: absolute;
+    top: 8px;
+    border-radius: 15px;
+    transform: translateX(0) rotate(0) scale(1);
+    transition: transform 400ms ease, box-shadow 300ms ease, border 300ms ease;
+    width: 95%;
+    box-shadow: 0 0 4px 2px var(--bs-dark-bg-subtle);
+}
+
+.property-card[data-status="unknown"] {
+    transform: translateX(50%) rotate(30deg) scale(0.001);
+    transition: none;
+}
+
+.property-card[data-status="active"] {
+    transition-delay: 300ms;
+}
+
+.property-card[data-status="right"] {
+    transform: translateX(50%) rotate(30deg) scale(0.001);
+}
+
+.property-card[data-status="left"] {
+    transform: translateX(-50%) rotate(-30deg) scale(0.001);
+}
+
+.property-card[data-status="becoming-active-from-right"] {
+    transform: translateX(50%) rotate(30deg) scale(0.001);
+    transition: none;
+}
+
+.property-card[data-status="becoming-active-from-left"] {
+    transform: translateX(-50%) rotate(-30deg) scale(0.001);
+    transition: none;
+}
+
+.saved {
+    border: 3px solid var(--love);
+    box-shadow: 0 0 4px 2px var(--love)
+}
+
+.property-card[data-status="hidden"] {
+    transform: translateY(50%) scale(0.001);
+}
+
+.bounce2 {
+    animation: bounce2 1s ease;
+}
+@keyframes bounce2 {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-30px);}
+    60% {transform: translateY(-10px);}
+}
+
+</style>
+
 <div 
 id='{{ property.propertyId }}' 
 class="card property-card"

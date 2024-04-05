@@ -10,31 +10,17 @@ page containing additional information about the property. on desktop 3 and a ha
 initially -->
 
 <style>
-    /* .flex-row {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        padding: 5px;
-    }
-    .horizontal-scrollable > .flex-row { 
-            overflow-x: scroll; 
-            white-space: nowrap; 
-        } 
-          
-    .horizontal-scrollable > .row > .col-xs-4 { 
-        display: inline-block; 
-        float: none; 
-    }  */
     .shadow {
         box-shadow: 0 0 4px 2px var(--bs-dark-bg-subtle);
         transform: translateY(0%);
         transition: transform .2s ease;
     }
-    .shadow:hover {
-        transform: translateY(-5%);
-        /* transiton: transform .2s ease; */
+    @media (min-width: 1000px) {
+        .shadow:hover {
+            transform: translateY(-5%);
+        }
     }
-
+    
 </style>
 
 <div class="container-fluid py-4" style="background-color: var(--bs-secondary-bg)">

@@ -1,8 +1,8 @@
 from profiles.models import Profile, SavedProperty
 # from .api.test_api import PROPERTY_DATA
-from .api.google_api import google_street_view_api
-from .api.nominatim_api import nominatim_boundry_api
-from .types import Coordinates, MapData, Property
+from ..api.google_api import google_street_view_api
+from ..api.nominatim_api import nominatim_boundry_api
+from ..types import Coordinates, MapData, Property
 
 import shapely.geometry as sg
 from typing import List, TypedDict

@@ -31,7 +31,7 @@ class NotionApiPayload(TypedDict):
     beds_min: NotRequired[int]
     beds_max: NotRequired[int]
 
-def property_search_api(address: Address, size:int=250, min:int=0, max:int=0)-> List[Property]:
+def property_search_api(address: Address, size:int=50, min:int=0, max:int=0)-> List[Property]:
     url = 'https://api.realestateapi.com/v2/PropertySearch'
     headers = {
         "accept": "application/json",
