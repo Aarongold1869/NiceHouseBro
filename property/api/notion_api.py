@@ -2,34 +2,34 @@ from django.conf import settings
 
 from property.types import Address, Property
 
-from functools import cache
+from functools import lru_cache
 import requests
-from typing import List, NotRequired, TypedDict
+from typing import List, TypedDict
 
 class NotionApiPayload(TypedDict):
     ids_only: bool
     obfuscate: bool
     summary: bool
-    size: NotRequired[int]
-    Latitude: NotRequired[float]
-    Longitude: NotRequired[float]
-    radius: NotRequired[int]
-    address: NotRequired[str]
-    city: NotRequired[str]
-    state: NotRequired[str]
-    negative_equity: NotRequired[bool]
-    equity: NotRequired[bool]
-    cash_buyer: NotRequired[bool]
-    quit_claim: NotRequired[bool]
-    corporate_owned: NotRequired[bool]
-    free_clear: NotRequired[bool]
-    absentee_owner: NotRequired[bool]
-    reo: NotRequired[bool]
-    auction: NotRequired[bool]
-    foreclosure: NotRequired[bool]
-    pre_foreclosure: NotRequired[bool]
-    beds_min: NotRequired[int]
-    beds_max: NotRequired[int]
+    size: int
+    Latitude: float
+    Longitude: float
+    radius: int
+    address: str
+    city: str
+    state: str
+    negative_equity: bool
+    equity: bool
+    cash_buyer: bool
+    quit_claim: bool
+    corporate_owned: bool
+    free_clear: bool
+    absentee_owner: bool
+    reo: bool
+    auction: bool
+    foreclosure: bool
+    pre_foreclosure: bool
+    beds_min: int
+    beds_max: int
 
 def property_search_api(address: Address, size:int=50, min:int=0, max:int=0)-> List[Property]:
     url = 'https://api.realestateapi.com/v2/PropertySearch'
@@ -65,7 +65,7 @@ def property_search_api(address: Address, size:int=50, min:int=0, max:int=0)-> L
         print(e)
     return property_list
 
-@cache
+@lru_cache
 def property_detail_api(address: str)-> Property:
     url = "https://api.realestateapi.com/v2/PropertySearch"
     payload: NotionApiPayload = {

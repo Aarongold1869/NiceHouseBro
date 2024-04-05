@@ -41,7 +41,7 @@ LOCATION_TYPE_ZOOM_HASH = {
     'postalcode': 10,
 }
 
-def retrieve_map_data_from_search_str(search_str: str)-> MapData | None:
+def retrieve_map_data_from_search_str(search_str: str)-> MapData:
     geocode_data = nominatim_boundry_api(search_str=search_str, reverse=False)
     if not geocode_data:
         return None
@@ -56,7 +56,7 @@ def retrieve_map_data_from_search_str(search_str: str)-> MapData | None:
     )
     return map_data
 
-def retrieve_map_data_from_reverse_search(search_str: str)-> MapData | None:
+def retrieve_map_data_from_reverse_search(search_str: str)-> MapData:
     geocode_data = nominatim_boundry_api(search_str=search_str, reverse=True)
     if not geocode_data:
         return None

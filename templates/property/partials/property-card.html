@@ -85,7 +85,7 @@ data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|
         <div class="card-body text-wrap" style="color:var(--bs-body-color);">
             <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.estimatedValue|currency:0 }}</h5>
             <p class="card-subtitle mb-2" style="font-size:.8rem!important;">
-                Cap: <strong >{{ 0.1|percentage }}</strong>&ensp;|&ensp;
+                Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
                 bds: <strong>{{ property.bedrooms }}</strong>&ensp;|&ensp;
                 br: <strong>{{ property.bathrooms }}</strong>&ensp;|&ensp;
                 <strong>{{ property.squareFeet|comma }} sqft.</strong>

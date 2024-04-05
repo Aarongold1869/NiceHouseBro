@@ -8,7 +8,7 @@ from profiles.models import Profile, SavedProperty
 from .api.notion_api import property_search_api, property_detail_api
 from .api.google_api import google_street_view_api
 from .types import Address, Property
-from .functions import get_card_image_arr, retrieve_map_data_from_search_str, retrieve_map_data_from_reverse_search
+from .functions import get_card_image_arr, retrieve_map_data_from_search_str, retrieve_map_data_from_reverse_search, calculate_cap_rate
 
 from typing import List
 
@@ -29,11 +29,14 @@ def explore_view(request, search_str:str='', lat=None, lng=None):
             response.delete_cookie('coordinates')
             return response
         property_list = property_search_api(address=map_data['address']) # currently notion api is used
-    
+
     property_init = None
     is_saved = False
     image_arr = None
     if property_list: 
+        property_list = list(map(lambda x: 
+                                { **x, 'cap_rate':calculate_cap_rate(value=int(x['estimatedValue']), rent=int(x['rentAmount']) if 'rentAmount' in x.keys() else 0) }, 
+                                property_list))
         property_init = property_list[0]
         is_saved = SavedProperty.objects.filter(property_id=property_init['propertyId']).exists()
         image_arr = get_card_image_arr(property_list)
@@ -52,16 +55,16 @@ def explore_view(request, search_str:str='', lat=None, lng=None):
 @require_http_methods(['GET'])
 def get_explore_controls_view(request, property_id: str):
     address = request.GET.get('address')
-    saved_qs = SavedProperty.objects.filter(Q(profile__user=request.user) & Q(property_id=property_id))
+    saved_qs = SavedProperty.objects.filter(Q(profile__user=request.user) & Q(property_id=property_id) & Q(archived=False))
     is_saved = saved_qs.exists()
-    return render(request, 'property\partials\explore-controls.html', { 'property_obj': { 'propertyId': property_id, "address": { "address": address } }, 'is_saved': is_saved })
+    return render(request, 'property/partials/explore-controls.html', { 'property_obj': { 'propertyId': property_id, "address": { "address": address } }, 'is_saved': is_saved })
 
 @require_http_methods(['GET'])
 def get_card_image_view(request, *args, **kwargs):
     property_id = request.GET.get('property_id')
     address = request.GET.get('address')
     image = google_street_view_api(address=address)
-    return render(request, 'property\partials\card-image.html', {'property_id':property_id,  'image': image})
+    return render(request, 'property/partials/card-image.html', {'property_id':property_id,  'image': image})
 
 @login_required(login_url='/account/login/')
 @require_http_methods(['POST'])

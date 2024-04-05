@@ -3,7 +3,7 @@ from django import template
 register = template.Library()
 
 @register.filter(name='currency')
-def currency(value: float | str, decimal: int)-> str:
+def currency(value: str, decimal: int)-> str:
     if type(value) == str:
         if value == '':
             value = 0

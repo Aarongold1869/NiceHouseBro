@@ -1,11 +1,11 @@
 from django.conf import settings
 
 import base64
-from functools import cache
+from functools import lru_cache
 import requests
 
-@cache
-def google_street_view_api(address:str) -> str | None:
+@lru_cache
+def google_street_view_api(address:str) -> str:
     params = {
         "key": settings.GOOGLE_MAPS_API_KEY,
         "location": address,
@@ -16,5 +16,5 @@ def google_street_view_api(address:str) -> str | None:
         uri = f"data:{res.headers['Content-Type']};base64,{base64.b64encode(res.content).decode('utf-8')}"
         res.close()
     else:
-        uri = None
+        uri = ''
     return uri

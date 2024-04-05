@@ -1,11 +1,11 @@
 
 from property.types import MapData
 
-from functools import cache
+from functools import lru_cache
 from geopy.geocoders import Nominatim
 
-@cache
-def nominatim_boundry_api(search_str: str, reverse: bool)-> dict | None:
+@lru_cache
+def nominatim_boundry_api(search_str: str, reverse: bool)-> dict:
     app = Nominatim(user_agent="NHB")
     if not reverse:
         location = app.geocode(search_str, geometry='geojson', addressdetails=True)
