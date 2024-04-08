@@ -31,7 +31,8 @@ class NotionApiPayload(TypedDict):
     beds_min: int
     beds_max: int
 
-def property_search_api(address: Address, size:int=50, min:int=0, max:int=0)-> List[Property]:
+
+def property_search_api(address: Address, size:int=250, min:int=20000, max:int=0)-> List[Property]:
     url = 'https://api.realestateapi.com/v2/PropertySearch'
     headers = {
         "accept": "application/json",
@@ -60,7 +61,8 @@ def property_search_api(address: Address, size:int=50, min:int=0, max:int=0)-> L
             return property_list
         property_list = res.json()['data']
         res.close()
-        property_list = list(filter(lambda x: 'address' in x.keys() and 'address' in x['address'].keys(), property_list))
+        required = ['address', 'suggestedRent']
+        property_list = list(filter(lambda x: set(required).issubset(x.keys()) and 'address' in x['address'].keys(), property_list)) # require address and suggestedRent
     except requests.exceptions.RequestException as e:
         print(e)
     return property_list
@@ -72,6 +74,7 @@ def property_detail_api(address: str)-> Property:
         "ids_only": False,
         "obfuscate": False,
         "summary": False,
+        
         "size": 1,
         "address": address
     }

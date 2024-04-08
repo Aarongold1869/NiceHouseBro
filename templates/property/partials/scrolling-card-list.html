@@ -36,7 +36,7 @@ initially -->
                     <div class="card-body text-wrap">
                         <h5 class="card-title" style='font-weight:600;'>{{ property.estimatedValue|currency:0 }}</h5>
                         <p class='card-subtitle mb-2' style="font-size:.7rem;">
-                            Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
+                            {% comment %} Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp; {% endcomment %}
                             bds: <strong>{{ property.bedrooms }}</strong>&ensp;|&ensp;
                             br: <strong>{{ property.bathrooms }}</strong>&ensp;|&ensp;
                             <strong>{{ property.squareFeet }} sqft.</strong>

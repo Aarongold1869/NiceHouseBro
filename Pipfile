@@ -12,6 +12,7 @@ shapely = "*"
 django-crispy-forms = "*"
 crispy-bootstrap5 = "*"
 requests = "*"
+beautifulsoup4 = "*"
 
 [dev-packages]
 

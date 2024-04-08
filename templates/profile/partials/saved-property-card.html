@@ -51,14 +51,14 @@
                 <div class="property-card-details">
                     <h6 style="font-weight:600;">{{ property.price|currency:0 }}</h6>
                     <p class="mb-2" style="font-size:1rem;">
-                        Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
+                        Cap: <strong >{{ property.cap_rate }}</strong>&ensp;|&ensp;
                         bds: <strong>{{ property.bedrooms }}</strong>&ensp;|&ensp;
                         br: <strong>{{ property.bathrooms }}</strong>&ensp;|&ensp;
                         <strong>{{ property.area }} sqft.</strong>
                     </p>
                 </div>
                 <div id="card-button-container" class="d-flex py-2">
-                    <a href="/property/{{property.propertyId}}/" class="btn btn-sm btn-outline-info border-3 me-1" style="width:100%;">View Property</a>
+                    <a href="/property/detail/{{property.address}}/" class="btn btn-sm btn-outline-info border-3 me-1" style="width:100%;">View Property</a>
                     <a href="#" class="btn btn-sm love border-3 me-2" style="width:100%;">Contact Agent</a>
                     <button 
                     class="btn btn-sm border-3 border-secondary me-2"

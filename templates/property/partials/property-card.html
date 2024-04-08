@@ -81,11 +81,23 @@ data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|
         alt="..." 
         style="border-top-left-radius:10px;border-top-right-radius:10px;"
         >
+
+        {% if property.cap_rate > 0.04 %}
+        <span class="badge text-white fs-6" style="position: absolute; top: 10px; left: 10px; background-color:var(--love)">Amazing Deal</span>
+        {% elif property.cap_rate > 0.03 %}
         <span class="badge text-white fs-6" style="position: absolute; top: 10px; left: 10px; background-color:var(--love)">Great Deal</span>
+        {% elif property.cap_rate > 0.02 %}
+        <span class="badge text-white fs-6" style="position: absolute; top: 10px; left: 10px; background-color:var(--love)">Good Deal</span>
+        {% elif property.cap_rate > 0.01 %}
+        <span class="badge text-white fs-6" style="position: absolute; top: 10px; left: 10px; background-color:var(--love)">Fair Deal</span>
+        {% endif %}
+   
         <div class="card-body text-wrap" style="color:var(--bs-body-color);">
             <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.estimatedValue|currency:0 }}</h5>
             <p class="card-subtitle mb-2" style="font-size:.8rem!important;">
-                Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
+                {% if property.cap_rate != 0 %}
+                    Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
+                {% endif %}
                 bds: <strong>{{ property.bedrooms }}</strong>&ensp;|&ensp;
                 br: <strong>{{ property.bathrooms }}</strong>&ensp;|&ensp;
                 <strong>{{ property.squareFeet|comma }} sqft.</strong>

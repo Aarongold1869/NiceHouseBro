@@ -35,7 +35,7 @@ def explore_view(request, search_str:str='', lat=None, lng=None):
     image_arr = None
     if property_list: 
         property_list = list(map(lambda x: 
-                                { **x, 'cap_rate':calculate_cap_rate(value=int(x['estimatedValue']), rent=int(x['rentAmount']) if 'rentAmount' in x.keys() else 0) }, 
+                                { **x, 'cap_rate':calculate_cap_rate(value=int(x['estimatedValue']), rent=int(x.get('suggestedRent', 0))) }, 
                                 property_list))
         property_init = property_list[0]
         is_saved = SavedProperty.objects.filter(property_id=property_init['propertyId']).exists()
