@@ -13,6 +13,8 @@ django-crispy-forms = "*"
 crispy-bootstrap5 = "*"
 requests = "*"
 beautifulsoup4 = "*"
+scrapfly-sdk = "*"
+lxml = "*"
 
 [dev-packages]
 
