@@ -1,6 +1,3 @@
-
-from property.types import MapData
-
 from functools import lru_cache
 from geopy.geocoders import Nominatim
 

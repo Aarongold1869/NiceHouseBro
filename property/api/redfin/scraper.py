@@ -39,7 +39,6 @@ class RedfinScraper():
             soup = BeautifulSoup(response.text, 'html.parser')
             pretty: RedfinResponse = soup.prettify().replace('{}&amp;&amp;', '')
             data = json.loads(pretty)["payload"]
-            print(data['originalHomes'].keys())
             property_list = []
             if 'homes' in data:
                 return data['homes']
@@ -50,20 +49,21 @@ class RedfinScraper():
             print(response.status_code)
             print('Failed to scrape the URL')
             return []
-    
-def main():
-    scraper = RedfinScraper(
-        include_nearby_homes=True, 
-        market='seattle', 
-        num_homes=1,
-        page_number=1, 
-        poly='-122.54472%2047.44109%2C-122.11144%2047.44109%2C-122.11144%2047.78363%2C-122.54472%2047.78363%2C-122.54472%2047.44109'
-    )
-    data: List[Property] = scraper.get_property_list()
-    if len(data) > 0:
-        print(data)
 
-if __name__ == '__main__':
-    main()
+
+# def main():
+#     scraper = RedfinScraper(
+#         include_nearby_homes=True, 
+#         market='seattle', 
+#         num_homes=1,
+#         page_number=1, 
+#         poly='-122.54472%2047.44109%2C-122.11144%2047.44109%2C-122.11144%2047.78363%2C-122.54472%2047.78363%2C-122.54472%2047.44109'
+#     )
+#     data: List[Property] = scraper.get_property_list()
+#     if len(data) > 0:
+#         print(data)
+
+# if __name__ == '__main__':
+#     main()
 
 

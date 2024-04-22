@@ -73,17 +73,6 @@ def retrieve_map_data_from_reverse_search(search_str: str)-> MapData:
     )
     return map_data
 
-# def filter_properties_by_search_boundry(boundry: List[Coordinates])-> List[Property]:
-#     def coordinates_are_in_polygon(coordinates: Coordinates, boundry: List[Coordinates])-> bool:
-#         point = sg.Point([coordinates[1], coordinates[0]])
-#         if type(boundry[0][0]) == float:
-#             polygon = sg.Polygon(boundry)
-#         else:
-#             polygon = sg.Polygon(boundry[0])
-#         return point.within(polygon)
-#     filtered_list: List[Property] = list(filter(lambda x: coordinates_are_in_polygon(x['Coordinates'], boundry), PROPERTY_DATA))
-#     return filtered_list
-
 class ImageDict(TypedDict):
     propertyId: str
     image: str

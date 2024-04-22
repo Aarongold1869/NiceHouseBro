@@ -5,7 +5,8 @@ from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
 from profiles.models import Profile, SavedProperty
-from .api.notion_api import property_search_api, property_detail_api
+from .api import property_search_api, property_detail_api
+
 from .api.google_api import google_street_view_api
 from .types import Address, Property
 from .functions import get_card_image_arr, retrieve_map_data_from_search_str, retrieve_map_data_from_reverse_search, calculate_cap_rate
@@ -20,7 +21,7 @@ def explore_view(request, search_str:str='', lat=None, lng=None):
         map_data = retrieve_map_data_from_search_str(search_str=search_str)
         if not map_data:
             raise Exception("Map data not found.")
-        property_list = property_search_api(address=map_data['address']) # currently notion api is used
+        property_list = property_search_api(search_str=map_data['address']['city']) # currently notion api is used
 
     if lat and lng:
         map_data = retrieve_map_data_from_reverse_search(search_str=f"{lng}, {lat}")
