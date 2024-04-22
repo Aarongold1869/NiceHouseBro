@@ -4,13 +4,13 @@ import requests
 from typing import List
 import urllib
 
-from redfin_types import Property
+from .redfin_types import Property, RedfinResponse
 
 class RedfinScraper():
 
     def __init__(self, include_nearby_homes: bool, market:str, num_homes:int, page_number:int, poly:str):
         self.al = 1
-        self.include_nearby_homes = include_nearby_homes
+        self.include_nearby_homes = str(include_nearby_homes).lower()
         self.market = market
         self.num_homes = num_homes
         self.ord = 'redfin-recommended-asc'
@@ -22,7 +22,7 @@ class RedfinScraper():
         self.uipt = '1,2,3,4,5,6,7,8'
 
     def get_endpoint(self)-> str:
-        endpoint = 'gis?' + urllib.parse.urlencode(self.__dict__, safe=',%').lower()                                                                                                                          #-122.54472%2047.44109%2C-122.11144%2047.44109%2C-122.11144%2047.78363%2C-122.54472%2047.78363%2C-122.54472%2047.44109'
+        endpoint = 'gis?' + urllib.parse.urlencode(self.__dict__, safe=',%')                                                                                                                         #-122.54472%2047.44109%2C-122.11144%2047.44109%2C-122.11144%2047.78363%2C-122.54472%2047.78363%2C-122.54472%2047.44109'
         return endpoint
     
     def get_property_list(self)-> List[Property]:
@@ -37,9 +37,15 @@ class RedfinScraper():
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')
-            pretty = soup.prettify().replace('{}&amp;&amp;', '')
-            data = json.loads(pretty)["payload"]["homes"]
-            return data
+            pretty: RedfinResponse = soup.prettify().replace('{}&amp;&amp;', '')
+            data = json.loads(pretty)["payload"]
+            print(data['originalHomes'].keys())
+            property_list = []
+            if 'homes' in data:
+                return data['homes']
+            elif 'originalHomes' in data:
+                return data['originalHomes']['homes']
+            return property_list
         else:
             print(response.status_code)
             print('Failed to scrape the URL')

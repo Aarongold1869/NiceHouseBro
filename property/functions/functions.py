@@ -42,14 +42,18 @@ LOCATION_TYPE_ZOOM_HASH = {
 }
 
 def retrieve_map_data_from_search_str(search_str: str)-> MapData:
-    geocode_data = nominatim_boundry_api(search_str=search_str, reverse=False)
+    geocode_data = nominatim_boundry_api(search_str=search_str)
     if not geocode_data:
         return None
     addresstype = geocode_data.raw['addresstype']
-    print(addresstype)
+    coordinates = geocode_data.raw['geojson']['coordinates'][0]
+    if type(coordinates[0][0]) == float:
+        boundry = coordinates
+    else:
+        boundry = coordinates[0]
     map_data: MapData = MapData( 
         coordinates=[geocode_data.latitude, geocode_data.longitude],
-        boundry=geocode_data.raw['geojson'], 
+        boundry=boundry, 
         zoom=LOCATION_TYPE_ZOOM_HASH.get(addresstype, 11),
         bounding_box=geocode_data.raw['boundingbox'],
         address=geocode_data.raw['address']
