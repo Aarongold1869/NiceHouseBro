@@ -110,10 +110,11 @@
     // Get the property list from the django context
     const propertyList = JSON.parse(document.getElementById('property_list').textContent);
     propertyList.forEach(function (property) {
-        L.marker([property.latitude, property.longitude], {
+        console.log([property.latLong.value.latitude, property.latLong.value.longitude])
+        L.marker([property.latLong.value.latitude, property.latLong.value.longitude], {
 			icon: L.divIcon({
 				className: 'markerDiv', 
-				html: `<span class="map-marker">${property.estimatedValue.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })}</span>`
+				html: `<span class="map-marker">${property.price.value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })}</span>`
 			})
 		}).addTo(map)
         .on('click', function(e) { window.location.replace(`/property/detail/${property.address.address.replace('/','|')}`) })

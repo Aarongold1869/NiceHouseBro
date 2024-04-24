@@ -18,25 +18,22 @@ def explore_view(request, search_str:str='', lat=None, lng=None):
     property_list: List[Property] = []
     
     if search_str != '':
-        map_data = retrieve_map_data_from_search_str(search_str=search_str)
-        if not map_data:
-            raise Exception("Map data not found.")
-        property_list = property_search_api(search_str=map_data['address']['city']) # currently notion api is used
+        property_list, map_data = property_search_api(search_str=search_str) # currently notion api is used
 
-    if lat and lng:
-        map_data = retrieve_map_data_from_reverse_search(search_str=f"{lng}, {lat}")
-        if not map_data:
-            response = render(request, '500.html', {})
-            response.delete_cookie('coordinates')
-            return response
-        property_list = property_search_api(address=map_data['address']) # currently notion api is used
+    # if lat and lng:
+    #     map_data = retrieve_map_data_from_reverse_search(search_str=f"{lng}, {lat}")
+    #     if not map_data:
+    #         response = render(request, '500.html', {})
+    #         response.delete_cookie('coordinates')
+    #         return response
+    #     property_list = property_search_api(address=map_data['address']) # currently notion api is used
 
     property_init = None
     is_saved = False
     image_arr = None
     if property_list: 
         property_list = list(map(lambda x: 
-                                { **x, 'cap_rate':calculate_cap_rate(value=int(x['estimatedValue']), rent=int(x.get('suggestedRent', 0))) }, 
+                                { **x, 'cap_rate':calculate_cap_rate(value=int(x['price']['value']), rent=int(x.get('suggestedRent', 0))) }, 
                                 property_list))
         property_init = property_list[0]
         is_saved = SavedProperty.objects.filter(property_id=property_init['propertyId']).exists()

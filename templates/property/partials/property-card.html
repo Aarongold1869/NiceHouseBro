@@ -72,7 +72,7 @@ data-status="{% if forloop.counter0 == 0 %}active{% else %}unknown{% endif %}"
 data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|length %}true{% else %}false{% endif %}"
 >
     <a 
-    href="{% url 'property_detail' address=property.address.address|remove_slashes %}" 
+    {% comment %} href="{% url 'property_detail' address=property.address.address|remove_slashes %}"  {% endcomment %}
     style="position: relative;">
         <img 
         id="property-card-image-{{ property.propertyId }}"
@@ -93,14 +93,15 @@ data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|
         {% endif %}
    
         <div class="card-body text-wrap" style="color:var(--bs-body-color);">
-            <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.estimatedValue|currency:0 }}</h5>
+            {% comment %} <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.estimatedValue|currency:0 }}</h5> {% endcomment %}
+            <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.price.value|currency:0 }}</h5>
             <p class="card-subtitle mb-2" style="font-size:.8rem!important;">
                 {% if property.cap_rate != 0 %}
                     Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
                 {% endif %}
                 bds: <strong>{{ property.bedrooms }}</strong>&ensp;|&ensp;
                 br: <strong>{{ property.bathrooms }}</strong>&ensp;|&ensp;
-                <strong>{{ property.squareFeet|comma }} sqft.</strong>
+                <strong>{{ property.sqFt.value|comma }} sqft.</strong>
             </p>
             <h6 id="property-address-{{ property.propertyId }}" class="card-subtitle mb-2" style="font-size:.8rem;">{{ property.address.address }}</h6>
             {% comment %} <p class="card-text text-muted" style="font-size:.8rem;">This is a short description of the property.</p>   {% endcomment %}
