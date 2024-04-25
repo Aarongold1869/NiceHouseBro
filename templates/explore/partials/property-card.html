@@ -1,0 +1,110 @@
+{% load static %}
+{% load currency %}
+{% load percentage %}
+{% load comma %}
+{% load remove_slashes %}
+{% load index %}
+
+<style>
+
+.property-card {
+    position: absolute;
+    top: 8px;
+    border-radius: 15px;
+    transform: translateX(0) rotate(0) scale(1);
+    transition: transform 400ms ease, box-shadow 300ms ease, border 300ms ease;
+    width: 95%;
+    box-shadow: 0 0 4px 2px var(--bs-dark-bg-subtle);
+}
+
+.property-card[data-status="unknown"] {
+    transform: translateX(50%) rotate(30deg) scale(0.001);
+    transition: none;
+}
+
+.property-card[data-status="active"] {
+    transition-delay: 300ms;
+}
+
+.property-card[data-status="right"] {
+    transform: translateX(50%) rotate(30deg) scale(0.001);
+}
+
+.property-card[data-status="left"] {
+    transform: translateX(-50%) rotate(-30deg) scale(0.001);
+}
+
+.property-card[data-status="becoming-active-from-right"] {
+    transform: translateX(50%) rotate(30deg) scale(0.001);
+    transition: none;
+}
+
+.property-card[data-status="becoming-active-from-left"] {
+    transform: translateX(-50%) rotate(-30deg) scale(0.001);
+    transition: none;
+}
+
+.saved {
+    border: 3px solid var(--love);
+    box-shadow: 0 0 4px 2px var(--love)
+}
+
+.property-card[data-status="hidden"] {
+    transform: translateY(50%) scale(0.001);
+}
+
+.bounce2 {
+    animation: bounce2 1s ease;
+}
+@keyframes bounce2 {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-30px);}
+    60% {transform: translateY(-10px);}
+}
+
+</style>
+
+<div 
+id='{{ property.propertyId }}' 
+class="card property-card"
+data-index="{{ forloop.counter0 }}" 
+data-status="{% if forloop.counter0 == 0 %}active{% else %}unknown{% endif %}"
+data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|length %}true{% else %}false{% endif %}"
+>
+    <a 
+    {% comment %} href="{% url 'property_detail' address=property.address|remove_slashes %}"  {% endcomment %}
+    style="position: relative;">
+        <img 
+        id="property-card-image-{{ property.propertyId }}"
+        src="{{ card_img_arr|index:forloop.counter0 }}" 
+        class="img-fluid card-img-top" 
+        alt="..." 
+        style="border-top-left-radius:10px;border-top-right-radius:10px;"
+        >
+
+        {% if property.cap_rate > 0.04 %}
+        <span class="badge text-white fs-6" style="position: absolute; top: 10px; left: 10px; background-color:var(--love)">Amazing Deal</span>
+        {% elif property.cap_rate > 0.03 %}
+        <span class="badge text-white fs-6" style="position: absolute; top: 10px; left: 10px; background-color:var(--love)">Great Deal</span>
+        {% elif property.cap_rate > 0.02 %}
+        <span class="badge text-white fs-6" style="position: absolute; top: 10px; left: 10px; background-color:var(--love)">Good Deal</span>
+        {% elif property.cap_rate > 0.01 %}
+        <span class="badge text-white fs-6" style="position: absolute; top: 10px; left: 10px; background-color:var(--love)">Fair Deal</span>
+        {% endif %}
+   
+        <div class="card-body text-wrap" style="color:var(--bs-body-color);">
+            {% comment %} <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.estimatedValue|currency:0 }}</h5> {% endcomment %}
+            <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.price.value|currency:0 }}</h5>
+            <p class="card-subtitle mb-2" style="font-size:.8rem!important;">
+                {% if property.cap_rate != 0 %}
+                    Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
+                {% endif %}
+                bds: <strong>{{ property.beds }}</strong>&ensp;|&ensp;
+                br: <strong>{{ property.baths }}</strong>&ensp;|&ensp;
+                <strong>{{ property.sqFt.value|comma }} sqft.</strong>
+            </p>
+            <h6 id="property-address-{{ property.propertyId }}" class="card-subtitle mb-2" style="font-size:.8rem;">{{ property.address }}</h6>
+            {% comment %} <p class="card-text text-muted" style="font-size:.8rem;">This is a short description of the property.</p>   {% endcomment %}
+        </div>
+    </a>
+</div>

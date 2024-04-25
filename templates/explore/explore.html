@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+    #explore-container {
+        height:100vh;
+        overflow: hidden;
+    }
+
+    #property-card-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 4px;
+        position: relative;
+        /* width: 100%; */
+        height: 500px;
+        overflow: hidden;
+    }
+
+    #property-card-container a {
+        text-decoration: none;
+        color: var(--foreground);
+    }
+
+    #map-container {
+        position: absolute;
+        z-index: 99;
+        transition: none;
+        transform: translateX(100%);
+    }
+    #map-container[data-visible="true"] {
+        transform: translateX(0%);
+        transition: transform 300ms ease;
+    }
+    #map-container[data-visible="false"] {
+        transform: translateX(100%);
+        transition: transform 300ms ease;
+    }
+
+    @media only screen and (min-width: 600px) {
+        #property-card-container {
+            height: 650px;
+        }
+    }
+    @media only screen and (min-width: 1000px) {
+        #explore-container {
+            height: 95vh;
+        }
+        #property-card-container {
+            height: 700px;
+        }
+        #map-container {
+            position: relative;
+            transform: translateX(0%)!important;
+            display: block;
+        }
+        #map-button {
+            display: none; 
+        }
+    }
+</style>
+    
+<div id='explore-container' class="d-flex flex-column align-items-center position-relative" >
+
+    <div id='current-search' class="d-flex w-100 pt-4 pb-3 px-3 m-0 mb-1" style="background-color: var(--bs-dark-bg-subtle)">
+        <div class="d-flex col-12 col-lg-4">
+            <input id="location-search" type="text" class="form-control me-2" style="border:3px solid var(--bs-secondary-color);" placeholder="{{ search_str }}" >
+            <button id="search-button" class="btn love border-3 me-2">Search</button>
+            <button class="btn btn-outline-info border-3" onclick="showFilterPopover()">
+                {% include "icons/filter.html" %}
+            </button>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center w-100 h-100">
+
+        <div id='swiping-component' class="col-12 col-md-8 col-lg-4 overflow-hidden p-1 px-2">
+
+            <div class="d-flex align-items-center justify-content-between px-3 pt-1 pb-2">
+                <h3 class="mb-0">Explore</h3>
+                <button 
+                id="map-button" 
+                class="btn border-0 p-0 m-0" 
+                onclick="toggleMapView()"
+                >
+                    {% include "icons/map-icon.html" %}
+                </button>
+            </div>
+
+            <!-- Swiping Property List -->
+            <div id='property-card-container'>
+
+                {% if not property_list %}
+
+                    {% include "explore/partials/end-of-list.html" %}
+
+                {% else %}
+
+                    {% for property in property_list %}
+
+                        {% include "explore/partials/property-card.html" %}
+
+                    {% endfor %}
+                    
+                {% endif %}
+
+                 <!-- Controls -->
+                {% if property_obj %}
+                    {% include "explore/partials/explore-controls.html" %}
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div id='map-container' class="col-12 col-lg-8 p-1 h-100" style="background-color: var(--bs-body-bg);" data-visible="false">
+            <div id="map-header" class="d-flex align-items-center justify-content-between px-3 pt-1 pb-2">
+                <h3 class="mb-0">Map</h3>
+                <button 
+                id="map-button" 
+                class="btn border-0 p-0 m-0" 
+                onclick="toggleMapView()"
+                >
+                    {% include "icons/arrows.html" %}
+                </button>
+            </div>
+            
+            {% include "explore/partials/explore-map.html" %}
+        
+        </div>
+    
+    </div>
+
+</div>
+
+{% include "explore/explore-filter.html" %}
+
+{% include "components/register-modal.html" %}
+
+<script>
+
+    let activeIndex = 0;
+    const cards = document.getElementsByClassName("property-card");
+
+    const handleNextCard = () => {
+        const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
+        let nextIndex = activeIndex + 1 <= cards.length - 1 ? activeIndex + 1 : 0;
+        const nextCard = document.querySelector(`[data-index="${nextIndex}"]`);
+        currentCard.dataset.status = "left";
+        nextCard.dataset.status = "becoming-active-from-right";
+        setTimeout(() => {
+            nextCard.dataset.status = "active";
+            activeIndex = nextIndex;
+        }, 100);  
+        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, { target:'#explore-controls', swap:'outerHTML' })
+        
+        let nextNextIndex = nextIndex + 1 <= cards.length - 1 ? nextIndex + 1 : 0;
+        if (nextNextIndex === 0) {
+            return
+        }
+        const nextNextCard = document.querySelector(`[data-index="${nextNextIndex}"]`);
+        if (nextNextCard.dataset.imgdidset === "true") {
+            return
+        }
+        const nextNextCardAddress = document.getElementById(`property-address-${nextNextCard.id}`).innerText.replace('/','|');
+        htmx.ajax('GET', `/property/get-card-image/`, { target:`#property-card-image-${ nextNextCard.id }`, swap:'outerHTML', values: { address: nextNextCardAddress, property_id: nextNextCard.id } })
+        nextNextCard.dataset.imgdidset = "true";
+    }
+
+    const handlePrevCard = () => {
+        const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
+        let nextIndex = activeIndex - 1 >= 0 ? activeIndex - 1 : cards.length - 1;
+        const nextCard = document.querySelector(`[data-index="${nextIndex}"]`);
+        currentCard.dataset.status = "right";
+        nextCard.dataset.status = "becoming-active-from-left";
+        setTimeout(() => {
+            nextCard.dataset.status = "active";
+            activeIndex = nextIndex;
+        }, 100);  
+        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, { target:'#explore-controls', swap:'outerHTML' })
+    
+        let nextNextIndex = nextIndex - 1 >= 0 ? nextIndex - 1 : cards.length - 2;
+        const nextNextCard = document.querySelector(`[data-index="${nextNextIndex}"]`);
+        if (nextNextCard.dataset.imgdidset === "true") {
+            return
+        }
+        const nextNextCardAddress = document.getElementById(`property-address-${nextNextCard.id}`).innerText.replace('/','|');
+        htmx.ajax('GET', `/property/get-card-image/`, { target:`#property-card-image-${ nextNextCard.id }`, swap:'outerHTML', values: { address: nextNextCardAddress, property_id: nextNextCard.id } })
+        nextNextCard.dataset.imgdidset = "true";
+    }
+
+    const handleSaveCard = () => {
+        const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
+        currentCard.classList.toggle("saved")
+        currentCard.classList.toggle("bounce2")
+        let imageStr = document.getElementById(`property-card-image-${currentCard.id}`).src;
+        let addressStr = document.getElementById(`property-address-${currentCard.id}`).innerText;
+        htmx.ajax('POST', `/property/explore-toggle-saved/${currentCard.id}/`, {target:'#save-button', swap:'outerHTML', values: { address: addressStr, image: imageStr } })
+    }
+
+    const handleHideCard = async () => {
+        // get current card
+        const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
+        // set status to hidden -> hidden css transition
+        currentCard.dataset.status = "hidden";
+        // remove card from DOM following transition
+        await new Promise(resolve => setTimeout(resolve, 300));
+        currentCard.remove();
+        // update index of remaining cards
+        for (let i = 0; i < cards.length; i++) {
+            cards[i].dataset.index = i;
+        } 
+        // if no cards left, retrieve new cards
+        if (cards.length === 0) {
+            console.log('retrieve new cards')
+            // htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
+            return
+        }
+        // increment index
+        let nextIndex = activeIndex <= cards.length - 1 ? activeIndex : 0;
+        // get and display next card
+        const nextCard = document.querySelector(`[data-index="${nextIndex}"]`);
+        nextCard.dataset.status = "becoming-active-from-right";
+        setTimeout(() => {
+            nextCard.dataset.status = "active";
+            activeIndex = nextIndex;
+        }, 100);   
+        // update explore controls
+        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
+
+        let nextNextIndex = nextIndex + 1 <= cards.length - 1 ? nextIndex + 1 : 0;
+        if (nextNextIndex === 0) {
+            return
+        }
+        const nextNextCard = document.querySelector(`[data-index="${nextNextIndex}"]`);
+        if (nextNextCard.dataset.imgdidset === "true") {
+            return
+        }
+        const nextNextCardAddress = document.getElementById(`property-address-${nextNextCard.id}`).innerText.replace('/','|');
+        htmx.ajax('GET', `/property/get-card-image/`, { target:`#property-card-image-${ nextNextCard.id }`, swap:'outerHTML', values: { address: nextNextCardAddress, property_id: nextNextCard.id } })
+        nextNextCard.dataset.imgdidset = "true";
+    }
+
+    function showFilterPopover() {
+        const filterPopover = document.getElementById("explore-filter-popover");
+        filterPopover.style.display = "flex";
+        setTimeout(() => {
+            filterPopover.classList.toggle("popover-hidden");
+        }, 10);  
+    }
+
+    function toggleMapView() {
+        const mapContainer = document.getElementById("map-container");
+        // const swipingComponent = document.getElementById("swiping-component");
+        mapContainer.dataset.visible = mapContainer.dataset.visible === "false" ? "true" : "false";
+        // swipingComponent.style.display = swipingComponent.style.display === "none" ? "block" : "none";
+    }
+
+    function promptLogin() {
+        document.getElementById("register-modal").style.display = "flex";
+    }
+
+    function submitSearch(event) {
+        event.preventDefault();
+        const search = document.getElementById('location-search').value;
+        if (search === '') {
+          return;
+        }
+        window.location.replace(`/explore/search=${search}`)
+      }
+    
+      const searchButton = document.getElementById('search-button');
+      searchButton.addEventListener("click", submitSearch, false);
+    
+      function initialize() {
+        new google.maps.places.Autocomplete(searchInput);
+      }
+      const searchInput = document.getElementById('location-search');
+      searchInput.addEventListener('keypress', initialize);
+
+</script>
+
+{% endblock content %}

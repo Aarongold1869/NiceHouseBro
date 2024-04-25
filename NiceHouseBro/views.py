@@ -1,18 +1,19 @@
 from django.conf import settings
 from django.shortcuts import render
 
-from property.api import property_search_api
-from property.functions import get_card_image_arr
-from property.types import Property
+from api.redfin import fetch_property_list_from_map_data
+from api.redfin.redfin_types import Property
+from explore.functions import fetch_card_image_arr
 
 from typing import List
 
 def home_view(request):
-    property_list: List[Property] = property_search_api(search_str='Pensacola, FL')
-    image_arr = get_card_image_arr(property_list=property_list, get_all=True)
+    # property_list: List[Property] = property_search_api(search_str='Pensacola, FL')
+    property_list: List[Property] = []
+    # image_arr = get_card_image_arr(property_list=property_list, get_all=True)
+    card_img_arr = []
     context = {
         'property_list': property_list, 
-        'image_arr': image_arr,
-        'API_KEY': settings.GOOGLE_MAPS_API_KEY
+        'card_img_arr': card_img_arr,
     }
     return render(request, 'home.html', context)

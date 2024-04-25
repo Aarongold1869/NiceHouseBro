@@ -32,7 +32,7 @@ initially -->
             {% for property in property_list %}
             {% comment %} <a href="{% url "property_detail" address=property.address.address|remove_slashes %}" > {% endcomment %}
                 <div class="card mx-2 shadow" style="display: inline-block; min-width: 18rem; cursor:pointer;">
-                    <img src="{{ image_arr|index:forloop.counter0 }}" class="card-img-top" alt="...">
+                    <img src="{{ card_img_arr|index:forloop.counter0 }}" class="card-img-top" alt="...">
                     <div class="card-body text-wrap">
                         <h5 class="card-title" style='font-weight:600;'>{{ property.estimatedValue|currency:0 }}</h5>
                         <p class='card-subtitle mb-2' style="font-size:.7rem;">

@@ -4,8 +4,7 @@ from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
 from .models import Profile, SavedProperty
-from property.api.notion_api import property_detail_api
-from property.types import Property
+from api.redfin import property_detail_api
 
 import ast
 import json
