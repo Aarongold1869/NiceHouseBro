@@ -124,4 +124,4 @@ class NominatimApiReponse(TypedDict):
     display_name: str
     boundingbox: List[str]
     geojson: List[str]
-    addressdetails: Address
+    addressdetails: Dict

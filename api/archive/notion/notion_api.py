@@ -1,10 +1,10 @@
 from django.conf import settings
 
-from api.archive.types import Address, Property
+from .types import Property
 
 from functools import lru_cache
 import requests
-from typing import List, TypedDict
+from typing import List, TypedDict, Dict
 
 class NotionApiPayload(TypedDict):
     ids_only: bool
@@ -32,7 +32,7 @@ class NotionApiPayload(TypedDict):
     beds_max: int
 
 
-def property_search_api(address: Address, size:int=250, min:int=20000, max:int=0)-> List[Property]:
+def property_search_api(address: Dict, size:int=250, min:int=20000, max:int=0)-> List[Property]:
     url = 'https://api.realestateapi.com/v2/PropertySearch'
     headers = {
         "accept": "application/json",
