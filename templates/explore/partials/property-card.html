@@ -72,7 +72,7 @@ data-status="{% if forloop.counter0 == 0 %}active{% else %}unknown{% endif %}"
 data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|length %}true{% else %}false{% endif %}"
 >
     <a 
-    {% comment %} href="{% url 'property_detail' address=property.address|remove_slashes %}"  {% endcomment %}
+    href="{% url 'property_detail' address=property.address|remove_slashes %}" 
     style="position: relative;">
         <img 
         id="property-card-image-{{ property.propertyId }}"
@@ -99,8 +99,8 @@ data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|
                 {% if property.cap_rate != 0 %}
                     Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
                 {% endif %}
-                bds: <strong>{{ property.beds }}</strong>&ensp;|&ensp;
-                br: <strong>{{ property.baths }}</strong>&ensp;|&ensp;
+                beds: <strong>{{ property.beds }}</strong>&ensp;|&ensp;
+                baths: <strong>{{ property.baths }}</strong>&ensp;|&ensp;
                 <strong>{{ property.sqFt.value|comma }} sqft.</strong>
             </p>
             <h6 id="property-address-{{ property.propertyId }}" class="card-subtitle mb-2" style="font-size:.8rem;">{{ property.address }}</h6>

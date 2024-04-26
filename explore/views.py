@@ -1,6 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.conf import settings
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
@@ -14,21 +15,27 @@ from profiles.models import Profile, SavedProperty
 from .functions import fetch_card_image_arr
 from property.functions import calculate_cap_rate
 
+import random
 from typing import List
 
-def explore_view(request, search_str:str=''):
+def explore_view(request, search_str:str='Pensacola, FL'):
     ''' View recieves search string as an argument and returns a list of properties, 
     and map data based on the search string. If no search string is provided, the 
     view returns data for Pensacola, FL.'''
 
     map_data: MapData = fetch_map_data_from_search_str(search_str=search_str) 
-    # property_list: List[Property] = fetch_property_list_from_map_data(map_data=map_data)
+    if not map_data:
+        return HttpResponse(status=500)
+    
+    # fetch property list from map data (specifically boundry info)
+    property_list: List[Property] = fetch_property_list_from_map_data(map_data=map_data)
+    # calculate cap rate for each property
+    # create address string for each property
     property_list = list(map(lambda x: { 
                                 **x, 
-                                'cap_rate': calculate_cap_rate(value=int(x['price']['value']), rent=int(x.get('suggestedRent', 0))),
-                                'address': f"{x['streetLine']} {x['city']}, {x['state']} {x['postalCode']}"
-                            }, fetch_property_list_from_map_data(map_data=map_data)))
-    
+                                'cap_rate': calculate_cap_rate(value=int(x['price']['value']), rent=random.randint(1000, 2000)),
+                                'address': f"{x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine']} {x['city']}, {x['state']} {x['postalCode']['value']}"
+                            }, property_list))
     property_init = None
     is_saved = False
     card_img_arr = None
@@ -61,7 +68,7 @@ def get_card_image_view(request, *args, **kwargs):
     property_id = request.GET.get('property_id')
     address = request.GET.get('address')
     image = google_street_view_api(address=address)
-    return render(request, 'property/partials/card-image.html', {'property_id':property_id,  'image': image})
+    return render(request, 'explore/partials/card-image.html', {'property_id': property_id, 'image': image})
 
 @login_required(login_url='/account/login/')
 @require_http_methods(['POST'])

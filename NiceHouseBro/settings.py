@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'django_htmx',
 
     'account',
+    'agent',
     'profiles',
     'property',
 ]

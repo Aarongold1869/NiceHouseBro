@@ -73,7 +73,7 @@ class Property(TypedDict):
     isShortlisted: bool
     isViewedListing: bool
 
-class RedfinPayloadData(TypedDict):
+class RedfinSearchPagePayload(TypedDict):
     homes: List[Property]
     dataSources: List[dict]
     buildings: dict
@@ -82,11 +82,14 @@ class RedfinPayloadData(TypedDict):
     csvDownloadLinkDisplayLevel: int
     hasBrokerInformation: bool
 
+class RedfinDetailPagePayload(TypedDict):
+    ...
+
 class RedfinResponse(TypedDict):
     version: int
     errorMessage: str
     resultCode: int
-    payload: dict
+    payload: RedfinSearchPagePayload | RedfinDetailPagePayload
 
 ''' 
 Redfin response data structure:

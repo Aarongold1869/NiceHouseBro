@@ -47,6 +47,7 @@ def fetch_map_data_from_search_str(search_str: str)-> MapData:
         boundry = coordinates
     else:
         boundry = coordinates[0]
+    # print(boundry)
     map_data: MapData = MapData( 
         coordinates=[geocode_data.latitude, geocode_data.longitude],
         boundry=boundry, 

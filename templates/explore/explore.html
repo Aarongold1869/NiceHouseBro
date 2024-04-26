@@ -156,7 +156,7 @@
             nextCard.dataset.status = "active";
             activeIndex = nextIndex;
         }, 100);  
-        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, { target:'#explore-controls', swap:'outerHTML' })
+        htmx.ajax('GET', `/explore/get-explore-controls/${nextCard.id}/`, { target:'#explore-controls', swap:'outerHTML' })
         
         let nextNextIndex = nextIndex + 1 <= cards.length - 1 ? nextIndex + 1 : 0;
         if (nextNextIndex === 0) {
@@ -167,7 +167,7 @@
             return
         }
         const nextNextCardAddress = document.getElementById(`property-address-${nextNextCard.id}`).innerText.replace('/','|');
-        htmx.ajax('GET', `/property/get-card-image/`, { target:`#property-card-image-${ nextNextCard.id }`, swap:'outerHTML', values: { address: nextNextCardAddress, property_id: nextNextCard.id } })
+        htmx.ajax('GET', `/explore/get-card-image/`, { target:`#property-card-image-${ nextNextCard.id }`, swap:'outerHTML', values: { address: nextNextCardAddress, property_id: nextNextCard.id } })
         nextNextCard.dataset.imgdidset = "true";
     }
 
@@ -181,7 +181,7 @@
             nextCard.dataset.status = "active";
             activeIndex = nextIndex;
         }, 100);  
-        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, { target:'#explore-controls', swap:'outerHTML' })
+        htmx.ajax('GET', `/explore/get-explore-controls/${nextCard.id}/`, { target:'#explore-controls', swap:'outerHTML' })
     
         let nextNextIndex = nextIndex - 1 >= 0 ? nextIndex - 1 : cards.length - 2;
         const nextNextCard = document.querySelector(`[data-index="${nextNextIndex}"]`);
@@ -189,7 +189,7 @@
             return
         }
         const nextNextCardAddress = document.getElementById(`property-address-${nextNextCard.id}`).innerText.replace('/','|');
-        htmx.ajax('GET', `/property/get-card-image/`, { target:`#property-card-image-${ nextNextCard.id }`, swap:'outerHTML', values: { address: nextNextCardAddress, property_id: nextNextCard.id } })
+        htmx.ajax('GET', `/explore/get-card-image/`, { target:`#property-card-image-${ nextNextCard.id }`, swap:'outerHTML', values: { address: nextNextCardAddress, property_id: nextNextCard.id } })
         nextNextCard.dataset.imgdidset = "true";
     }
 
@@ -199,7 +199,7 @@
         currentCard.classList.toggle("bounce2")
         let imageStr = document.getElementById(`property-card-image-${currentCard.id}`).src;
         let addressStr = document.getElementById(`property-address-${currentCard.id}`).innerText;
-        htmx.ajax('POST', `/property/explore-toggle-saved/${currentCard.id}/`, {target:'#save-button', swap:'outerHTML', values: { address: addressStr, image: imageStr } })
+        htmx.ajax('POST', `/explore/explore-toggle-saved/${currentCard.id}/`, {target:'#save-button', swap:'outerHTML', values: { address: addressStr, image: imageStr } })
     }
 
     const handleHideCard = async () => {
@@ -230,7 +230,7 @@
             activeIndex = nextIndex;
         }, 100);   
         // update explore controls
-        htmx.ajax('GET', `/property/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
+        htmx.ajax('GET', `/explore/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
 
         let nextNextIndex = nextIndex + 1 <= cards.length - 1 ? nextIndex + 1 : 0;
         if (nextNextIndex === 0) {
@@ -241,7 +241,7 @@
             return
         }
         const nextNextCardAddress = document.getElementById(`property-address-${nextNextCard.id}`).innerText.replace('/','|');
-        htmx.ajax('GET', `/property/get-card-image/`, { target:`#property-card-image-${ nextNextCard.id }`, swap:'outerHTML', values: { address: nextNextCardAddress, property_id: nextNextCard.id } })
+        htmx.ajax('GET', `/explore/get-card-image/`, { target:`#property-card-image-${ nextNextCard.id }`, swap:'outerHTML', values: { address: nextNextCardAddress, property_id: nextNextCard.id } })
         nextNextCard.dataset.imgdidset = "true";
     }
 
