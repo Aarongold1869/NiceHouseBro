@@ -66,7 +66,6 @@ class RedfinPropertyDetailScraper():
         endpoint = f'{self.state}/{self.city}/{self.address}/home/{self.id}'
         return endpoint
     
-    # @lru_cache
     def get_soup(self)-> Dict:
         # https://www.redfin.com/TN/Elizabethton/121-Williams-Ave-37643/home/116345480
         base_url = 'https://www.redfin.com/'
@@ -92,10 +91,11 @@ class RedfinPropertyDetailScraper():
         home_stats = soup.find_all('div', class_='home-main-stats-variant')
         stat_blocks = home_stats[0].find_all('div', class_='stat-block')
         stats = {}
-        # for el in stat_blocks:
-        #     key = el.find('html_element', class_='statsLabel').text
-        #     val = el.find('html_element', class_='statsValue').text if el.find('html_element', class_='statsValue') else None
-        #     stats[key] = val 
+        print(stat_blocks)
+        for el in stat_blocks:
+            key = el.find(class_='statsLabel').text
+            val = el.find(class_='statsValue').text
+            stats[key] = val 
         return stats
 
 

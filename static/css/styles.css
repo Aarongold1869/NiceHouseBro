@@ -56,7 +56,8 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: var(--love);;
+  background-color: var(--bs-body-bg);
+  outline: 2px solid var(--bs-secondary-color);
   -webkit-transition: .4s;
   transition: .4s;
 }
@@ -66,15 +67,11 @@ body {
   content: "";
   height: 16px;
   width: 16px;
-  left: 2px;
-  bottom: 4px;
-  background-color: white;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--love);
   -webkit-transition: .4s;
   transition: .4s;
-}
-
-input:checked + .slider {
-  background-color: var(--love);
 }
 
 input:focus + .slider {
