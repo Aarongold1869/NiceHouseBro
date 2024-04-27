@@ -9,14 +9,13 @@ from api.redfin import property_detail_api
 from api.redfin.redfin_types import Property
 
 def property_detail_view(request, address:str='5663 Dunridge Drive, Pace FL 32571'):
-    property: Property = property_detail_api(address=address)
-    street_view_image = google_street_view_api(address=address)
+    property = property_detail_api(address=address)
+    # street_view_image = google_street_view_api(address=address)
     is_saved = False
     if request.user.is_authenticated:
         saved_qs = SavedProperty.objects.filter(Q(profile__user=request.user) & Q(property_id=property['propertyId']))
-        if saved_qs.exists():
-            is_saved = True
-    return render(request, 'property/property-detail.html', {'property': property, "is_saved": is_saved, "image": street_view_image })
+        is_saved = saved_qs.exists()
+    return render(request, 'property/property-detail.html', {'property': property, "is_saved": is_saved })
 
 @login_required(login_url='/account/login/')
 @require_http_methods(['POST'])

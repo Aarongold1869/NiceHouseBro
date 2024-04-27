@@ -25,4 +25,13 @@ class SavedProperty(models.Model):
     def __str__(self):
         return f'{self.profile.user.username} - {str(self.property_id)}'
     
-
+class Comment(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    property_id = models.CharField(max_length=100)
+    comment = models.CharField(max_length=999)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    archived = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f'{self.profile.user.username} - {str(self.property_id)}'

@@ -22,6 +22,18 @@ def fetch_property_list_from_map_data(map_data: MapData)-> List[Property]:
     return property_list
 
 
-def property_detail_api():
-    ...
+def property_detail_api(address:str):
+    property = {
+        'propertyId': 0, 
+        'address': address, 
+        'price': 230000, 
+        'cap_rate': 0.1,
+        'beds': '3', 
+        'baths': '1', 
+        'sq_ft': '1,607', 
+        'remarks': 'Charming 3-bedroom, 1-bathroom home nestled in the heart of OKC. Recent updates include new sewer plumbing and hallway ceilings, and ceiling fans in 2023; new roof and interior paint in 2022, and backyard grass seed and leveling in 2024. Newer hot water tank and HVAC overhaul in 2019, along with a new electrical panel and windows in 2015. Featuring an open concept layout that blends modern updates with original character, this home includes a sunroom for added relaxation. The primary bedroom offers a spacious closet with washer and dryer hookups. Outside, the backyard includes a storage shed. Conveniently located within walking distance to Reed Park, local restaurants, grocery stores, and numerous shopping options, this property offers both comfort and convenience in a desirable neighborhood. ', 
+        'photo': 'https://ssl.cdn-redfin.com/photo/254/bigphoto/591/644591_0.jpg'
+    }
+    return property
+    
     

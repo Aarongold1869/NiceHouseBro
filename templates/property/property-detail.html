@@ -67,7 +67,7 @@
                 </div>         {% endcomment %}
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <img src="{{ image }}" class="d-block w-100" alt="">
+                        <img src="{{ property.photo }}" class="d-block w-100" alt="">
                     </div>
                     {% comment %} {% for image_url in property.image_array %}
                     <div class="carousel-item {% if forloop.counter0 == 0 %} active {% endif %}">
@@ -89,34 +89,34 @@
         {% comment %} property details {% endcomment %}
         <div class="container p-4" style="background-color: var(--bs-tertiary-bg);">
             <div class="d-flex justify-content-between">
-                <h2 class="fw-bold mb-3">{{ property.estimatedValue|currency:0 }}</h2>
+                <h2 class="fw-bold mb-3">{{ property.price|currency:0 }}</h2>
             </div>  
             <a 
             class="btn love border-2 mb-3"
             href="tel:757-652-3262"
             >Get in Touch</a>
             <h5 class="mb-3">
-                <strong>{{ property.cap_rate }}</strong> Cap Rate |
-                <strong>{{ property.bedrooms }}</strong> Beds |
-                <strong>{{ property.bathrooms }}</strong> Baths |
-                <strong>{{ property.area }}</strong> square feet
+                <strong>{{ property.cap_rate|percentage }}</strong> Cap Rate |
+                <strong>{{ property.beds }}</strong> Beds |
+                <strong>{{ property.baths }}</strong> Baths |
+                <strong>{{ property.sq_ft }}</strong> square feet
             </h5>
-            <h5 class="mb-3">{{ property.address.address }}</h5>
+            <h5 class="mb-3">{{ property.address }}</h5>
             
             <div id="description-container-trunc" style="display:block;">
                 <h5 class="fw-bold">Description</h5>
-                <p id="property-description" class='fs-6'> {% lorem 20 w %}... </p>  
+                <p id="property-description" class='fs-6'>{{ property.remarks|truncatechars:140 }}</p>  
                 <a style="cursor:pointer; color:var(--love);" onclick="toggleDescExpand()">Show More</a>
             </div>
             <div id="description-container-expand" style="display:none;">
                 <h5 class="fw-bold">Description</h5>
-                <p id="property-description"> {% lorem 40 w %} </p>  
+                <p id="property-description">{{ property.remarks }}</p>  
                 <a style="cursor:pointer; color:var(--love);" onclick="toggleDescExpand()">Show Less</a>
             </div>
         </div>
 
         {% comment %} Map {% endcomment %}
-        {% include "components/detail-map.html" with property=property %}
+        {% include "property/partials/detail-map.html" with property=property %}
         
         {% comment %} Comment Section {% endcomment %}
         {% comment %} {% include "property/partials/comment-section.html" with comments=property.comments %} {% endcomment %}

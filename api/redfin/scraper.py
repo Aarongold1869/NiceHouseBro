@@ -5,11 +5,9 @@ import requests
 from typing import List, Dict
 import urllib
 
-import sys
-if len(sys.argv) >= 2 and sys.argv[1] == 'runserver':
-    from .redfin_types import Property, RedfinResponse
-else:
-    from redfin_types import Property, RedfinResponse
+
+from .redfin_types import Property, RedfinResponse
+# from redfin_types import Property, RedfinResponse
 
 class RedfinScraper():
     def __init__(self, include_nearby_homes: bool, market:str, poly:str, num_homes:int=10, page_number:int=1):
@@ -88,15 +86,18 @@ class RedfinPropertyDetailScraper():
         soup = self.get_soup()
         if not soup:
             return None
-        home_stats = soup.find_all('div', class_='home-main-stats-variant')
-        stat_blocks = home_stats[0].find_all('div', class_='stat-block')
-        stats = {}
-        print(stat_blocks)
+        data = {}
+        top_stats = soup.find_all('div', class_='home-main-stats-variant')
+        stat_blocks = top_stats[0].find_all('div', class_='stat-block')
         for el in stat_blocks:
-            key = el.find(class_='statsLabel').text
+            key = el.find(class_='statsLabel').text.replace(' ', '_').lower()
+            if 'Get pre-approved' in key:
+                key = 'price'
             val = el.find(class_='statsValue').text
-            stats[key] = val 
-        return stats
+            data[key] = val 
+        data['remarks'] = soup.find('div', class_='remarks').find('p').find('span').text
+        data['photo'] = soup.find('div', id_='MBImage0')#.find('a').find('span').find('img')['src']
+        return data
 
 
 def test_search_scraper():
