@@ -87,7 +87,20 @@
         </div>
 
         {% comment %} property details {% endcomment %}
-        <div class="container p-4" style="background-color: var(--bs-tertiary-bg);">
+        <div class="container px-4 py-3" style="background-color: var(--bs-tertiary-bg);">
+
+            <ul class="nav nav-tabs mb-3">
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="#">Details</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Comments</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Contact</a>
+                </li>
+            </ul>
+
             <div class="d-flex justify-content-between">
                 <h2 class="fw-bold mb-3">{{ property.price|currency:0 }}</h2>
             </div>  
