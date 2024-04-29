@@ -1,6 +1,6 @@
 from api.google import google_street_view_api
 from api.redfin.redfin_types import Property
-from profiles.models import SavedProperty
+from property.models import SavedProperty
 
 from typing import List, TypedDict
 

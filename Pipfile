@@ -15,6 +15,7 @@ requests = "*"
 beautifulsoup4 = "*"
 scrapfly-sdk = "*"
 lxml = "*"
+pytz = "*"
 
 [dev-packages]
 

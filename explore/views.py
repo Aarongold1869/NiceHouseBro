@@ -11,7 +11,8 @@ from api.google import google_street_view_api
 from api.nominatim import fetch_map_data_from_search_str #, retrieve_map_data_from_reverse_search
 from api.nominatim.types import MapData
 
-from profiles.models import Profile, SavedProperty
+from profiles.models import Profile
+from property.models import SavedProperty
 from .functions import fetch_card_image_arr
 from property.functions import calculate_cap_rate
 

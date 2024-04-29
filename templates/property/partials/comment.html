@@ -1,0 +1,49 @@
+{% load time_delta %}
+
+<style>
+    .profile-badge {
+        width:1.75rem; 
+        height:1.75rem; 
+        background:var(--love); 
+        border-radius:100%; 
+        margin-right: 8px; 
+        text-align:center;
+        color:white;
+    }
+
+    .comment-action {
+        margin-left: 1rem;
+        color: var(--bs-secondary-color);
+        cursor: pointer;
+        font-size: .8rem;
+        text-decoration: none;
+    }
+</style>
+
+<div id="comment-{{ comment.id }}" class="card my-1 border-0 border-bottom">
+    <div class="card-body">
+        <div class='d-flex align-items-start'>
+            <span class="profile-badge">
+                <p>{{ comment.profile.user.username.0 }}</p>
+            </span>
+            <p style="font-size: 1rem; color:var(--bs-secondary-color)">{{ comment.profile.user.username }}</p>
+            <p class="card-text"><small class="text-muted">&ensp;&#8226;&ensp;{{ comment.timestamp|time_delta }}</small></p>
+        </div>
+        <p class="card-text">{{ comment.comment }}</p>
+
+        <div id="commment-actions" class="d-flex justify-content-end">
+            <a class="comment-action">&#8226;&#8226;&#8226;</a>
+            <a class="comment-action">Like</a>
+            <a class="comment-action">Reply</a>
+            {% if request.user.id == comment.profile.user.id %}
+                <a class="comment-action">Edit</a>
+                <a 
+                class="comment-action" 
+                hx-delete="{% url 'delete_comment' comment_id=comment.id %}"
+                hx-target="#comment-{{ comment.id }}"
+                hx-swap="delete"
+                >Delete</a>
+            {% endif %}
+        </div>
+    </div>
+</div>

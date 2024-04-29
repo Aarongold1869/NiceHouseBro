@@ -3,7 +3,8 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
-from .models import Profile, SavedProperty
+from .models import Profile
+from property.models import SavedProperty
 from api.redfin import property_detail_api
 
 import ast
