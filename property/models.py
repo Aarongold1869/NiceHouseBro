@@ -21,10 +21,22 @@ class SavedProperty(models.Model):
 class Comment(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     property_id = models.CharField(max_length=100)
-    comment = models.CharField(max_length=999)
+    text = models.CharField(max_length=999)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     archived = models.BooleanField(default=False)
     
     def __str__(self):
         return f'{self.profile.user.username} - {str(self.property_id)} - {self.timestamp}'
+    
+
+class Reply(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    text = models.CharField(max_length=999)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    archived = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f'{self.profile.user.username} - {str(self.comment.id)} - {self.timestamp}'

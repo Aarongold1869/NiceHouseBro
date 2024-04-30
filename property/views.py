@@ -61,8 +61,23 @@ def create_comment_view(request, property_id: str):
     return render(request, "property/partials/comment.html", {'comment': comment })
 
 @login_required()
+@require_http_methods(['GET'])
+def edit_comment_view(request, comment_id: int):
+    comment = Comment.objects.get(id=comment_id, profile=Profile.objects.get(user=request.user))
+    form = CommentForm(instance=comment)
+    return render(request, "property/partials/edit-comment-form.html", {'comment': comment, 'form': form})
+
+@login_required()
+@require_http_methods(['POST'])
+def update_comment_view(request, comment_id: int):
+    comment = Comment.objects.get(id=comment_id, profile=Profile.objects.get(user=request.user))
+    comment.text = request.POST.get('comment')
+    comment.save()
+    return render(request, "property/partials/comment.html", {'comment': comment })
+
+@login_required()
 @require_http_methods(['DELETE'])
 def delete_comment_view(request, comment_id: int):
-    comment = Comment.objects.get(id=comment_id)
+    comment = Comment.objects.get(id=comment_id, profile=Profile.objects.get(user=request.user))
     comment.delete()
     return HttpResponse(status=200)

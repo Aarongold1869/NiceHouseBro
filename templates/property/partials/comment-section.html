@@ -12,10 +12,10 @@
     >
         {% csrf_token %}
         {{ form|crispy }}
-        <input id="comment-button" type='submit' class='btn love border-3' style="font-weight:bold;" value='Comment'>
+        <input id="comment-button" type='submit' class='btn btn-sm love border-2'  value='Comment'>
     </form>
     
-    <div id="comment-list" class="container py-4 px-0">
+    <div id="comment-list" class="container mt-4 py-1 px-2 bg-light">
         {% if not comment_list %}
             <h5 id="no-comments">No comments yet.</h5>
         {% else %}
