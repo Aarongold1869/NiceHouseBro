@@ -19,21 +19,21 @@
         text-decoration: none;
     }
 
-    .comment-card:hover {
+    {% comment %} .comment-card:hover {
         background-color: var(--bs-secondary-bg);
-    }
+    } {% endcomment %}
 </style>
 
-<div id="comment-{{ comment.id }}" class="card my-2 border-0 border-bottom ">
+<div id="comment-{{ comment.id }}" class="card mb-2 pb-1 border-0">
     <div class="card-body pt-3 pb-2 comment-card">
         <div class='d-flex align-items-start'>
             <span class="profile-badge">
-                <p>{{ comment.profile.user.username.0 }}</p>
+                <p class="m-0">{{ comment.profile.user.username.0 }}</p>
             </span>
             <p style="font-size: 1rem; color:var(--bs-secondary-color)">{{ comment.profile.user.username }}</p>
             <p class="card-text"><small class="text-muted">&ensp;&#8226;&ensp;{{ comment.timestamp|time_delta }}</small></p>
         </div>
-        <p class="card-text my-1">{{ comment.text }}</p>
+        <p class="card-text my-1 ms-1">{{ comment.text }}</p>
         
         <div id="commment-actions" class="d-flex justify-content-end">
             <a class="comment-action">&#8226;&#8226;&#8226;</a>
@@ -41,7 +41,24 @@
                 {% comment %} {% include "icons/thumbs-up.html" %} {% endcomment %}
                 Like
             </a>
-            <a class="comment-action">Reply</a>
+               
+            {% if comment.reply_set.count > 0 %}
+            <a 
+            class="comment-action"
+            hx-get="{% url 'create_reply' comment_id=comment.id %}"
+            hx-target="#reply-section-{{comment.id}}"
+            hx-swap="afterbegin"
+            >Reply</a>
+            {% else %}
+            <a 
+            class="comment-action"
+            hx-get="{% url 'create_reply' comment_id=comment.id %}"
+            hx-target="#reply-section-container-{{comment.id}}"
+            hx-swap="outerHTML"
+            hx-vals='{ "first": "true" }'
+            >Reply</a>
+            {% endif %}
+
             {% if request.user.id == comment.profile.user.id %}
                 <a 
                 class="comment-action"
@@ -61,47 +78,31 @@
     </div>
 
     <!-- Replies -->
-    {% for reply in comment.reply_set.all|slice:"5" %}
-    <div class="card-body ms-3 my-0 pt-2 pb-1 comment-card" style="border-left: 2px solid lightgray;">
-        <div class='d-flex align-items-start'>
-            <span class="profile-badge">
-                <p>{{ reply.profile.user.username.0 }}</p>
-            </span>
-            <p style="font-size: 1rem; color:var(--bs-secondary-color)">{{ reply.profile.user.username }}</p>
-            <p class="card-text"><small class="text-muted">&ensp;&#8226;&ensp;{{ reply.timestamp|time_delta }}</small></p>
-        </div>
-        <p class="card-text my-1">{{ reply.text }}</p>
-
-        <div id="reply-actions" class="d-flex justify-content-end">
-            <a class="comment-action">&#8226;&#8226;&#8226;</a>
-            <a class="comment-action">
-                {% comment %} {% include "icons/thumbs-up.html" %} {% endcomment %}
-                Like
-            </a>
-            <a class="comment-action">Reply</a>
-            {% if request.user.id == comment.profile.user.id %}
-                <a 
-                class="comment-action"
-                {% comment %} hx-get="{% url 'edit_comment' comment_id=comment.id %}"
-                hx-target="#comment-{{ comment.id }}"
-                hx-swap="outerHTML" {% endcomment %}
-                >Edit</a>
-                <a 
-                class="comment-action" 
-                {% comment %} hx-delete="{% url 'delete_comment' comment_id=comment.id %}"
-                hx-target="#comment-{{ comment.id }}"
-                hx-swap="delete"
-                hx-confirm="Are you sure you want to delete this comment?" {% endcomment %}
-                >Delete</a>
-            {% endif %}
-        </div>
-    </div>
-    {% endfor %}
-
-    {% if comment.reply_set.all.count > 5 %}
-    <a class="card-body ms-3 my-0 pt-2 pb-1 text-center" style="border-left: 2px solid lightgray; background: var(--bs-secondary-bg); cursor:pointer;">
-        View more replies
-    </a>
+    {% if comment.reply_set.all.exists %}
+        {% include "property/partials/reply-section.html" with comment=comment %}
+    {% else %}
+        <div id="reply-section-container-{{comment.id}}"></div>
     {% endif %}
 
 </div>
+
+<script>
+    function hideReplies(commentId) {
+        const replySection = document.getElementById(`reply-section-${commentId}`);
+        replySection.style.display = 'none';
+        const hideRepliesButton = document.getElementById(`hide-replies-${commentId}`);
+        hideRepliesButton.style.display = 'none';
+        const showRepliesButton = document.getElementById(`show-replies-${commentId}`);
+        showRepliesButton.style.display = 'block';
+    }
+
+    function showReplies(commentId) {
+        const replySection = document.getElementById(`reply-section-${commentId}`);
+        replySection.style.display = 'block';
+        const hideRepliesButton = document.getElementById(`hide-replies-${commentId}`);
+        hideRepliesButton.style.display = 'block';
+        const showRepliesButton = document.getElementById(`show-replies-${commentId}`);
+        showRepliesButton.style.display = 'none';
+    }
+
+</script>

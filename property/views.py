@@ -4,8 +4,8 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
-from .forms import CommentForm
-from .models import SavedProperty, Comment
+from .forms import CommentForm, ReplyForm
+from .models import SavedProperty, Comment, Reply
 from profiles.models import Profile 
 from api.google import google_street_view_api
 from api.redfin import property_detail_api
@@ -56,7 +56,7 @@ def create_comment_view(request, property_id: str):
     comment = Comment.objects.create(
         profile=profile,
         property_id=property_id,
-        comment=request.POST.get('comment')
+        text=request.POST.get('text')
     )
     return render(request, "property/partials/comment.html", {'comment': comment })
 
@@ -71,7 +71,7 @@ def edit_comment_view(request, comment_id: int):
 @require_http_methods(['POST'])
 def update_comment_view(request, comment_id: int):
     comment = Comment.objects.get(id=comment_id, profile=Profile.objects.get(user=request.user))
-    comment.text = request.POST.get('comment')
+    comment.text = request.POST.get('text')
     comment.save()
     return render(request, "property/partials/comment.html", {'comment': comment })
 
@@ -81,3 +81,41 @@ def delete_comment_view(request, comment_id: int):
     comment = Comment.objects.get(id=comment_id, profile=Profile.objects.get(user=request.user))
     comment.delete()
     return HttpResponse(status=200)
+
+@login_required()
+@require_http_methods(['GET', 'POST'])
+def create_reply_view(request, comment_id: int):
+    profile = Profile.objects.get(user=request.user)
+    comment = Comment.objects.get(id=comment_id)
+    if request.method == 'POST':
+        reply = Reply.objects.create(
+            profile=profile,
+            comment=comment,
+            text=request.POST.get('text')
+        )
+        return render(request, "property/partials/reply.html", {'comment': comment, 'reply': reply })
+    else:
+        text_init: str = request.GET.get('text', '')
+        reply = Reply(
+            profile=profile,
+            comment=comment,
+            text=text_init
+        )
+        if request.GET.get('first'):
+            return render(request, "property/partials/reply-form-first.html", {'comment': comment, 'reply': reply, 'form': ReplyForm() })
+        return render(request, "property/partials/reply-form.html", {'comment': comment, 'reply': reply, 'form': ReplyForm(instance=reply)})
+
+@login_required()
+@require_http_methods(['POST'])
+def edit_reply_view(request, comment_id: int, reply_id: int=0):
+    profile = Profile.objects.get(user=request.user)
+    if reply_id == 0:
+        reply = Reply.objects(
+            profile=profile,
+            comment=Comment.objects.get(id=comment_id),
+        )
+        form = ReplyForm(instance=reply)
+    else:
+        reply = Reply.objects.get(id=reply_id, profile=profile)
+        form = ReplyForm(instance=reply)
+    return render(request, "property/partials/reply.html", {'reply': reply, 'form': form })

@@ -1,0 +1,44 @@
+{% load time_delta %}
+
+<div class="card-body ms-4 my-0 pt-2 pb-1 comment-card" style="border-left: 2px solid var(--bs-secondary-bg);;">
+    <div class='d-flex align-items-start'>
+        <span class="profile-badge">
+            <p>{{ reply.profile.user.username.0 }}</p>
+        </span>
+        <p style="font-size: 1rem; color:var(--bs-secondary-color)">{{ reply.profile.user.username }}</p>
+        <p class="card-text"><small class="text-muted">&ensp;&#8226;&ensp;{{ reply.timestamp|time_delta }}</small></p>
+    </div>
+    <p class="card-text my-1 ms-1">{{ reply.text }}</p>
+
+    <div id="reply-actions" class="d-flex justify-content-end">
+        <a class="comment-action">&#8226;&#8226;&#8226;</a>
+        <a class="comment-action">
+            {% comment %} {% include "icons/thumbs-up.html" %} {% endcomment %}
+            Like
+        </a>
+
+        <a 
+        class="comment-action"
+        hx-get="{% url 'create_reply' comment_id=comment.id %}"
+        hx-target="#reply-section-{{comment.id}}"
+        hx-swap="afterbegin"
+        hx-vals='{ "text": "@{{ reply.profile.user.username }} " }'
+        >Reply</a>
+
+        {% if request.user.id == reply.profile.user.id %}
+            <a 
+            class="comment-action"
+            {% comment %} hx-get="{% url 'edit_comment' comment_id=comment.id %}"
+            hx-target="#comment-{{ comment.id }}"
+            hx-swap="outerHTML" {% endcomment %}
+            >Edit</a>
+            <a 
+            class="comment-action" 
+            {% comment %} hx-delete="{% url 'delete_comment' comment_id=comment.id %}"
+            hx-target="#comment-{{ comment.id }}"
+            hx-swap="delete"
+            hx-confirm="Are you sure you want to delete this comment?" {% endcomment %}
+            >Delete</a>
+        {% endif %}
+    </div>
+</div>
