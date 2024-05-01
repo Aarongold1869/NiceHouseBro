@@ -11,9 +11,9 @@ urlpatterns = [
     path('edit-comment/<int:comment_id>/', views.edit_comment_view, name='edit_comment'),
     path('update-comment/<int:comment_id>/', views.update_comment_view, name='update_comment'),
     path('delete-comment/<int:comment_id>/', views.delete_comment_view, name='delete_comment'),
+    path('toggle-comment-like/<int:comment_id>/', views.toggle_comment_like, name='toggle_comment_like'),
 
     # Replies
-    path('new-reply/<int:comment_id>/', views.new_reply_view, name='new_reply'),
     path('create-reply/<int:comment_id>/', views.create_reply_view, name='create_reply'),
     path('edit-reply/<int:reply_id>/', views.edit_reply_view, name='edit_reply'),
     path('update-reply/<int:reply_id>/', views.update_reply_view, name='update_reply'),

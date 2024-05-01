@@ -30,11 +30,29 @@ style="display:{% if not comment.reply_set.all.exists %}none{% else %}block{% en
         id="reply-count-{{comment.id}}" 
         class="ms-1" 
         style="font-size:.8rem;"
-        hx-trigger="delete-reply-{{comment.id}} from:body"
+        hx-trigger="update-reply-count-{{comment.id}} from:body"
         hx-get="{% url 'get_reply_count' comment_id=comment.id %}"
         hx-swap="innerHTML"
         >View {{ comment.reply_set.count }} replies</span>
     </button>
+
+    <div id="create-reply-form-container-{{comment.id}}" class="card my-1 ms-4 border-0" style="display: none;">
+        <div class="card-body">
+            <form 
+            id="create-reply-form-{{comment.id}}"
+            method="post"
+            hx-post="{% url 'create_reply' comment_id=comment.id %}"
+            hx-target="#reply-section-{{comment.id}}"
+            hx-swap="afterbegin"
+            hx-on::after-request="hideReplyForm({{comment.id}})"
+            >
+                {% csrf_token %}
+                <input name="text" type="text" class="form-control mb-3" placeholder="Post a reply...">
+                <input id="comment-button" type='submit' class='btn btn-sm love border-2' value="Reply">
+                <input id="comment-button" type='button' class='btn btn-sm love border-2' value='Cancel' onclick="hideReplyForm({{comment.id}})">
+            </form>
+        </div>
+    </div>
 
     <div id="reply-section-{{comment.id}}">
     {% for reply in comment.reply_set.all|dictsort:"timestamp" %}
@@ -53,3 +71,14 @@ style="display:{% if not comment.reply_set.all.exists %}none{% else %}block{% en
     {% endif %} {% endcomment %}
 
 </div>
+
+<script>
+
+    function hideReplyForm(comment_id) {
+        const form = document.getElementById(`create-reply-form-${comment_id}`)
+        form.reset();
+        const formContainer = document.getElementById(`create-reply-form-container-${comment_id}`)
+        formContainer.style.display = 'none';
+    }
+
+</script>
