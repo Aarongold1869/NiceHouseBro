@@ -38,7 +38,6 @@ def retrieve_comment_section(request, property_id: str):
 @login_required()
 @require_http_methods(['POST'])
 def toggle_property_saved(request, property_id: str):
-    # property: Property = next((x for x in PROPERTY_DATA if x['id'] == property_id), None)
     profile = Profile.objects.get(user=request.user)
     saved_qs = SavedProperty.objects.filter(Q(profile=profile) & Q(property_id=property_id))
     if not saved_qs.exists():
@@ -48,13 +47,12 @@ def toggle_property_saved(request, property_id: str):
             address=request.POST.get('address'),
             image=request.POST.get('image')
         )
-        # property['saved'] = True
         is_saved = True
     else:
         saved_qs.delete()
-        # property['saved'] = False
         is_saved = False
-    return render(request, "property/partials/detail-save-button.html", {'property_id': property_id, 'is_saved': is_saved  })
+    property = Property(propertyId=property_id, address=request.POST.get('address'), photo=request.POST.get('image'))
+    return render(request, "property/partials/detail-save-button.html", {'property': property, 'is_saved': is_saved  })
 
 @login_required()
 @require_http_methods(['POST'])

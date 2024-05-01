@@ -4,10 +4,10 @@ hx-get="{% url 'toggle_comment_like' comment_id=comment.id %}"
 hx-swap="outerHTML"
 >
 <p id="like-count-{{comment.id}}" class="m-0">{{ comment.commentlike_set.count }}&ensp;&#8226;&ensp;</p>
-<span class="me-1 comment-action-text">Like</span>
+<span class="me-2 comment-action-text">Like</span>
 {% if liked == True %}
-    {% include "icons/heart-fill.html" with size=13 %}
+    {% include "icons/heart-fill.html" with size=14 %}
 {% else %}
-    {% include "icons/heart.html" with size=13 %}
+    {% include "icons/heart.html" with size=14 %}
 {% endif %}
 </a>

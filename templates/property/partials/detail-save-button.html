@@ -2,7 +2,8 @@
 id="save-button" 
 class='btn bg-transparent border-2'
 style="color: var(--love);"
-hx-post="{% url 'toggle_saved' property_id=property_id %}"
+hx-post="{% url 'toggle_saved' property_id=property.propertyId %}"
+hx-vals='{"address": "{{ property.address }}", "image": "{{ property.photo }}"}'
 hx-swap="outerHTML"
 >
 {% if is_saved %}

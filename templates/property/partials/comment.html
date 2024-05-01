@@ -16,21 +16,25 @@
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
-        align-items: flex-start;
+        align-items: center;
     } 
 
     .comment-action {
         margin-left: .8rem;
-        color: var(--love);
+        color: var(--bs-secondary-color);
         cursor: pointer;
         font-size: .8rem;
         text-decoration: none;
         display: flex;
         flex-direction: row;
-        align-items: flex-start;
+        align-items: center;
     }
     
     @media (max-width: 576px) {
+        #commment-actions {
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
         .comment-action-text {
             display:none;
         }
@@ -57,11 +61,11 @@
             hx-swap="outerHTML"
             >
             <p id="like-count-{{comment.id}}" class="m-0">{{ comment.commentlike_set.count }}&ensp;&#8226;&ensp;</p>
-            <span class="me-1 comment-action-text">Like</span>
+            <span class="me-2 comment-action-text">Like</span>
             {% if comment.id in comment_like_list %}
-                {% include "icons/heart-fill.html" with size=15 %}
+                {% include "icons/heart-fill.html" with size=14 %}
             {% else %}
-                {% include "icons/heart.html" with size=15 %}
+                {% include "icons/heart.html" with size=14 %}
             {% endif %}
             </a>
 
@@ -69,7 +73,7 @@
             class="comment-action align-items-start"
             onclick="unhideReplyForm('{{ comment.id }}', null)"
             >
-            <span class="me-1 comment-action-text">Reply</span>
+            <span class="me-2 comment-action-text">Reply</span>
             {% include "icons/reply.html" %}
             </a>
 
@@ -81,7 +85,7 @@
             hx-target="#comment-{{ comment.id }}"
             hx-swap="outerHTML"
             >
-            <span class="me-1 comment-action-text">Edit</span>
+            <span class="me-2 comment-action-text">Edit</span>
             {% include "icons/pencil.html" %}
             </a>
             <a 
@@ -92,7 +96,7 @@
             hx-swap="delete"
             hx-confirm="Are you sure you want to delete this comment?"
             >
-            <span class="me-1 comment-action-text">Delete</span>
+            <span class="me-2 comment-action-text">Delete</span>
             {% include "icons/trashcan.html" %}
             </a>
 

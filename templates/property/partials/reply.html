@@ -17,7 +17,7 @@
         hx-swap="outerHTML"
         >
         <p id="like-count-{{reply.id}}" class="m-0">{{ reply.replylike_set.count }}&ensp;&#8226;&ensp;</p>
-        <span class="me-1 comment-action-text">Like</span>
+        <span class="me-2 comment-action-text">Like</span>
         {% if reply.id in reply_like_list %}
             {% include "icons/heart-fill.html" with size=15 %}
         {% else %}
@@ -29,7 +29,7 @@
         class="comment-action"
         onclick="unhideReplyForm('{{ comment.id }}', '@{{ reply.profile.user.username }}')"
         >
-        <span class="me-1 comment-action-text">Reply</span>
+        <span class="me-2 comment-action-text">Reply</span>
         {% include "icons/reply.html" %}
         </a>
 
@@ -41,7 +41,7 @@
         hx-target="#reply-{{reply.id}}"
         hx-swap="outerHTML" 
         >
-        <span class="me-1 comment-action-text">Edit</span>
+        <span class="me-2 comment-action-text">Edit</span>
         {% include "icons/pencil.html" %}
         </a>
 
@@ -52,7 +52,7 @@
         hx-swap="delete"
         hx-confirm="Are you sure you want to delete this comment?"
         >
-        <span class="me-1 comment-action-text">Delete</span>
+        <span class="me-2 comment-action-text">Delete</span>
         {% include "icons/trashcan.html" %}
         </a>
 
