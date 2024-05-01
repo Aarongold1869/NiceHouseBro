@@ -143,7 +143,10 @@
             </div>
 
             <div id="comments-tab" style="display:none;">
-                {% include "property/partials/comment-section.html" %}
+
+                <div id="comment-section">
+                {% comment %} {% include "property/partials/comment-section.html" %} {% endcomment %}
+                
             </div>
 
             <div id="contact-tab" style="display:none;">
@@ -155,7 +158,10 @@
     </div>
 </div>
 
+{{ property|json_script:"property" }}
+
 <script>
+
     function toggleDescExpand() {
         const trunc = document.getElementById('description-container-trunc');
         const expand = document.getElementById('description-container-expand');
@@ -207,6 +213,16 @@
                 break;
         }
     }
+
+    // Lazy load comment section
+    function retrieveComments(propertyId) {
+        htmx.ajax('GET', `/property/get-comments/${propertyId}/`, { target:'#comment-section', swap:'outerHTML' })
+    }
+
+    window.onload = (event) => {
+        const property = JSON.parse(document.getElementById('property').textContent);
+        retrieveComments(property.propertyId)
+    };
 
 </script>
 

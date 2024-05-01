@@ -21,16 +21,19 @@ def property_detail_view(request, address:str='5663 Dunridge Drive, Pace FL 3257
     if request.user.is_authenticated:
         saved_qs = SavedProperty.objects.filter(Q(profile__user=request.user) & Q(property_id=property['propertyId']))
         is_saved = saved_qs.exists()
-    comment_list = Comment.objects.filter(property_id=property['propertyId']).order_by('-timestamp')
+    return render(request, 'property/property-detail.html', {'property': property, 'is_saved': is_saved})
+
+@require_http_methods(['GET'])
+def retrieve_comment_section(request, property_id: str):
+    comment_list = Comment.objects.filter(property_id=property_id).order_by('-timestamp')
     context = {
-        'property': property, 
-        'is_saved': is_saved, 
+        'property': {'propertyId': property_id},
         'form': CommentForm(),
         'comment_list': comment_list,
-        'comment_like_list': list(map(lambda x: x.comment.id, CommentLike.objects.filter(profile__user=request.user, comment__property_id=property['propertyId']))),
+        'comment_like_list': list(map(lambda x: x.comment.id, CommentLike.objects.filter(profile__user=request.user, comment__property_id=property_id))),
         'reply_like_list': list(map(lambda x: x.reply.id, ReplyLike.objects.filter(profile__user=request.user))),
     }
-    return render(request, 'property/property-detail.html', context)
+    return render(request, 'property/partials/comment-section.html', context)
 
 @login_required()
 @require_http_methods(['POST'])
@@ -143,7 +146,6 @@ def delete_reply_view(request, reply_id: int):
     response = HttpResponse(status=200)
     return trigger_client_event(response, f'update-reply-count-{comment.id}')
     
-@login_required()
 @require_http_methods(['GET'])
 def get_reply_count(request, comment_id: int):
     comment = Comment.objects.get(id=comment_id)
