@@ -11,6 +11,8 @@ from api.google import google_street_view_api
 from api.redfin import property_detail_api
 from api.redfin.redfin_types import Property
 
+from django_htmx.http import trigger_client_event
+
 
 def property_detail_view(request, address:str='5663 Dunridge Drive, Pace FL 32571'):
     property = property_detail_api(address=address)
@@ -83,39 +85,57 @@ def delete_comment_view(request, comment_id: int):
     return HttpResponse(status=200)
 
 @login_required()
-@require_http_methods(['GET', 'POST'])
-def create_reply_view(request, comment_id: int):
-    profile = Profile.objects.get(user=request.user)
+@require_http_methods(['GET'])
+def new_reply_view(request, comment_id: int):
     comment = Comment.objects.get(id=comment_id)
-    if request.method == 'POST':
-        reply = Reply.objects.create(
-            profile=profile,
-            comment=comment,
-            text=request.POST.get('text')
-        )
-        return render(request, "property/partials/reply.html", {'comment': comment, 'reply': reply })
-    else:
-        text_init: str = request.GET.get('text', '')
-        reply = Reply(
-            profile=profile,
-            comment=comment,
-            text=text_init
-        )
-        if request.GET.get('first'):
-            return render(request, "property/partials/reply-form-first.html", {'comment': comment, 'reply': reply, 'form': ReplyForm() })
-        return render(request, "property/partials/reply-form.html", {'comment': comment, 'reply': reply, 'form': ReplyForm(instance=reply)})
+    text_init: str = request.GET.get('text', '')
+    reply = Reply(
+        profile=Profile.objects.get(user=request.user),
+        comment=comment,
+        text=text_init
+    )
+    context = { 'comment': comment, 'reply': reply, 'form': ReplyForm(instance=reply) }
+    return render(request, "property/partials/create-reply-form.html", context)
 
 @login_required()
 @require_http_methods(['POST'])
-def edit_reply_view(request, comment_id: int, reply_id: int=0):
+def create_reply_view(request, comment_id: int):
     profile = Profile.objects.get(user=request.user)
-    if reply_id == 0:
-        reply = Reply.objects(
-            profile=profile,
-            comment=Comment.objects.get(id=comment_id),
-        )
-        form = ReplyForm(instance=reply)
-    else:
-        reply = Reply.objects.get(id=reply_id, profile=profile)
-        form = ReplyForm(instance=reply)
-    return render(request, "property/partials/reply.html", {'reply': reply, 'form': form })
+    comment = Comment.objects.get(id=comment_id)
+    reply = Reply.objects.create(
+        profile=profile,
+        comment=comment,
+        text=request.POST.get('text')
+    )
+    return render(request, "property/partials/reply.html", {'comment': comment, 'reply': reply })
+
+@login_required()
+@require_http_methods(['GET'])
+def edit_reply_view(request, reply_id: int):
+    reply = Reply.objects.get(id=reply_id, profile=Profile.objects.get(user=request.user))
+    form = ReplyForm(instance=reply)
+    context = {'comment': reply.comment, 'reply': reply, 'form': form }
+    return render(request, "property/partials/update-reply-form.html", context)
+
+@login_required()
+@require_http_methods(['POST'])
+def update_reply_view(request, reply_id: int):
+    reply = Reply.objects.get(id=reply_id, profile=Profile.objects.get(user=request.user))
+    reply.text = request.POST.get('text')
+    reply.save()
+    return render(request, "property/partials/reply.html", { 'comment': reply.comment, 'reply': reply })
+
+@login_required()
+@require_http_methods(['DELETE'])
+def delete_reply_view(request, reply_id: int):
+    reply = Reply.objects.get(id=reply_id, profile=Profile.objects.get(user=request.user))
+    comment = reply.comment
+    reply.delete()
+    response = HttpResponse(status=200)
+    return trigger_client_event(response, f'delete-reply-{comment.id}')
+    
+@login_required()
+@require_http_methods(['GET'])
+def get_reply_count(request, comment_id: int):
+    comment = Comment.objects.get(id=comment_id)
+    return HttpResponse(f'View {comment.reply_set.count()} replies')

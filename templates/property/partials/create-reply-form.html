@@ -11,7 +11,7 @@
         >
             {% csrf_token %}
             {{ form|crispy }}
-            <input id="comment-button" type='submit' class='btn btn-sm love border-2' value='Reply'>
+            <input id="comment-button" type='submit' class='btn btn-sm love border-2' value="Reply">
             <input id="comment-button" type='button' class='btn btn-sm love border-2' value='Cancel' onclick="Cancel('reply-{{ reply.id }}')">
         </form>
     </div>

@@ -1,4 +1,8 @@
-<div id="reply-section-container-{{comment.id}}" class="position-relative">
+<div 
+id="reply-section-container-{{comment.id}}" 
+class="position-relative" 
+style="display:{% if not comment.reply_set.all.exists %}none{% else %}block{% endif %};"
+>
 
     <button 
     id="hide-replies-{{comment.id}}"
@@ -22,7 +26,14 @@
             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
         </svg>
-        <span class="ms-1" style="font-size:.8rem;">View {{ comment.reply_set.count }} replies</span>
+        <span 
+        id="reply-count-{{comment.id}}" 
+        class="ms-1" 
+        style="font-size:.8rem;"
+        hx-trigger="delete-reply-{{comment.id}} from:body"
+        hx-get="{% url 'get_reply_count' comment_id=comment.id %}"
+        hx-swap="innerHTML"
+        >View {{ comment.reply_set.count }} replies</span>
     </button>
 
     <div id="reply-section-{{comment.id}}">

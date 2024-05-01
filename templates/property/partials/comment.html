@@ -18,14 +18,10 @@
         font-size: .8rem;
         text-decoration: none;
     }
-
-    {% comment %} .comment-card:hover {
-        background-color: var(--bs-secondary-bg);
-    } {% endcomment %}
 </style>
 
 <div id="comment-{{ comment.id }}" class="card mb-2 pb-1 border-0">
-    <div class="card-body pt-3 pb-2 comment-card">
+    <div class="card-body pt-3 pb-2">
         <div class='d-flex align-items-start'>
             <span class="profile-badge">
                 <p class="m-0">{{ comment.profile.user.username.0 }}</p>
@@ -41,52 +37,43 @@
                 {% comment %} {% include "icons/thumbs-up.html" %} {% endcomment %}
                 Like
             </a>
-               
-            {% if comment.reply_set.count > 0 %}
+
             <a 
             class="comment-action"
-            hx-get="{% url 'create_reply' comment_id=comment.id %}"
+            hx-get="{% url 'new_reply' comment_id=comment.id %}"
             hx-target="#reply-section-{{comment.id}}"
             hx-swap="afterbegin"
+            hx-on::after-request="UnhideReplySectionContainer({{comment.id}})"
             >Reply</a>
-            {% else %}
-            <a 
-            class="comment-action"
-            hx-get="{% url 'create_reply' comment_id=comment.id %}"
-            hx-target="#reply-section-container-{{comment.id}}"
-            hx-swap="outerHTML"
-            hx-vals='{ "first": "true" }'
-            >Reply</a>
-            {% endif %}
 
             {% if request.user.id == comment.profile.user.id %}
-                <a 
-                class="comment-action"
-                hx-get="{% url 'edit_comment' comment_id=comment.id %}"
-                hx-target="#comment-{{ comment.id }}"
-                hx-swap="outerHTML"
-                >Edit</a>
-                <a 
-                class="comment-action" 
-                hx-delete="{% url 'delete_comment' comment_id=comment.id %}"
-                hx-target="#comment-{{ comment.id }}"
-                hx-swap="delete"
-                hx-confirm="Are you sure you want to delete this comment?"
-                >Delete</a>
+
+            <a 
+            class="comment-action"
+            hx-get="{% url 'edit_comment' comment_id=comment.id %}"
+            hx-target="#comment-{{ comment.id }}"
+            hx-swap="outerHTML"
+            >Edit</a>
+            <a 
+
+            class="comment-action" 
+            hx-delete="{% url 'delete_comment' comment_id=comment.id %}"
+            hx-target="#comment-{{ comment.id }}"
+            hx-swap="delete"
+            hx-confirm="Are you sure you want to delete this comment?"
+            >Delete</a>
+
             {% endif %}
         </div>
     </div>
 
     <!-- Replies -->
-    {% if comment.reply_set.all.exists %}
-        {% include "property/partials/reply-section.html" with comment=comment %}
-    {% else %}
-        <div id="reply-section-container-{{comment.id}}"></div>
-    {% endif %}
+    {% include "property/partials/reply-section.html" with comment=comment %}
 
 </div>
 
 <script>
+
     function hideReplies(commentId) {
         const replySection = document.getElementById(`reply-section-${commentId}`);
         replySection.style.display = 'none';
@@ -103,6 +90,11 @@
         hideRepliesButton.style.display = 'block';
         const showRepliesButton = document.getElementById(`show-replies-${commentId}`);
         showRepliesButton.style.display = 'none';
+    }
+
+    function UnhideReplySectionContainer(commentId) {
+        const replySectionContainer = document.getElementById(`reply-section-container-${commentId}`);
+        replySectionContainer.style.display = 'block';
     }
 
 </script>

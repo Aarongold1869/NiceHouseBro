@@ -12,6 +12,11 @@ urlpatterns = [
     path('update-comment/<int:comment_id>/', views.update_comment_view, name='update_comment'),
     path('delete-comment/<int:comment_id>/', views.delete_comment_view, name='delete_comment'),
 
+    # Replies
+    path('new-reply/<int:comment_id>/', views.new_reply_view, name='new_reply'),
     path('create-reply/<int:comment_id>/', views.create_reply_view, name='create_reply'),
     path('edit-reply/<int:reply_id>/', views.edit_reply_view, name='edit_reply'),
+    path('update-reply/<int:reply_id>/', views.update_reply_view, name='update_reply'),
+    path('delete-reply/<int:reply_id>/', views.delete_reply_view, name='delete_reply'),
+    path('get-reply-count/<int:comment_id>/', views.get_reply_count, name='get_reply_count')
 ] 
