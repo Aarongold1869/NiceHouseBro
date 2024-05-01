@@ -18,5 +18,6 @@ urlpatterns = [
     path('edit-reply/<int:reply_id>/', views.edit_reply_view, name='edit_reply'),
     path('update-reply/<int:reply_id>/', views.update_reply_view, name='update_reply'),
     path('delete-reply/<int:reply_id>/', views.delete_reply_view, name='delete_reply'),
-    path('get-reply-count/<int:comment_id>/', views.get_reply_count, name='get_reply_count')
+    path('get-reply-count/<int:comment_id>/', views.get_reply_count, name='get_reply_count'),
+    path('toggle-reply-like/<int:reply_id>/', views.toggle_reply_like, name='toggle_reply_like'),
 ] 

@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
 from .forms import CommentForm, ReplyForm
-from .models import SavedProperty, Comment, CommentLike, Reply
+from .models import SavedProperty, Comment, CommentLike, Reply, ReplyLike
 from profiles.models import Profile 
 from api.google import google_street_view_api
 from api.redfin import property_detail_api
@@ -27,7 +27,8 @@ def property_detail_view(request, address:str='5663 Dunridge Drive, Pace FL 3257
         'is_saved': is_saved, 
         'form': CommentForm(),
         'comment_list': comment_list,
-        'comment_like_list': list(map(lambda x: x.comment.id, CommentLike.objects.filter(profile__user=request.user)))
+        'comment_like_list': list(map(lambda x: x.comment.id, CommentLike.objects.filter(profile__user=request.user, comment__property_id=property['propertyId']))),
+        'reply_like_list': list(map(lambda x: x.reply.id, ReplyLike.objects.filter(profile__user=request.user))),
     }
     return render(request, 'property/property-detail.html', context)
 
@@ -86,6 +87,25 @@ def delete_comment_view(request, comment_id: int):
     return HttpResponse(status=200)
 
 @login_required()
+@require_http_methods(['GET'])
+def toggle_comment_like(request, comment_id: int):
+    comment = Comment.objects.get(id=comment_id)
+    comment_like_qs = CommentLike.objects.filter(Q(profile__user=request.user) & Q(comment=comment))
+    count = comment_like_qs.count()
+    if not comment_like_qs.exists():
+        CommentLike.objects.create(
+            profile=Profile.objects.get(user=request.user),
+            comment=Comment.objects.get(id=comment_id)
+        )
+        count+=1
+        liked=True
+    else:
+        comment_like_qs.delete()
+        count-=1
+        liked=False
+    return render(request, "property/partials/comment-like-button.html", {'comment': comment, 'liked': liked })
+
+@login_required()
 @require_http_methods(['POST'])
 def create_reply_view(request, comment_id: int):
     profile = Profile.objects.get(user=request.user)
@@ -131,19 +151,20 @@ def get_reply_count(request, comment_id: int):
 
 @login_required()
 @require_http_methods(['GET'])
-def toggle_comment_like(request, comment_id: int):
-    comment = Comment.objects.get(id=comment_id)
-    comment_like_qs = CommentLike.objects.filter(Q(profile__user=request.user) & Q(comment=comment))
-    count = comment_like_qs.count()
-    if not comment_like_qs.exists():
-        CommentLike.objects.create(
+def toggle_reply_like(request, reply_id: int):
+    reply = Reply.objects.get(id=reply_id)
+    reply_like_qs = ReplyLike.objects.filter(Q(profile__user=request.user) & Q(reply=reply))
+    count = reply_like_qs.count()
+    if not reply_like_qs.exists():
+        ReplyLike.objects.create(
             profile=Profile.objects.get(user=request.user),
-            comment=Comment.objects.get(id=comment_id)
+            reply=Reply.objects.get(id=reply_id)
         )
         count+=1
         liked=True
     else:
-        comment_like_qs.delete()
+        reply_like_qs.delete()
         count-=1
         liked=False
-    return render(request, "property/partials/comment-like-button.html", {'comment': comment, 'liked': liked })
+    return render(request, "property/partials/reply-like-button.html", {'reply': reply, 'liked': liked })
+

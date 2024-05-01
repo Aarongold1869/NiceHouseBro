@@ -12,7 +12,11 @@
     }
 
     #commment-actions {
-        margin-top: 1rem;
+        margin-top: 1rem!important;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: flex-start;
     } 
 
     .comment-action {
@@ -23,7 +27,7 @@
         text-decoration: none;
         display: flex;
         flex-direction: row;
-        align-items: center;
+        align-items: flex-start;
     }
     
     @media (max-width: 576px) {
@@ -45,7 +49,7 @@
         </div>
         <p class="card-text my-1 ms-1">{{ comment.text }}</p>
         
-        <div id="commment-actions" class="d-flex justify-content-end">
+        <div id="commment-actions">
             
             <a 
             class="comment-action d-flex align-items-center"
@@ -55,9 +59,9 @@
             <p id="like-count-{{comment.id}}" class="m-0">{{ comment.commentlike_set.count }}&ensp;&#8226;&ensp;</p>
             <span class="me-1 comment-action-text">Like</span>
             {% if comment.id in comment_like_list %}
-                {% include "icons/heart-fill.html" with size=13 %}
+                {% include "icons/heart-fill.html" with size=15 %}
             {% else %}
-                {% include "icons/heart.html" with size=13 %}
+                {% include "icons/heart.html" with size=15 %}
             {% endif %}
             </a>
 
