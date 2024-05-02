@@ -21,4 +21,6 @@ urlpatterns = [
     path('delete-reply/<int:reply_id>/', views.delete_reply_view, name='delete_reply'),
     path('get-reply-count/<int:comment_id>/', views.get_reply_count, name='get_reply_count'),
     path('toggle-reply-like/<int:reply_id>/', views.toggle_reply_like, name='toggle_reply_like'),
+
+    path('report-comment/', views.report_comment_view, name='report_comment'),
 ] 

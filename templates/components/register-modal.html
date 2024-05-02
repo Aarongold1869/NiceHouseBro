@@ -1,52 +1,22 @@
-<!-- a modal that covers the screen and prompts user to navigate to /accounts/register/ to create an account -->
-<!-- the modal should have a 80% opacity and be centered on the screen  -->
-<!-- the modal should have a close button that closes the modal when clicked -->
-<style>
-    #register-modal {
-        position: fixed;
-        z-index: 1000;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
 
-    #modal-blur {
-        position: absolute;
-        background-color: var(--background);
-        opacity: 0.3;
-        width: 100vw;
-        height: 100vh;
-    }
-
-    #modal-content {
-        opacity: 1;
-        background-color: var(--background);
-        padding: 25px;
-        border-radius: 15px;
-        margin: auto;
-        width: fit-content;
-        text-align: center;
-    }
-
-    .close-button {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        cursor: pointer;
-    }
-</style>
-
-<script>
-    function hideModal() {
-        document.getElementById('register-modal').style.display = 'none';
-    }
-</script>
-
-<div id="register-modal" class="modal">
-    <span id="modal-blur" class="modal-blur"></span>
-    <div id="modal-content" class="modal-content">
-        <span class="close-button" onclick="hideModal()">&times;</span>
-        <h2 class="mb-4">Login or Create an Account</h2>
-        <p>Click <a href="/account/register/">here</a> to create an account.</p>
+<!-- Modal -->
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="register-modal-title">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="register-modal-title">Login or Sign Up</h5>
+        {% comment %} <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> {% endcomment %}
+      </div>
+      <div class="modal-body">
+          <p>You must be logged in to perform this action.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+        <a href="/account/login/" type="button" class="btn btn-sm love">Login</a>
+        <a href="/account/register/" type="button" class="btn btn-sm love">Sign Up</a>
+      </div>
     </div>
+  </div>
 </div>

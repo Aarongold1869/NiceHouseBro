@@ -1,13 +1,13 @@
-<a 
-class="comment-action d-flex align-items-center"
+<button
+class="btn m-0 comment-action"
 hx-get="{% url 'toggle_comment_like' comment_id=comment.id %}"
 hx-swap="outerHTML"
 >
 <p id="like-count-{{comment.id}}" class="m-0">{{ comment.commentlike_set.count }}&ensp;&#8226;&ensp;</p>
 <span class="me-2 comment-action-text">Like</span>
 {% if liked == True %}
-    {% include "icons/heart-fill.html" with size=14 %}
+    {% include "icons/heart-fill.html" with size=14 fill="var(--love)"%}
 {% else %}
     {% include "icons/heart.html" with size=14 %}
 {% endif %}
-</a>
+</button>

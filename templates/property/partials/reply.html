@@ -1,52 +1,63 @@
 {% load time_delta %}
 
 <div id="reply-{{reply.id}}" class="card-body ms-4 my-0 pt-2 pb-1" style="border-left: 2px solid var(--bs-secondary-bg);">
-    <div class='d-flex align-items-start'>
-        <span class="profile-badge">
+    <div class='d-flex align-items-start mb-2'>
+        {% comment %} <span class="profile-badge">
             <p>{{ reply.profile.user.username.0 }}</p>
-        </span>
-        <p style="font-size: 1rem; color:var(--bs-secondary-color)">{{ reply.profile.user.username }}</p>
-        <p class="card-text"><small class="text-muted">&ensp;&#8226;&ensp;{{ reply.timestamp|time_delta }}</small></p>
+        </span> {% endcomment %}
+        <svg xmlns="http://www.w3.org/2000/svg" class='me-2' width="24" height="24" fill="var(--love)" class="bi bi-person-circle" viewBox="0 0 16 16">
+            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+        </svg>
+        <p class="m-0">{{ reply.profile.user.username }}</p>
+        <p class="m-0"><small class="text-muted">&ensp;&#8226;&ensp;{{ reply.timestamp|time_delta }}</small></p>
     </div>
-    <p class="card-text my-1 ms-1">{{ reply.text }}</p>
+    <p id="reply-text-{{reply.id}}" class="card-text my-1 ms-1">{{ reply.text }}</p>
+
+    <hr class="m-0 my-2"></hr>
+    {% if not user.is_authenticated %}
+
+    {% include "property/partials/comment-actions-no-auth.html" %}
+
+    {% else %}
 
     <div id="commment-actions">
-        <a 
-        class="comment-action d-flex align-items-center"
+        <button 
+        class="btn comment-action m-0"
         hx-get="{% url 'toggle_reply_like' reply_id=reply.id %}"
         hx-swap="outerHTML"
         >
         <p id="like-count-{{reply.id}}" class="m-0">{{ reply.replylike_set.count }}&ensp;&#8226;&ensp;</p>
         <span class="me-2 comment-action-text">Like</span>
         {% if reply.id in reply_like_list %}
-            {% include "icons/heart-fill.html" with size=15 %}
+            {% include "icons/heart-fill.html" with size=14 fill="var(--love)" %}
         {% else %}
-            {% include "icons/heart.html" with size=15 %}
+            {% include "icons/heart.html" with size=14 %}
         {% endif %}
-        </a>
+        </button>
 
-        <a 
-        class="comment-action"
-        onclick="unhideReplyForm('{{ comment.id }}', '@{{ reply.profile.user.username }}')"
+        <button 
+        class="btn comment-action m-0"
+        onclick="unhideReplyForm('{{ comment.id }}', '@{{ reply.profile.user.username }} ')"
         >
         <span class="me-2 comment-action-text">Reply</span>
         {% include "icons/reply.html" %}
-        </a>
+        </button>
 
         {% if request.user.id == reply.profile.user.id %}
 
-        <a 
-        class="comment-action"
+        <button 
+        class="btn comment-action m-0"
         hx-get="{% url 'edit_reply' reply_id=reply.id %}"
         hx-target="#reply-{{reply.id}}"
         hx-swap="outerHTML" 
         >
         <span class="me-2 comment-action-text">Edit</span>
         {% include "icons/pencil.html" %}
-        </a>
+        </button>
 
-        <a 
-        class="comment-action" 
+        <button 
+        class="btn comment-action m-0"
         hx-delete="{% url 'delete_reply' reply_id=reply.id %}"
         hx-target="#reply-{{ reply.id }}"
         hx-swap="delete"
@@ -54,10 +65,31 @@
         >
         <span class="me-2 comment-action-text">Delete</span>
         {% include "icons/trashcan.html" %}
-        </a>
+        </button>
 
         {% endif %}
 
-        <a class="comment-action">&#8226;&#8226;&#8226;</a>
+        <div class="dropdown">
+            <button class="btn m-0 comment-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                &#8226;&#8226;&#8226;
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" onclick="hideReply({{reply.id}})">Hide Comment</a></li>
+              <li><a class="dropdown-item" href="#">Block User</a></li>
+              <li><a class="dropdown-item" href="#">Report Comment</a></li>
+            </ul>
+        </div>
     </div>
+
+    {% endif %}
+    
 </div>
+
+<script>
+    
+    function hideReply(replyId) {
+        const reply = document.getElementById(`reply-${replyId}`);
+        reply.style.display = 'none';
+    }
+
+</script>

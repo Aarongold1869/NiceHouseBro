@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
-from .models import Profile
+from .models import Profile, BlockedUser
 from property.models import SavedProperty
 from api.redfin import property_detail_api
 
@@ -54,3 +54,12 @@ def locate_view(request, *args, **kwargs):
     response = HttpResponse(status=200)
     response.set_cookie('coordinates', json.dumps(request.GET))
     return response
+
+@login_required(login_url='/account/login/')
+@require_http_methods(['POST'])
+def block_user_view(request, blocked_user_id:int ):
+    if request.user.id == blocked_user_id:
+        return HttpResponse(status=500)
+    profile = Profile.objects.get(user=request.user)
+    BlockedUser.objects.create(profile=profile, blocked_user=blocked_user_id)
+    return HttpResponse(status=200)

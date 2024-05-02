@@ -143,10 +143,7 @@
             </div>
 
             <div id="comments-tab" style="display:none;">
-
                 <div id="comment-section">
-                {% comment %} {% include "property/partials/comment-section.html" %} {% endcomment %}
-                
             </div>
 
             <div id="contact-tab" style="display:none;">
@@ -156,7 +153,10 @@
         </div>
 
     </div>
+
 </div>
+
+{% include "components/register-modal.html" %}
 
 {{ property|json_script:"property" }}
 
@@ -216,13 +216,13 @@
 
     // Lazy load comment section
     function retrieveComments(propertyId) {
-        htmx.ajax('GET', `/property/get-comments/${propertyId}/`, { target:'#comment-section', swap:'outerHTML' })
+        htmx.ajax('GET', `/property/get-comments/${propertyId}/`, { target:'#comment-section', swap:'outerHTML' });
     }
 
     window.onload = (event) => {
         const property = JSON.parse(document.getElementById('property').textContent);
         retrieveComments(property.propertyId)
-    };
+    }; 
 
 </script>
 

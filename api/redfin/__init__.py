@@ -26,6 +26,12 @@ def property_detail_api(address:str):
     property = {
         'propertyId': 0, 
         'address': address, 
+        'latLong': {
+            'value':{
+                'latitude':47.4998584,
+                'longitude':-122.3360967
+            }
+        },
         'price': 230000, 
         'cap_rate': 0.1,
         'beds': '3', 

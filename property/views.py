@@ -4,9 +4,9 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
-from .forms import CommentForm, ReplyForm
-from .models import SavedProperty, Comment, CommentLike, Reply, ReplyLike
-from profiles.models import Profile 
+from .forms import CommentForm, ReplyForm, ReportFormForm
+from .models import SavedProperty, Comment, CommentLike, Reply, ReplyLike, ReportForm
+from profiles.models import Profile, BlockedUser
 from api.google import google_street_view_api
 from api.redfin import property_detail_api
 from api.redfin.redfin_types import Property
@@ -21,7 +21,7 @@ def property_detail_view(request, address:str='5663 Dunridge Drive, Pace FL 3257
     if request.user.is_authenticated:
         saved_qs = SavedProperty.objects.filter(Q(profile__user=request.user) & Q(property_id=property['propertyId']))
         is_saved = saved_qs.exists()
-    return render(request, 'property/property-detail.html', {'property': property, 'is_saved': is_saved})
+    return render(request, 'property/property-detail.html', {'property': property, 'is_saved': is_saved })
 
 @require_http_methods(['GET'])
 def retrieve_comment_section(request, property_id: str):
@@ -30,9 +30,11 @@ def retrieve_comment_section(request, property_id: str):
         'property': {'propertyId': property_id},
         'form': CommentForm(),
         'comment_list': comment_list,
-        'comment_like_list': list(map(lambda x: x.comment.id, CommentLike.objects.filter(profile__user=request.user, comment__property_id=property_id))),
-        'reply_like_list': list(map(lambda x: x.reply.id, ReplyLike.objects.filter(profile__user=request.user))),
+        'report_form': ReportFormForm()
     }
+    if request.user.is_authenticated:
+        context['comment_like_list'] = list(map(lambda x: x.comment.id, CommentLike.objects.filter(profile__user=request.user, comment__property_id=property_id)))
+        context['reply_like_list'] = list(map(lambda x: x.reply.id, ReplyLike.objects.filter(profile__user=request.user)))
     return render(request, 'property/partials/comment-section.html', context)
 
 @login_required()
@@ -168,3 +170,18 @@ def toggle_reply_like(request, reply_id: int):
         liked=False
     return render(request, "property/partials/reply-like-button.html", {'reply': reply, 'liked': liked })
 
+@require_http_methods(['POST'])
+def report_comment_view(request):
+    data = request.POST
+    ReportForm.objects.create(
+        model=data.get('model'),
+        object_id=data.get('object_id'),
+        profile=Profile.objects.get(user=request.user),
+        cause=data.get('cause'),
+        reported_text=data.get('reported_text')
+    )
+    BlockedUser.objects.create(
+        profile=Profile.objects.get(user=request.user),
+        blocked_user=data.get('reported_user')
+    )
+    return HttpResponse(status=200)

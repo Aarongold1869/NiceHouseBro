@@ -1,5 +1,21 @@
 {% load crispy_forms_tags %}
 
+<style>
+    #comment-section {
+        font-size: 1rem;
+    }
+
+    @media (max-width: 576px) {
+        #comment-section {
+            font-size: .9rem;
+        }
+        #comment-section input {
+            font-size: .9rem;
+        }
+    }
+
+</style> 
+
 <div id="comment-section">
     
     <form 
@@ -12,7 +28,12 @@
     >
         {% csrf_token %}
         {{ form|crispy }}
-        <input id="comment-button" type='submit' class='btn btn-sm love border-2'  value='Comment'>
+
+        {% if not user.is_authenticated %}
+        <button type="button" class="btn btn-sm love border-2" data-bs-toggle="modal" data-bs-target="#registerModal">Comment</button>
+        {% else %}
+        <input id="comment-button" type='submit' class='btn btn-sm love border-2' value='Comment'>
+        {% endif %}
     </form>
     
     <div id="comment-list" class="container mt-4 px-2 pt-2 pb-1 rounded" style="background-color:var(--bs-secondary-bg);">
@@ -24,7 +45,6 @@
             {% endfor %}
         {% endif %}
     </div>
-
 
 </div>
 

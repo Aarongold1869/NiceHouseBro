@@ -6,13 +6,14 @@
         height:1.75rem; 
         background:var(--love); 
         border-radius:100%; 
-        margin-right: 8px; 
+        margin-right: .5rem; 
         text-align:center;
+        align-items:center;
         color:white;
     }
 
     #commment-actions {
-        margin-top: 1rem!important;
+        {% comment %} margin-top: 1rem!important; {% endcomment %}
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
@@ -24,16 +25,18 @@
         color: var(--bs-secondary-color);
         cursor: pointer;
         font-size: .8rem;
-        text-decoration: none;
         display: flex;
         flex-direction: row;
         align-items: center;
     }
+
+    .comment-action::after {
+        content: none;
+    }
     
     @media (max-width: 576px) {
         #commment-actions {
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
         }
         .comment-action-text {
             display:none;
@@ -44,53 +47,64 @@
 
 <div id="comment-{{ comment.id }}" class="card mb-2 pb-2 border-0">
     <div class="card-body pt-3 pb-2">
-        <div class='d-flex align-items-start'>
-            <span class="profile-badge">
+        <div class='d-flex align-items-center mb-2'>
+            {% comment %} <span class="profile-badge">
                 <p class="m-0">{{ comment.profile.user.username.0 }}</p>
-            </span>
-            <p style="font-size: 1rem; color:var(--bs-secondary-color)">{{ comment.profile.user.username }}</p>
-            <p class="card-text"><small class="text-muted">&ensp;&#8226;&ensp;{{ comment.timestamp|time_delta }}</small></p>
+            </span> {% endcomment %}
+            <svg xmlns="http://www.w3.org/2000/svg" class='me-2' width="24" height="24" fill="var(--love)" class="bi bi-person-circle" viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+            </svg>
+            <p class="m-0">{{ comment.profile.user.username }}</p>
+            <p class="m-0"><small class="text-muted">&ensp;&#8226;&ensp;{{ comment.timestamp|time_delta }}</small></p>
         </div>
-        <p class="card-text my-1 ms-1">{{ comment.text }}</p>
+        <p id="comment-text-{{comment.id}}" class="card-text my-1 ms-1">{{ comment.text }}</p>
         
+        <hr class="m-0 my-2"></hr>
+        {% if not user.is_authenticated %}
+
+        {% include "property/partials/comment-actions-no-auth.html" %}
+
+        {% else %}
+
         <div id="commment-actions">
             
-            <a 
-            class="comment-action d-flex align-items-center"
+            <button 
+            class="btn comment-action m-0"
             hx-get="{% url 'toggle_comment_like' comment_id=comment.id %}"
             hx-swap="outerHTML"
             >
             <p id="like-count-{{comment.id}}" class="m-0">{{ comment.commentlike_set.count }}&ensp;&#8226;&ensp;</p>
             <span class="me-2 comment-action-text">Like</span>
             {% if comment.id in comment_like_list %}
-                {% include "icons/heart-fill.html" with size=14 %}
+                {% include "icons/heart-fill.html" with size=14 fill="var(--love)" %}
             {% else %}
                 {% include "icons/heart.html" with size=14 %}
             {% endif %}
-            </a>
+            </button>
 
-            <a 
-            class="comment-action align-items-start"
+            <button 
+            class="btn comment-action m-0"
             onclick="unhideReplyForm('{{ comment.id }}', null)"
             >
             <span class="me-2 comment-action-text">Reply</span>
             {% include "icons/reply.html" %}
-            </a>
+            </button>
 
             {% if request.user.id == comment.profile.user.id %}
 
-            <a 
-            class="comment-action"
+            <button 
+            class="btn comment-action m-0"
             hx-get="{% url 'edit_comment' comment_id=comment.id %}"
-            hx-target="#comment-{{ comment.id }}"
+            hx-target="#comment-{{comment.id}}"
             hx-swap="outerHTML"
             >
             <span class="me-2 comment-action-text">Edit</span>
             {% include "icons/pencil.html" %}
-            </a>
-            <a 
-
-            class="comment-action" 
+            </button>
+            
+            <button 
+            class="btn comment-action m-0"
             hx-delete="{% url 'delete_comment' comment_id=comment.id %}"
             hx-target="#comment-{{ comment.id }}"
             hx-swap="delete"
@@ -98,12 +112,38 @@
             >
             <span class="me-2 comment-action-text">Delete</span>
             {% include "icons/trashcan.html" %}
-            </a>
+            </button>
 
             {% endif %}
 
-            <a class="comment-action">&#8226;&#8226;&#8226;</a>
+            {% if user.id != comment.profile.user.id %}
+            <div class="dropdown">
+                <button class="btn m-0 comment-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    &#8226;&#8226;&#8226;
+                </button>
+                <ul class="dropdown-menu">
+                  <li style="cursor:pointer;"><a class="dropdown-item" onclick="hideComment({{comment.id}})">Hide Comment</a></li>
+                  <li style="cursor:pointer;"><a 
+                    class="dropdown-item"
+                    hx-post="{% url 'block_user' blocked_user_id=comment.profile.user.id %}"
+                    hx-target="#comment-{{comment.id}}"
+                    hx-swap="delete"
+                    >Block User</a></li>
+                  <li style="cursor:pointer;"><a 
+                    class="dropdown-item" 
+                    data-bs-toggle="modal" data-bs-target="#reportModal"
+                    >Block and Report</a></li>
+                </ul>
+            </div>
+
+            {% include "property/partials/report-modal.html" with object=comment model="Comment" %}
+            {% endif %}
+
         </div>
+        
+        {% endif %}
+        {% comment %} <hr></hr> {% endcomment %}
+        
     </div>
 
     <!-- Replies -->
@@ -140,10 +180,17 @@
         const replyForm = document.getElementById(`create-reply-form-container-${commentId}`);
         replyForm.style.display = 'block';
         UnhideReplySectionContainer(commentId);
+        const replyInput = document.getElementById(`create-reply-form-${commentId}`).querySelector('input[name="text"]');
         if (textInit) {
-            const replyInput = document.getElementById(`create-reply-form-${commentId}`).querySelector('input[name="text"]');
             replyInput.value = textInit;
         }
+        replyInput.focus();
+        // replyInput.scrollIntoView();
+    }
+
+    function hideComment(commentId) {
+        const comment = document.getElementById(`comment-${commentId}`);
+        comment.style.display = 'none';
     }
 
 </script>

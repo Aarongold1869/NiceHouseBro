@@ -13,8 +13,8 @@
 
     let property = JSON.parse(document.getElementById('property').textContent);
     if (property) { // if coordinates are provided, set the map view to the coordinates
-        map.setView([property.latitude, property.longitude], 16);
-        var marker = L.marker([property.latitude, property.longitude]).addTo(map);
+        map.setView([property.latLong.value.latitude, property.latLong.value.longitude], 16);
+        var marker = L.marker([property.latLong.value.latitude, property.latLong.value.longitude]).addTo(map);
     } 
 
 </script>

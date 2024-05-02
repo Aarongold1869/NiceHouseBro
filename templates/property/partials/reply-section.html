@@ -47,9 +47,9 @@ style="display:{% if not comment.reply_set.all.exists %}none{% else %}block{% en
             hx-on::after-request="hideReplyForm({{comment.id}})"
             >
                 {% csrf_token %}
-                <input name="text" type="text" class="form-control mb-3" placeholder="Post a reply...">
-                <input id="comment-button" type='submit' class='btn btn-sm love border-2' value="Reply">
-                <input id="comment-button" type='button' class='btn btn-sm love border-2' value='Cancel' onclick="hideReplyForm({{comment.id}})">
+                <input name="text" type="textarea" class="form-control mb-3" placeholder="Post a reply...">
+                <input type='submit' class='btn btn-sm love border-2' value="Reply">
+                <a class='btn btn-sm love border-2' onclick="hideReplyForm({{comment.id}})">Cancel</a>   
             </form>
         </div>
     </div>

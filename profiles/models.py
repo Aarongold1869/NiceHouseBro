@@ -8,3 +8,15 @@ class Profile(models.Model):
     
     def __str__(self):
         return self.user.username
+
+class BlockedUser(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    blocked_user = models.IntegerField()
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint('profile', 'blocked_user', name='profile-blocked_user'),
+        ]
+    
+    def __str__(self):
+        return f'{self.profile.user.username} - {self.blocked_user}'

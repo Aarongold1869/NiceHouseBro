@@ -66,3 +66,29 @@ class ReplyLike(models.Model):
 
     def __str__(self):
         return f'{self.profile.user.username} - {str(self.reply.id)} - {self.timestamp}'
+    
+class ReportForm(models.Model):
+    model = models.CharField(choices=[('Comment', 'Comment'), ('Reply', 'Reply')], max_length=10)
+    object_id = models.IntegerField()
+    reported_text = models.CharField(max_length=999)
+    profile = models.ForeignKey(Profile, on_delete=models.PROTECT)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    cause = models.CharField(choices=[
+            ('Spam', 'Spam'), 
+            ('Harrassment', 'Harrassment'), 
+            ('Threatening Violence', 'Threatening Violence'), 
+            ('Hate Speech', 'Hate Speech'), 
+            ('Impersonation', 'Impersonation'),
+            ('Prohibited Transaction', 'Prohibited Transaction'),
+            ('Other', 'Other')
+        ], 
+        max_length=40)
+    resolved = models.BooleanField(default=False)
+    action = models.CharField(choices=[
+            ('Delete', 'Delete'), 
+            ('Ignore', 'Ignore'), 
+            ('TempCommentBan', 'TempCommentBan'),
+            ('CommentBan', 'CommentBan')
+        ], 
+        max_length=20, blank=True, null=True)
+    updated = models.DateTimeField(auto_now=True)
