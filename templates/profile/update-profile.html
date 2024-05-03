@@ -90,10 +90,13 @@
             <h1>{{ profile.user.username|upper }}</h1>
         </div>
 
-        <form id="update-profile-form" >
+        <form 
+        id="update-profile-form" 
+        hx-post={% url 'update_profile' %}
+        hx-swap="none"
+        hx-on::after-swap="alert('Profile Updated Successfully')"
+        >
             {% csrf_token %}
-
-            {{ crispy_form }}
             <label class="mb-1" for="email">Email *</label>
             <input type="email" class="form-control mb-3" id="email" name="email" value="{{ user.email }}">
             <label class="mb-1" for="first_name">First Name *</label>
@@ -102,9 +105,9 @@
             <input type="text" class="form-control mb-3" id="last_name" name="last_name" value="{{ user.last_name }}">
             <label class="mb-1" for="phone">Phone *</label>
             <input type="text" class="form-control mb-3" id="phone" name="phone" value="{{ profile.phone_number }}">
-            <label class="mb-1" for="location">Location *</label>
+            <label class="mb-1" for="location">Location</label>
             <input type="text" class="form-control mb-3" id="location-input" name="location" value="{{ profile.location }}">
-            <label class="mb-1" for="goal">Goal *</label>
+            <label class="mb-1" for="goal">Goal</label>
             <select class="form-select" id="goal" name="goal">
                 {% for option in GOAL_CHOICES %}
                 <option value="{{option.0}}" {% if profile.goal == option %} selected {% endif %}>{{option.0}}</option>

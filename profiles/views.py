@@ -28,9 +28,21 @@ def saved_property_list_view(request, *args, **kwargs):
 
 @login_required(login_url='/account/login/')
 def update_profile_view(request, *args, **kwargs):
-    profile = Profile.objects.get(user=request.user)
-    form = UpdateProfileForm()
-    return render(request, 'profile/update-profile.html', {'profile': profile, 'form': form, 'GOAL_CHOICES': GOAL_CHOICES })
+    user = request.user
+    profile = Profile.objects.get(user=user)
+    if request.htmx:
+        form = UpdateProfileForm(request.POST)
+        if form.is_valid():
+            user = form.cleaned_data.get('first_name')
+            user = form.cleaned_data.get('last_name')
+            user = form.cleaned_data.get('email')
+            user.save()
+            profile.phone_number = form.cleaned_data.get('phone_number')
+            profile.location = form.cleaned_data.get('location')
+            profile.goal = form.cleaned_data.get('goal')
+            profile.save()
+            return HttpResponse(status=200)
+    return render(request, 'profile/update-profile.html', {'profile': profile, 'GOAL_CHOICES': GOAL_CHOICES })
 
 @login_required(login_url='/account/login/')
 @require_http_methods(['POST'])
