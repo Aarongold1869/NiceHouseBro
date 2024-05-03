@@ -6,10 +6,10 @@
         {% if not reply.profile.profile_picture %}
             {% include "icons/profile-icon.html" %}
         {% else %}
-            <img src="{{ reply.profile.profile_picture.url }}" class="profile-badge me-2" alt="profile picture">
+            <img src="{{ reply.profile.profile_picture.url }}" class="profile-badge" alt="profile picture">
         {% endif %}
 
-        <p class="m-0">{{ reply.profile.user.username }}</p>
+        <p class="m-0 ms-2">{{ reply.profile.user.username }}</p>
         <p class="m-0"><small class="text-muted">&ensp;&#8226;&ensp;{{ reply.timestamp|time_delta }}</small></p>
     </div>
     <p id="reply-text-{{reply.id}}" class="card-text my-1 ms-1">{{ reply.text }}</p>

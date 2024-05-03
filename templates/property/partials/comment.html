@@ -5,7 +5,7 @@
         width:2rem; 
         height:2rem; 
         border-radius:100%; 
-        margin-right: .5rem; 
+        {% comment %} margin-right: .5rem;  {% endcomment %}
     }
 
     #commment-actions {
@@ -48,10 +48,10 @@
             {% if not comment.profile.profile_picture %}
                 {% include "icons/profile-icon.html" %}
             {% else %}
-                <img src="{{ comment.profile.profile_picture.url }}" class="profile-badge me-2" alt="profile picture">
+                <img src="{{ comment.profile.profile_picture.url }}" class="profile-badge" alt="profile picture">
             {% endif %}
 
-            <p class="m-0">{{ comment.profile.user.username }}</p>
+            <p class="m-0 ms-2">{{ comment.profile.user.username }}</p>
             <p class="m-0"><small class="text-muted">&ensp;&#8226;&ensp;{{ comment.timestamp|time_delta }}</small></p>
         </div>
         <p id="comment-text-{{comment.id}}" class="card-text my-1 ms-1">{{ comment.text }}</p>
