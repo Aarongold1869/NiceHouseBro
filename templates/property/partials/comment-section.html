@@ -16,7 +16,12 @@
 
 </style> 
 
-<div id="comment-section">
+<div 
+id="comment-section" 
+hx-get="{% url 'get_comments' property_id=property.propertyId %}"
+hx-swap="outerHTML"
+hx-trigger="reload-comments from:body"
+>
     
     <form 
     id='comment-form'
@@ -41,7 +46,9 @@
             <h5 id="no-comments">No comments yet.</h5>
         {% else %}
             {% for comment in comment_list %}
-                {% include "property/partials/comment.html" %}
+                {% if not comment.profile.user.id in blocked_user_list %}
+                    {% include "property/partials/comment.html" %}
+                {% endif %}
             {% endfor %}
         {% endif %}
     </div>

@@ -3,16 +3,20 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
-from .models import Profile, BlockedUser
+from django_htmx.http import trigger_client_event
+
+from .models import Profile, BlockedUser, GOAL_CHOICES
+from .forms import UpdateProfileForm
 from property.models import SavedProperty
 from api.redfin import property_detail_api
 
 import ast
 import json
+import os
 
 # Create your views here.
-@login_required(login_url='/account/login/')
 
+@login_required(login_url='/account/login/')
 def saved_property_list_view(request, *args, **kwargs):
     profile = Profile.objects.get(user=request.user)
     saved_properties_qs = SavedProperty.objects.filter(profile=profile).filter(archived=False).order_by('-timestamp')
@@ -21,6 +25,25 @@ def saved_property_list_view(request, *args, **kwargs):
                                 'image': x.image
                             }, saved_properties_qs ))
     return render(request, 'profile/saved-properties.html', {'saved_properties': property_list })
+
+@login_required(login_url='/account/login/')
+def update_profile_view(request, *args, **kwargs):
+    profile = Profile.objects.get(user=request.user)
+    form = UpdateProfileForm()
+    return render(request, 'profile/update-profile.html', {'profile': profile, 'form': form, 'GOAL_CHOICES': GOAL_CHOICES })
+
+@login_required(login_url='/account/login/')
+@require_http_methods(['POST'])
+def update_profile_picture(request, *args, **kwargs):
+    profile = Profile.objects.get(user=request.user)
+    file = request.FILES.get('file-input', None)
+    if file:
+        if profile.profile_picture:
+            if os.path.exists(profile.profile_picture.path):
+                os.remove(profile.profile_picture.path)
+        profile.profile_picture = file
+        profile.save()
+    return render(request, 'profile/partials/profile-img.html', {'profile': profile })
 
 @login_required(login_url='/account/login/')
 @require_http_methods(['POST'])
@@ -62,4 +85,5 @@ def block_user_view(request, blocked_user_id:int ):
         return HttpResponse(status=500)
     profile = Profile.objects.get(user=request.user)
     BlockedUser.objects.create(profile=profile, blocked_user=blocked_user_id)
-    return HttpResponse(status=200)
+    response = HttpResponse(status=200)
+    return trigger_client_event(response, 'reload-comments')

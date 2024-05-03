@@ -1,7 +1,7 @@
 {% load crispy_forms_tags %}
 
 <!-- Modal -->
-<div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="register-modal-title">
+<div class="modal fade" id="reportModal-{{model}}-{{object.id}}" tabindex="-1" role="dialog" aria-labelledby="register-modal-title">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -25,13 +25,12 @@
                 <input type="hidden" name="reported_text" value="{{ object.text }}">
                 <input type="hidden" name="reported_user" value="{{ object.profile.user.id }}">
 
-                <p>#{{ model|lower }}-{{ object.id }}</p>
                 <button 
                 id="report-button" 
                 class='btn btn-sm love border-2' 
                 data-bs-dismiss="modal"
                 hx-post="{% url 'report_comment' %}"
-                hx-target="#comment-{{object.id}}"
+                hx-target="#{{model|lower}}-{{object.id}}"
                 hx-swap="delete"
                 >Report
                 </button>

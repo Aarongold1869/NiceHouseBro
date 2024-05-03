@@ -35,6 +35,7 @@ def retrieve_comment_section(request, property_id: str):
     if request.user.is_authenticated:
         context['comment_like_list'] = list(map(lambda x: x.comment.id, CommentLike.objects.filter(profile__user=request.user, comment__property_id=property_id)))
         context['reply_like_list'] = list(map(lambda x: x.reply.id, ReplyLike.objects.filter(profile__user=request.user)))
+        context['blocked_user_list'] = list(map(lambda x: x.blocked_user, BlockedUser.objects.filter(profile__user=request.user)) )
     return render(request, 'property/partials/comment-section.html', context)
 
 @login_required()
@@ -184,4 +185,5 @@ def report_comment_view(request):
         profile=Profile.objects.get(user=request.user),
         blocked_user=data.get('reported_user')
     )
-    return HttpResponse(status=200)
+    response = HttpResponse(status=200)
+    return trigger_client_event(response, 'reload-comments')

@@ -56,7 +56,9 @@ style="display:{% if not comment.reply_set.all.exists %}none{% else %}block{% en
 
     <div id="reply-section-{{comment.id}}">
     {% for reply in comment.reply_set.all|dictsort:"timestamp" %}
-        {% include "property/partials/reply.html" %}
+        {% if not reply.profile.user.id in blocked_user_list %}
+            {% include "property/partials/reply.html" %}
+        {% endif %}
     {% endfor %}
     </div>
 

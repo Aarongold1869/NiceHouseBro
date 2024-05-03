@@ -2,14 +2,10 @@
 
 <style>
     .profile-badge {
-        width:1.75rem; 
-        height:1.75rem; 
-        background:var(--love); 
+        width:2rem; 
+        height:2rem; 
         border-radius:100%; 
         margin-right: .5rem; 
-        text-align:center;
-        align-items:center;
-        color:white;
     }
 
     #commment-actions {
@@ -48,13 +44,13 @@
 <div id="comment-{{ comment.id }}" class="card mb-2 pb-2 border-0">
     <div class="card-body pt-3 pb-2">
         <div class='d-flex align-items-center mb-2'>
-            {% comment %} <span class="profile-badge">
-                <p class="m-0">{{ comment.profile.user.username.0 }}</p>
-            </span> {% endcomment %}
-            <svg xmlns="http://www.w3.org/2000/svg" class='me-2' width="24" height="24" fill="var(--love)" class="bi bi-person-circle" viewBox="0 0 16 16">
-                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-            </svg>
+
+            {% if not comment.profile.profile_picture %}
+                {% include "icons/profile-icon.html" %}
+            {% else %}
+                <img src="{{ comment.profile.profile_picture.url }}" class="profile-badge me-2" alt="profile picture">
+            {% endif %}
+
             <p class="m-0">{{ comment.profile.user.username }}</p>
             <p class="m-0"><small class="text-muted">&ensp;&#8226;&ensp;{{ comment.timestamp|time_delta }}</small></p>
         </div>
@@ -125,13 +121,13 @@
                   <li style="cursor:pointer;"><a class="dropdown-item" onclick="hideComment({{comment.id}})">Hide Comment</a></li>
                   <li style="cursor:pointer;"><a 
                     class="dropdown-item"
-                    hx-post="{% url 'block_user' blocked_user_id=comment.profile.user.id %}"
+                    hx-post="{% url 'block_user' blocked_user_id=comment.profile.id %}"
                     hx-target="#comment-{{comment.id}}"
                     hx-swap="delete"
                     >Block User</a></li>
                   <li style="cursor:pointer;"><a 
                     class="dropdown-item" 
-                    data-bs-toggle="modal" data-bs-target="#reportModal"
+                    data-bs-toggle="modal" data-bs-target="#reportModal-Comment-{{comment.id}}"
                     >Block and Report</a></li>
                 </ul>
             </div>

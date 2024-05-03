@@ -11,3 +11,4 @@ def calculate_cap_rate(value: int, rent: int, property_tax_rate: float=0.0091, m
     net_income = ann_gross_income - ann_operating_ex
     cap_rate = net_income / value
     return cap_rate
+

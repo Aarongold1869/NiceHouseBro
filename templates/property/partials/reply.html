@@ -2,13 +2,13 @@
 
 <div id="reply-{{reply.id}}" class="card-body ms-4 my-0 pt-2 pb-1" style="border-left: 2px solid var(--bs-secondary-bg);">
     <div class='d-flex align-items-start mb-2'>
-        {% comment %} <span class="profile-badge">
-            <p>{{ reply.profile.user.username.0 }}</p>
-        </span> {% endcomment %}
-        <svg xmlns="http://www.w3.org/2000/svg" class='me-2' width="24" height="24" fill="var(--love)" class="bi bi-person-circle" viewBox="0 0 16 16">
-            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-        </svg>
+
+        {% if not reply.profile.profile_picture %}
+            {% include "icons/profile-icon.html" %}
+        {% else %}
+            <img src="{{ reply.profile.profile_picture.url }}" class="profile-badge me-2" alt="profile picture">
+        {% endif %}
+
         <p class="m-0">{{ reply.profile.user.username }}</p>
         <p class="m-0"><small class="text-muted">&ensp;&#8226;&ensp;{{ reply.timestamp|time_delta }}</small></p>
     </div>
@@ -69,16 +69,30 @@
 
         {% endif %}
 
+        {% if user.id != reply.profile.user.id %}
         <div class="dropdown">
             <button class="btn m-0 comment-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 &#8226;&#8226;&#8226;
             </button>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" onclick="hideReply({{reply.id}})">Hide Comment</a></li>
-              <li><a class="dropdown-item" href="#">Block User</a></li>
-              <li><a class="dropdown-item" href="#">Report Comment</a></li>
+              <li style="cursor:pointer;"><a 
+                class="dropdown-item"
+                hx-post="{% url 'block_user' blocked_user_id=reply.profile.user.id %}"
+                hx-target="#reply-{{reply.id}}"
+                hx-swap="delete"
+                >Block User</a></li>
+              <li style="cursor:pointer;"><a 
+                class="dropdown-item" 
+                data-bs-toggle="modal" data-bs-target="#reportModal-Reply-{{reply.id}}"
+                >Block and Report</a></li>
             </ul>
         </div>
+
+        {% include "property/partials/report-modal.html" with object=reply model="Reply" %}
+        
+        {% endif %}
+
     </div>
 
     {% endif %}
