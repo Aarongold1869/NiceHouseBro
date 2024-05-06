@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% load time_delta%}
+
+<style>
+
+    .profile-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .profile-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 25%;
+        height: 100%;
+        padding: 1rem;
+        margin-right: 1rem;
+        border-radius: 10px;
+        background-color: var(--bs-secondary-bg);
+    }
+
+    .profile-content {
+        display: flex;
+        flex-direction: column;
+        width: 75%;
+    }
+
+    #mobile-change-picture-button {
+        display: flex;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 2rem;
+        height: 2rem;
+        text-align: center;
+        align-items: center;
+    }
+
+    @media (max-width: 1000px) {
+        .profile-container {
+            flex-direction: column;
+        }
+
+        .profile-info {
+            width: 100%;
+            margin-bottom: 1rem;
+            margin-right: 0;
+        }
+
+        .profile-content {
+            width: 100%;
+        }
+
+        #mobile-change-picture-button {
+            display: flex;
+        }
+    }
+
+
+    .profile-picture {
+        width: 15rem;
+        height: 15rem;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        margin: auto;
+        margin-bottom: 1rem;
+    }
+
+    .profile-picture img {
+        position: absolute;
+        object-fit: cover;
+        width: 15rem;
+        height: 15rem;
+        border-radius: 50%;
+    }
+
+    #file-input {
+        display: none;
+    }
+    
+    .-label {
+        display: none;
+        position: absolute;
+        cursor: pointer;
+        height: 15rem;
+        width: 15rem;
+        border-radius: 50%;
+        background-color: none;
+        color: transparent;
+    }
+
+    .profile-picture:hover {
+        .-label {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0,0,0,.8);
+            color: white;
+            z-index: 10000;
+            margin-bottom: 0;
+        }
+    }
+
+    span {
+        display: inline-flex;
+        padding: .2em;
+        height: 2em;
+    }
+
+    .profile-badge {
+        width:2rem; 
+        height:2rem; 
+        border-radius:100%; 
+    }
+
+</style>
+
+
+<div class="container col-sm-10 my-5 mx-auto">
+
+    <div class="profile-container">
+        <div class="profile-info">
+            <div>
+                <div class="mb-3 justify-content-center text-center">
+
+                    <div class="profile-picture">
+
+                        {% if user == profile.user %}
+                            <label class="-label" for="file-input">
+                                {% include "icons/camera.html" %}
+                                <span class="ms-2">Change Image</span>
+                            </label>
+                            <form
+                            hx-trigger="change"
+                            hx-post="/profile/update-picture/"
+                            hx-encoding="multipart/form-data"
+                            hx-target="#profile-img"
+                            hx-swap="outerHTML">
+                                <input id="file-input" name="file-input" type="file" />
+                            </form>
+
+                            <label for="file-input"
+                            id="mobile-change-picture-button"
+                            class="btn btn-sm love rounded-circle"
+                            >{% include "icons/camera.html" %}
+                            </label>
+                        {% endif %}
+                
+                        {% if profile.profile_picture %}
+                            <img id="profile-img" src="{{ profile.profile_picture.url }}" alt="Profile Picture">
+                        {% else %}
+                            <img id="profile-img" src="/media/profile_pictures/default/default.png" alt="Profile Picture">
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <h3 class="mb-0">{{ profile.user.first_name }} {{ profile.user.last_name }}</h3>
+                <h5 class="text-muted mb-3">@{{ profile.user.username }}</h5>
+                <hr></hr>
+
+                {% if user == profile.user %}
+                <button id="edit-profile-button" class="btn btn-sm love w-100" onclick="ShowUpdateProfileForm()">Edit Profile</button>
+            
+                <div id="update-profile-form-container" style="display:none;">
+                    {% include "profile/partials/update-profile-form.html"%}
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <div class="profile-content">
+
+            <div id="saved-properties mb-4">
+                <h3 class="mb-3">Saved Properties</h3>
+                <div id="saved-property-container"></div>
+            </div>
+
+            <div id="comments">
+                <h3 class="mb-4">Comments and Replies</h3>
+
+                <div class="container">
+                    {% for comment in profile.comment_set.all %}
+                        <div id="comment-{{ comment.id }}" class="card mb-2 p-2 border-2">
+                            <p class="text-muted">
+                                Commented on Listing 
+                                <a href="{{comment.detail_page_endpoint}}">{{ comment.property_address }}</a>
+                            </p>
+                            <div class='d-flex align-items-center mb-2'>
+
+                                {% if not comment.profile.profile_picture %}
+                                    {% include "icons/profile-icon.html" %}
+                                {% else %}
+                                    <img src="{{ comment.profile.profile_picture.url }}" class="profile-badge" alt="profile picture">
+                                {% endif %}
+                    
+                                <p class="m-0 ms-2">{{ comment.profile.user.username }}</p>
+                                <p class="m-0 text-muted">&ensp;&#8226;&ensp;{{ comment.timestamp|time_delta }}</p>
+                                
+                            </div>
+                            <p id="comment-text-{{comment.id}}" class="card-text my-1 ms-1">{{ comment.text }}</p>
+                        </div>
+                    {% endfor %}
+
+                 </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+{{ profile.id|json_script:"profile_id" }}
+
+<script>
+
+    function ShowUpdateProfileForm() {
+        const updateProfileForm = document.getElementById('update-profile-form-container');
+        updateProfileForm.style.display = 'block';
+        const editProfileButton = document.getElementById('edit-profile-button');
+        editProfileButton.style.display = 'none';
+    }
+
+    // Lazy load save properties
+    function retrieveSavedProperties() {
+        const profileId = JSON.parse(document.getElementById('profile_id').textContent);
+        htmx.ajax('GET', `/profile/saved/${profileId}`, { target:'#saved-property-container', swap:'outerHTML', select: "#saved-property-container" });
+    }
+
+    window.onload = (event) => {
+        retrieveSavedProperties()
+    }; 
+
+</script>
+
+
+{% endblock %}

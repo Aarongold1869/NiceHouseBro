@@ -1,0 +1,39 @@
+{% load crispy_forms_tags %}
+
+<form 
+id="update-profile-form" 
+hx-post="{% url 'update_profile' profile_id=profile.id %}"
+hx-swap="none"
+hx-on::after-swap="HideUpdateProfileForm()"
+>
+    {% csrf_token %}
+    
+    {{ form|crispy }}
+
+    <div class="d-flex mt-4 w-100">
+        <button type="submit" class="btn btn-sm love w-50 me-2">Update</button>
+        <button type="button" class="btn btn-secondary btn-sm w-50" onclick="HideUpdateProfileForm(didUpdate=false)">Cancel</button>
+    </div>
+
+</form>
+
+<script>
+
+    function initialize() {
+        new google.maps.places.Autocomplete(locationInput);
+    }
+
+    const locationInput = document.getElementById('id_location');
+    locationInput.addEventListener('keypress', initialize);
+
+    function HideUpdateProfileForm(didUpdate=true){
+        const updateProfileForm = document.getElementById('update-profile-form-container');
+        updateProfileForm.style.display = 'none';
+        const editProfileButton = document.getElementById('edit-profile-button');
+        editProfileButton.style.display = 'block';
+        if(didUpdate) {
+            alert('Profile Updated Successfully');  
+        }
+    }
+
+</script>

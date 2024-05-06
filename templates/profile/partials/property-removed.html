@@ -2,7 +2,7 @@
     <p>Property Unsaved. 
         <a 
         style="color:var(--love); cursor:pointer;" 
-        hx-post="{% url 'toggle_saved_profile' property_id=property.propertyId %}"
+        hx-post="{% url 'toggle_saved_property' property_id=property.propertyId %}"
         hx-target="#property-card-{{property.propertyId}}"
         hx-vals='{"property_obj":"{{ property }}"}'
         hx-swap="outerHTML"

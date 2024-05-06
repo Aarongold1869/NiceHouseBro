@@ -1,19 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% load static %}
-{% load currency %}
-{% load percentage %}
-{% load comma %}
 
 <div class="container col-12 col-md-8 col-lg-6 py-5 px-3">
     <h1 class="mb-4">Your Saved Properties</h1>
 
+    <div id="saved-property-container">
     {% for property in saved_properties %}
 
         {% include "profile/partials/saved-property-card.html" %}
         
     {% endfor %}
+    </div>  
 
 </div>
 

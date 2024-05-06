@@ -4,10 +4,24 @@
 {% load comma %}
 
 <style>
+    #card-button-container {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    #card-button-container a {
+        color: var(--bs-secondary-color);
+        font-size: .9rem;
+        cursor: pointer;
+        margin-right: .9rem;
+        text-decoration: none;
+    }
+
+    #card-button-container a:hover {
+        text-decoration: underline;
+    }
+
     @media (max-width: 1000px) {
-        /* #card-button-container {
-            flex-direction: column!important;
-        }  */
 
         h5 {
             font-size: .9rem!important;
@@ -25,49 +39,46 @@
             font-size: .7rem!important;
         }
 
-        /* .property-card-details {
-            display: none;
-        } */
-
         .card-image {
             object-fit: cover!important;
             max-height: 200px!important;
         }
 
-        /* .card {
-            flex-direction: column!important;   
-        } */
+        #property-description {
+            display: none;
+        }
     }
 </style>
 
-<div id="property-card-{{property.propertyId}}" class="card mb-3 w-auto" style="box-shadow: 0 0 4px 2px var(--bs-dark-bg-subtle);">
+<div id="property-card-{{property.propertyId}}" class="card mb-3 w-auto position-relative" style="box-shadow: 0 0 4px 2px var(--bs-dark-bg-subtle);">
     <div class="row g-0">
         <div class="col-4 col-md-4">
             <img src="{{property.image}}" class="img-fluid rounded-start h-100 card-image" alt="...">
         </div>
         <div class="col-8 col-md-8">
-            <div class="card-body">
+            <div class="card-body h-100">
                 <h5>{{ property.address.address }}</h5>
                 <div class="property-card-details">
                     <h6 style="font-weight:600;">{{ property.price|currency:0 }}</h6>
                     <p class="mb-2" style="font-size:1rem;">
-                        Cap: <strong >{{ property.cap_rate }}</strong>&ensp;|&ensp;
-                        bds: <strong>{{ property.bedrooms }}</strong>&ensp;|&ensp;
-                        br: <strong>{{ property.bathrooms }}</strong>&ensp;|&ensp;
-                        <strong>{{ property.area }} sqft.</strong>
+                        Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
+                        bds: <strong>{{ property.beds }}</strong>&ensp;|&ensp;
+                        br: <strong>{{ property.baths }}</strong>&ensp;|&ensp;
+                        <strong>{{ property.sq_ft }} sqft.</strong>
                     </p>
+                    <p id="property-description" style="font-size: .8rem;">{{ property.remarks|truncatechars:100 }}</p>
                 </div>
-                <div id="card-button-container" class="d-flex py-2">
-                    <a href="/property/detail/{{property.address}}/" class="btn btn-sm btn-outline-info border-3 me-1" style="width:100%;">View Property</a>
-                    <a href="#" class="btn btn-sm love border-3 me-2" style="width:100%;">Contact Agent</a>
-                    <button 
-                    class="btn btn-sm border-3 border-secondary me-2"
-                    style="background-color: var(--bs-secondary-bg); width:100%;"
-                    hx-post="{% url 'toggle_saved_profile' property_id=property.propertyId %}"
-                    hx-target="#property-card-{{property.propertyId}}"
-                    hx-vals='{"property_obj":"{{ property }}"}'
-                    hx-swap="outerHTML"
-                    >Unsave</button>
+                <div id="card-button-container" class="d-flex py-2 fixed-bottom">
+                    <a href="/property/detail/{{property.address}}/">View Property</a>
+                    <a href="#">Contact Agent</a>
+                    {% if user == profile.user %}
+                        <a 
+                        hx-post="{% url 'toggle_saved_property' property_id=property.propertyId %}"
+                        hx-target="#property-card-{{property.propertyId}}"
+                        hx-vals='{"property_obj":"{{ property }}"}'
+                        hx-swap="outerHTML" 
+                        >Unsave</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

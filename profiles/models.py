@@ -14,8 +14,8 @@ class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     theme = models.CharField(choices=[('light','light'), ('dark','dark')], max_length=100, default='dark')
     goal = models.CharField(choices=GOAL_CHOICES, max_length=100, default='Searching for Investment Property')
-    phone_number = models.CharField(max_length=10, blank=True)
-    location = models.CharField(max_length=100, blank=True)
+    phone_number = models.CharField(max_length=10, blank=True, null=True)
+    location = models.CharField(max_length=100, blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures', blank=True, null=True)
     
     def __str__(self):

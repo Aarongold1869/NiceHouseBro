@@ -21,6 +21,7 @@ class SavedProperty(models.Model):
 class Comment(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     property_id = models.CharField(max_length=100)
+    property_address = models.CharField(max_length=250)
     text = models.CharField(max_length=999)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -28,6 +29,9 @@ class Comment(models.Model):
     
     def __str__(self):
         return f'{self.profile.user.username} - {str(self.property_id)} - {self.timestamp}'
+    
+    def detail_page_endpoint(self):
+        return f'/property/detail/{self.property_address}/'
     
 class CommentLike(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)

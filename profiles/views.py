@@ -2,8 +2,10 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth.models import User
 
 from django_htmx.http import trigger_client_event
+from crispy_forms.templatetags.crispy_forms_filters import as_crispy_field
 
 from .models import Profile, BlockedUser, GOAL_CHOICES
 from .forms import UpdateProfileForm
@@ -14,35 +16,53 @@ import ast
 import json
 import os
 
+
 # Create your views here.
+@login_required(login_url='/account/login/')
+def profile_view(request, username:str, *args, **kwargs):
+    profile = Profile.objects.get(user__username=username)
+    form = UpdateProfileForm(initial={ 
+        'first_name': profile.user.first_name, 
+        'last_name': profile.user.last_name, 
+        'email': profile.user.email, 
+        'phone_number': profile.phone_number, 
+        'location': profile.location, 
+        'goal': profile.goal 
+    })
+    return render(request, 'profile/profile-detail.html', {'profile': profile, 'form': form })
+
+
+def validate_email(request):
+    form = UpdateProfileForm(request.GET)
+    return HttpResponse(as_crispy_field(form['email']))
 
 @login_required(login_url='/account/login/')
-def saved_property_list_view(request, *args, **kwargs):
-    profile = Profile.objects.get(user=request.user)
+@require_http_methods(['POST'])
+def update_profile_view(request, profile_id:int, *args, **kwargs):
+    user: User = request.user
+    profile = Profile.objects.get(id=profile_id, user=user)
+    form = UpdateProfileForm(request.POST)
+    if form.is_valid():
+        user.first_name = form.cleaned_data.get('first_name')
+        user.last_name = form.cleaned_data.get('last_name')
+        user.email = form.cleaned_data.get('email')
+        user.save()
+        profile.phone_number = form.cleaned_data.get('phone_number')
+        profile.location = form.cleaned_data.get('location')
+        profile.goal = form.cleaned_data.get('goal')
+        profile.save()
+        return HttpResponse(status=200)
+    return HttpResponse(status=500)
+
+@login_required(login_url='/account/login/')
+def saved_property_list_view(request, profile_id:int, *args, **kwargs):
+    profile = Profile.objects.get(id=profile_id)
     saved_properties_qs = SavedProperty.objects.filter(profile=profile).filter(archived=False).order_by('-timestamp')
     property_list = list(map(lambda x: {
                                 **property_detail_api(address=x.address), 
                                 'image': x.image
                             }, saved_properties_qs ))
-    return render(request, 'profile/saved-properties.html', {'saved_properties': property_list })
-
-@login_required(login_url='/account/login/')
-def update_profile_view(request, *args, **kwargs):
-    user = request.user
-    profile = Profile.objects.get(user=user)
-    if request.htmx:
-        form = UpdateProfileForm(request.POST)
-        if form.is_valid():
-            user = form.cleaned_data.get('first_name')
-            user = form.cleaned_data.get('last_name')
-            user = form.cleaned_data.get('email')
-            user.save()
-            profile.phone_number = form.cleaned_data.get('phone_number')
-            profile.location = form.cleaned_data.get('location')
-            profile.goal = form.cleaned_data.get('goal')
-            profile.save()
-            return HttpResponse(status=200)
-    return render(request, 'profile/update-profile.html', {'profile': profile, 'GOAL_CHOICES': GOAL_CHOICES })
+    return render(request, 'profile/saved-properties.html', { 'profile': profile, 'saved_properties': property_list })
 
 @login_required(login_url='/account/login/')
 @require_http_methods(['POST'])
