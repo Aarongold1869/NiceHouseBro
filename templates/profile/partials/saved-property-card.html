@@ -35,8 +35,9 @@
             font-size: .7rem!important;
         }
 
-        #card-button-container .btn {
-            font-size: .7rem!important;
+        #card-button-container a {
+            font-size: .6rem!important;
+            margin-right: .5rem!important;
         }
 
         .card-image {
@@ -50,15 +51,16 @@
     }
 </style>
 
-<div id="property-card-{{property.propertyId}}" class="card mb-3 w-auto position-relative" style="box-shadow: 0 0 4px 2px var(--bs-dark-bg-subtle);">
+<div id="property-card-{{property.propertyId}}" class="card mb-3 w-auto" style="box-shadow: 0 0 4px 2px var(--bs-dark-bg-subtle);">
     <div class="row g-0">
         <div class="col-4 col-md-4">
             <img src="{{property.image}}" class="img-fluid rounded-start h-100 card-image" alt="...">
         </div>
         <div class="col-8 col-md-8">
-            <div class="card-body h-100">
-                <h5>{{ property.address.address }}</h5>
+            <div class="card-body h-100 align-items-between py-1 px-3 pe-2">
+
                 <div class="property-card-details">
+                    <h5>{{ property.address.address }}</h5>
                     <h6 style="font-weight:600;">{{ property.price|currency:0 }}</h6>
                     <p class="mb-2" style="font-size:1rem;">
                         Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
@@ -68,9 +70,10 @@
                     </p>
                     <p id="property-description" style="font-size: .8rem;">{{ property.remarks|truncatechars:100 }}</p>
                 </div>
-                <div id="card-button-container" class="d-flex py-2 fixed-bottom">
+
+                <div id="card-button-container" class="d-flex py-2">
                     <a href="/property/detail/{{property.address}}/">View Property</a>
-                    <a href="#">Contact Agent</a>
+                    {% comment %} <a href="#">Contact Agent</a> {% endcomment %}
                     {% if user == profile.user %}
                         <a 
                         hx-post="{% url 'toggle_saved_property' property_id=property.propertyId %}"

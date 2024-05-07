@@ -21,6 +21,7 @@ import os
 @login_required(login_url='/account/login/')
 def profile_view(request, username:str, *args, **kwargs):
     profile = Profile.objects.get(user__username=username)
+    # profile.user.refresh_from_db()
     form = UpdateProfileForm(initial={ 
         'first_name': profile.user.first_name, 
         'last_name': profile.user.last_name, 
@@ -31,10 +32,19 @@ def profile_view(request, username:str, *args, **kwargs):
     })
     return render(request, 'profile/profile-detail.html', {'profile': profile, 'form': form })
 
-
 def validate_email(request):
     form = UpdateProfileForm(request.GET)
     return HttpResponse(as_crispy_field(form['email']))
+
+import re
+def validate_phone_number(request):
+    form = UpdateProfileForm(request.GET)
+    phone_number = request.GET.get('phone_number', None)
+    pattern = re.compile("(0|91)?[6-9][0-9]{9}")
+    if not pattern.match(phone_number):
+        form.add_error('phone_number', 'Invalid phone number')
+    # print(as_crispy_field(form['phone_number']))
+    return HttpResponse(as_crispy_field(form['phone_number']))
 
 @login_required(login_url='/account/login/')
 @require_http_methods(['POST'])
@@ -42,17 +52,20 @@ def update_profile_view(request, profile_id:int, *args, **kwargs):
     user: User = request.user
     profile = Profile.objects.get(id=profile_id, user=user)
     form = UpdateProfileForm(request.POST)
-    if form.is_valid():
-        user.first_name = form.cleaned_data.get('first_name')
-        user.last_name = form.cleaned_data.get('last_name')
-        user.email = form.cleaned_data.get('email')
-        user.save()
-        profile.phone_number = form.cleaned_data.get('phone_number')
-        profile.location = form.cleaned_data.get('location')
-        profile.goal = form.cleaned_data.get('goal')
-        profile.save()
-        return HttpResponse(status=200)
-    return HttpResponse(status=500)
+    if not form.is_valid():
+        return HttpResponse(status=500)
+    
+    user.first_name = form.cleaned_data.get('first_name')
+    user.last_name = form.cleaned_data.get('last_name')
+    user.email = form.cleaned_data.get('email')
+    user.save()
+    profile.phone_number = form.cleaned_data.get('phone_number')
+    profile.location = form.cleaned_data.get('location')
+    profile.goal = form.cleaned_data.get('goal')
+    profile.save()
+    
+    return render(request, 'profile/profile-detail.html', {'profile': profile, 'form': form })
+    
 
 @login_required(login_url='/account/login/')
 def saved_property_list_view(request, profile_id:int, *args, **kwargs):

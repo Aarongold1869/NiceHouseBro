@@ -6,11 +6,20 @@
     <h1 class="mb-4">Your Saved Properties</h1>
 
     <div id="saved-property-container">
+
+    {% if not saved_properties %}
+
+        <p>No saved properties.</p>
+
+    {% else %}
+
     {% for property in saved_properties %}
 
         {% include "profile/partials/saved-property-card.html" %}
         
     {% endfor %}
+    
+    {% endif %}
     </div>  
 
 </div>

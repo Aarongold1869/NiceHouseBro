@@ -110,14 +110,24 @@
     // Get the property list from the django context
     const propertyList = JSON.parse(document.getElementById('property_list').textContent);
     propertyList.forEach(function (property) {
-        L.marker([property.latLong.value.latitude, property.latLong.value.longitude], {
-			icon: L.divIcon({
-				className: 'markerDiv', 
-				html: `<span class="map-marker">${property.price.value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })}</span>`
-			})
-		}).addTo(map)
+        // L.marker([property.latLong.value.latitude, property.latLong.value.longitude], 
+        //     {
+        //         icon: L.divIcon({
+        //             className: 'markerDiv', 
+        //             html: `<span class="map-marker">${property.price.value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })}</span>`
+        //         })
+		//     }
+        // ).addTo(map)
+        L.circleMarker([property.latLong.value.latitude, property.latLong.value.longitude],
+            {
+                color: 'white',
+                fillColor: 'var(--love)',
+                fillOpacity: 1
+            }
+        )
+        .setRadius(7)
+        .addTo(map)
         .on('click', function(e) { window.location.replace(`/property/detail/${property.address.replace('/','|')}`) })
-        // .bindPopup(`$${property.price}`,{closeOnClick: false, autoClose: false}).openPopup();
     });
 
 </script>

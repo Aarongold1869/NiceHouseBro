@@ -1,4 +1,4 @@
-<div id="explore-controls" class="d-flex justify-content-center py-3 position-absolute bottom-0">
+<div id="explore-controls" class="d-flex justify-content-center py-3 ">
     <button 
     id="back-button" 
     class="btn mx-4 border-0"
@@ -19,7 +19,7 @@
 
     {% if request.user.is_authenticated %}
         <button 
-        id="save-button" 
+        id="save-button-{{ property.propertyId }}" 
         class="btn mx-2 border-0"
         onclick="handleSaveCard()"
         >
