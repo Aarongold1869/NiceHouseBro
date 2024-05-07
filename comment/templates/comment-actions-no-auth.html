@@ -1,0 +1,29 @@
+<div id="commment-actions">
+            
+    <button
+    class="btn m-0 comment-action"
+    data-bs-toggle="modal" data-bs-target="#registerModal"
+    >
+        <p id="like-count-{{comment.id}}" class="m-0">{{ comment.commentlike_set.count }}&ensp;&#8226;&ensp;</p>
+        <span class="me-2 comment-action-text">Like</span>
+        {% include "icons/heart.html" with size=14 %}
+    </button>
+
+    <button
+    class="btn m-0 comment-action"
+    data-bs-toggle="modal" data-bs-target="#registerModal"
+    >
+        <span class="me-2 comment-action-text">Reply</span>
+        {% include "icons/reply.html" %}
+    </button>
+
+    <div class="dropdown">
+        <button class="btn m-0 comment-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            &#8226;&#8226;&#8226;
+        </button>
+        <ul class="dropdown-menu">
+          <li style="cursor:pointer;"><a class="dropdown-item" onclick="hideComment({{comment.id}})">Hide Comment</a></li>
+        </ul>
+    </div>
+
+</div>

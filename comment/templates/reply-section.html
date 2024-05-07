@@ -1,0 +1,86 @@
+<div 
+id="reply-section-container-{{comment.id}}" 
+class="position-relative" 
+style="display:{% if not comment.reply_set.all.exists %}none{% else %}block{% endif %};"
+>
+
+    <button 
+    id="hide-replies-{{comment.id}}"
+    class="btn position-absolute p-1" 
+    style="top:-30px; left:13px;"
+    onClick="hideReplies('{{comment.id}}')"
+    >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="var(--bs-secondary-color)" class="bi bi-dash-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+            <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>
+        </svg>
+    </button>
+
+    <button 
+    id="show-replies-{{comment.id}}"
+    class="btn position-absolute p-1" 
+    style="top:-30px; left:13px; color: var(--bs-secondary-color); display:none;"
+    onClick="showReplies('{{comment.id}}')"
+    >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+        </svg>
+        <span 
+        id="reply-count-{{comment.id}}" 
+        class="ms-1" 
+        style="font-size:.8rem;"
+        hx-trigger="update-reply-count-{{comment.id}} from:body"
+        hx-get="{% url 'get_reply_count' comment_id=comment.id %}"
+        hx-swap="innerHTML"
+        >View {{ comment.reply_set.count }} replies</span>
+    </button>
+
+    <div id="create-reply-form-container-{{comment.id}}" class="card my-1 ms-4 border-0" style="display: none;">
+        <div class="card-body">
+            <form 
+            id="create-reply-form-{{comment.id}}"
+            method="post"
+            hx-post="{% url 'create_reply' comment_id=comment.id %}"
+            hx-target="#reply-section-{{comment.id}}"
+            hx-swap="afterbegin"
+            hx-on::after-request="hideReplyForm({{comment.id}})"
+            >
+                {% csrf_token %}
+                <input name="text" type="textarea" class="form-control mb-3" placeholder="Post a reply...">
+                <input type='submit' class='btn btn-sm love border-2' value="Reply">
+                <a class='btn btn-sm love border-2' onclick="hideReplyForm({{comment.id}})">Cancel</a>   
+            </form>
+        </div>
+    </div>
+
+    <div id="reply-section-{{comment.id}}">
+    {% for reply in comment.reply_set.all|dictsort:"timestamp" %}
+        {% if not reply.profile.user.id in blocked_user_list %}
+            {% include "property/partials/reply.html" %}
+        {% endif %}
+    {% endfor %}
+    </div>
+
+    {% comment %} {% if comment.reply_set.all.count > 5 %}
+    <a 
+    class="card-body ms-3 my-0 pt-2 pb-1 text-center" 
+    style="border-left: 2px solid lightgray; cursor:pointer;"
+    onMouseOver="this.style.backgroundColor='var(--bs-secondary-bg)'"
+    onMouseOut="this.style.backgroundColor='var(--bs-body-bg)'"
+    >View more replies
+    </a>
+    {% endif %} {% endcomment %}
+
+</div>
+
+<script>
+
+    function hideReplyForm(comment_id) {
+        const form = document.getElementById(`create-reply-form-${comment_id}`)
+        form.reset();
+        const formContainer = document.getElementById(`create-reply-form-container-${comment_id}`)
+        formContainer.style.display = 'none';
+    }
+
+</script>

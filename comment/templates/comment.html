@@ -1,0 +1,190 @@
+{% load time_delta %}
+
+<style>
+    .profile-badge {
+        width:2rem; 
+        height:2rem; 
+        border-radius:100%; 
+    }
+
+    #commment-actions {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+    } 
+
+    .comment-action {
+        margin-left: .8rem;
+        color: var(--bs-secondary-color);
+        cursor: pointer;
+        font-size: .8rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .comment-action::after {
+        content: none;
+    }
+    
+    @media (max-width: 576px) {
+        #commment-actions {
+            margin-bottom: 1.2rem;
+        }
+        .comment-action-text {
+            display:none;
+        }
+    }
+
+</style>
+
+<div id="comment-{{ comment.id }}" class="card mb-2 pb-2 border-0">
+    <div class="card-body pt-3 pb-2">
+        <div class='d-flex align-items-center mb-2'>
+
+            {% if not comment.profile.profile_picture %}
+                {% include "icons/profile-icon.html" %}
+            {% else %}
+                <img src="{{ comment.profile.profile_picture.url }}" class="profile-badge" alt="profile picture">
+            {% endif %}
+
+            <p class="m-0 ms-2">{{ comment.profile.user.username }}</p>
+            <p class="m-0"><small class="text-muted">&ensp;&#8226;&ensp;{{ comment.timestamp|time_delta }}</small></p>
+        </div>
+        <p id="comment-text-{{comment.id}}" class="card-text my-1 ms-1">{{ comment.text }}</p>
+        
+        <hr class="m-0 my-2"></hr>
+        {% if not user.is_authenticated %}
+
+        {% include "property/partials/comment-actions-no-auth.html" %}
+
+        {% else %}
+
+        <div id="commment-actions">
+            
+            <button 
+            class="btn comment-action m-0"
+            hx-get="{% url 'toggle_comment_like' comment_id=comment.id %}"
+            hx-swap="outerHTML"
+            >
+            <p id="like-count-{{comment.id}}" class="m-0">{{ comment.commentlike_set.count }}&ensp;&#8226;&ensp;</p>
+            <span class="me-2 comment-action-text">Like</span>
+            {% if comment.id in comment_like_list %}
+                {% include "icons/heart-fill.html" with size=14 fill="var(--love)" %}
+            {% else %}
+                {% include "icons/heart.html" with size=14 %}
+            {% endif %}
+            </button>
+
+            <button 
+            class="btn comment-action m-0"
+            onclick="unhideReplyForm('{{ comment.id }}', null)"
+            >
+            <span class="me-2 comment-action-text">Reply</span>
+            {% include "icons/reply.html" %}
+            </button>
+
+            {% if request.user.id == comment.profile.user.id %}
+
+            <button 
+            class="btn comment-action m-0"
+            hx-get="{% url 'edit_comment' comment_id=comment.id %}"
+            hx-target="#comment-{{comment.id}}"
+            hx-swap="outerHTML"
+            >
+            <span class="me-2 comment-action-text">Edit</span>
+            {% include "icons/pencil.html" %}
+            </button>
+            
+            <button 
+            class="btn comment-action m-0"
+            hx-delete="{% url 'delete_comment' comment_id=comment.id %}"
+            hx-target="#comment-{{ comment.id }}"
+            hx-swap="delete"
+            hx-confirm="Are you sure you want to delete this comment?"
+            >
+            <span class="me-2 comment-action-text">Delete</span>
+            {% include "icons/trashcan.html" %}
+            </button>
+
+            {% endif %}
+
+            {% if user.id != comment.profile.user.id %}
+            <div class="dropdown">
+                <button class="btn m-0 comment-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    &#8226;&#8226;&#8226;
+                </button>
+                <ul class="dropdown-menu">
+                  <li style="cursor:pointer;"><a class="dropdown-item" onclick="hideComment({{comment.id}})">Hide Comment</a></li>
+                  <li style="cursor:pointer;"><a 
+                    class="dropdown-item"
+                    hx-post="{% url 'block_user' blocked_user_id=comment.profile.id %}"
+                    hx-target="#comment-{{comment.id}}"
+                    hx-swap="delete"
+                    >Block User</a></li>
+                  <li style="cursor:pointer;"><a 
+                    class="dropdown-item" 
+                    data-bs-toggle="modal" data-bs-target="#reportModal-Comment-{{comment.id}}"
+                    >Block and Report</a></li>
+                </ul>
+            </div>
+
+            {% include "property/partials/report-modal.html" with object=comment model="Comment" %}
+            {% endif %}
+
+        </div>
+        
+        {% endif %}
+        {% comment %} <hr></hr> {% endcomment %}
+        
+    </div>
+
+    <!-- Replies -->
+    {% include "property/partials/reply-section.html" with comment=comment %}
+
+</div>
+
+<script>
+
+    function hideReplies(commentId) {
+        const replySection = document.getElementById(`reply-section-${commentId}`);
+        replySection.style.display = 'none';
+        const hideRepliesButton = document.getElementById(`hide-replies-${commentId}`);
+        hideRepliesButton.style.display = 'none';
+        const showRepliesButton = document.getElementById(`show-replies-${commentId}`);
+        showRepliesButton.style.display = 'block';
+    }
+
+    function showReplies(commentId) {
+        const replySection = document.getElementById(`reply-section-${commentId}`);
+        replySection.style.display = 'block';
+        const hideRepliesButton = document.getElementById(`hide-replies-${commentId}`);
+        hideRepliesButton.style.display = 'block';
+        const showRepliesButton = document.getElementById(`show-replies-${commentId}`);
+        showRepliesButton.style.display = 'none';
+    }
+
+    function UnhideReplySectionContainer(commentId) {
+        const replySectionContainer = document.getElementById(`reply-section-container-${commentId}`);
+        replySectionContainer.style.display = 'block';
+    }
+
+    function unhideReplyForm(commentId, textInit) {
+        const replyForm = document.getElementById(`create-reply-form-container-${commentId}`);
+        replyForm.style.display = 'block';
+        UnhideReplySectionContainer(commentId);
+        const replyInput = document.getElementById(`create-reply-form-${commentId}`).querySelector('input[name="text"]');
+        if (textInit) {
+            replyInput.value = textInit;
+        }
+        replyInput.focus();
+        // replyInput.scrollIntoView();
+    }
+
+    function hideComment(commentId) {
+        const comment = document.getElementById(`comment-${commentId}`);
+        comment.style.display = 'none';
+    }
+
+</script>

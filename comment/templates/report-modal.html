@@ -1,0 +1,46 @@
+{% load crispy_forms_tags %}
+
+<!-- Modal -->
+<div class="modal fade" id="reportModal-{{model}}-{{object.id}}" tabindex="-1" role="dialog" aria-labelledby="register-modal-title">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="report-modal-title">Report Comment</h5>
+          {% comment %} <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button> {% endcomment %}
+        </div>
+        <div class="modal-body">
+            <form 
+            id='report-form'
+            method='post'
+            {% comment %} hx-post="{% url 'update_reply' reply_id=reply.id %}"
+            hx-target="#reply-{{ reply.id }}"
+            hx-swap="outerHTML" {% endcomment %}
+            >
+                {% csrf_token %}
+                {{ report_form|crispy }}
+                <input type="hidden" name="object_id" value="{{ object.id }}">
+                <input type="hidden" name="model" value="{{ model }}">
+                <input type="hidden" name="reported_text" value="{{ object.text }}">
+                <input type="hidden" name="reported_user" value="{{ object.profile.user.id }}">
+
+                <button 
+                id="report-button" 
+                class='btn btn-sm love border-2' 
+                data-bs-dismiss="modal"
+                hx-post="{% url 'report_comment' %}"
+                hx-target="#{{model|lower}}-{{object.id}}"
+                hx-swap="delete"
+                >Report
+                </button>
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </form>
+        </div>
+        {% comment %} <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <a href="/account/register/" type="button" class="btn btn-sm love">Submit</a>
+        </div> {% endcomment %}
+      </div>
+    </div>
+</div>

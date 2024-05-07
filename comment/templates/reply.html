@@ -1,0 +1,109 @@
+{% load time_delta %}
+
+<div id="reply-{{reply.id}}" class="card-body ms-4 my-0 pt-2 pb-1" style="border-left: 2px solid var(--bs-secondary-bg);">
+    <div class='d-flex align-items-start mb-2'>
+
+        {% if not reply.profile.profile_picture %}
+            {% include "icons/profile-icon.html" %}
+        {% else %}
+            <img src="{{ reply.profile.profile_picture.url }}" class="profile-badge" alt="profile picture">
+        {% endif %}
+
+        <p class="m-0 ms-2">{{ reply.profile.user.username }}</p>
+        <p class="m-0"><small class="text-muted">&ensp;&#8226;&ensp;{{ reply.timestamp|time_delta }}</small></p>
+    </div>
+    <p id="reply-text-{{reply.id}}" class="card-text my-1 ms-1">{{ reply.text }}</p>
+
+    <hr class="m-0 my-2"></hr>
+    {% if not user.is_authenticated %}
+
+    {% include "property/partials/comment-actions-no-auth.html" %}
+
+    {% else %}
+
+    <div id="commment-actions">
+        <button 
+        class="btn comment-action m-0"
+        hx-get="{% url 'toggle_reply_like' reply_id=reply.id %}"
+        hx-swap="outerHTML"
+        >
+        <p id="like-count-{{reply.id}}" class="m-0">{{ reply.replylike_set.count }}&ensp;&#8226;&ensp;</p>
+        <span class="me-2 comment-action-text">Like</span>
+        {% if reply.id in reply_like_list %}
+            {% include "icons/heart-fill.html" with size=14 fill="var(--love)" %}
+        {% else %}
+            {% include "icons/heart.html" with size=14 %}
+        {% endif %}
+        </button>
+
+        <button 
+        class="btn comment-action m-0"
+        onclick="unhideReplyForm('{{ comment.id }}', '@{{ reply.profile.user.username }} ')"
+        >
+        <span class="me-2 comment-action-text">Reply</span>
+        {% include "icons/reply.html" %}
+        </button>
+
+        {% if request.user.id == reply.profile.user.id %}
+
+        <button 
+        class="btn comment-action m-0"
+        hx-get="{% url 'edit_reply' reply_id=reply.id %}"
+        hx-target="#reply-{{reply.id}}"
+        hx-swap="outerHTML" 
+        >
+        <span class="me-2 comment-action-text">Edit</span>
+        {% include "icons/pencil.html" %}
+        </button>
+
+        <button 
+        class="btn comment-action m-0"
+        hx-delete="{% url 'delete_reply' reply_id=reply.id %}"
+        hx-target="#reply-{{ reply.id }}"
+        hx-swap="delete"
+        hx-confirm="Are you sure you want to delete this comment?"
+        >
+        <span class="me-2 comment-action-text">Delete</span>
+        {% include "icons/trashcan.html" %}
+        </button>
+
+        {% endif %}
+
+        {% if user.id != reply.profile.user.id %}
+        <div class="dropdown">
+            <button class="btn m-0 comment-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                &#8226;&#8226;&#8226;
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" onclick="hideReply({{reply.id}})">Hide Comment</a></li>
+              <li style="cursor:pointer;"><a 
+                class="dropdown-item"
+                hx-post="{% url 'block_user' blocked_user_id=reply.profile.user.id %}"
+                hx-target="#reply-{{reply.id}}"
+                hx-swap="delete"
+                >Block User</a></li>
+              <li style="cursor:pointer;"><a 
+                class="dropdown-item" 
+                data-bs-toggle="modal" data-bs-target="#reportModal-Reply-{{reply.id}}"
+                >Block and Report</a></li>
+            </ul>
+        </div>
+
+        {% include "property/partials/report-modal.html" with object=reply model="Reply" %}
+        
+        {% endif %}
+
+    </div>
+
+    {% endif %}
+    
+</div>
+
+<script>
+    
+    function hideReply(replyId) {
+        const reply = document.getElementById(`reply-${replyId}`);
+        reply.style.display = 'none';
+    }
+
+</script>
