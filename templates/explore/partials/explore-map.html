@@ -1,7 +1,7 @@
 <style>
 	.map-marker {
 		position: relative;
-		display: flex;
+		/* display: flex; */
 		background-color: var(--love);
 		color: white;
 		width: fit-content;
@@ -13,17 +13,44 @@
 		border-radius: 15px;
 		top: -1.6rem;
 		box-shadow: 3px -3px 10px rgba(0, 0, 0, 0.4);
+        display: none;
 	}
+
+    .map-marker[data-visible="true"] {
+        display: flex;
+    }
 
 	.markerDiv {
 		background-color: transparent;
 		border-left: 10px solid transparent;
 		border-right: 10px solid transparent;
 		border-top: 10px solid var(--love);
-		display: flex;
+		/* display: flex; */
 		justify-content: center;
+        display:none;
         /* box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4); */
 	}
+
+    .markerDiv[data-visible="true"] {
+        display: flex;
+    }
+
+    .map-card {
+        position: absolute;
+        top: -100px; 
+        display: flex; 
+        flex-direction: column;
+        justify-content: center;
+        text-align: left;
+        width: 200px;
+        border-radius: 15px; 
+        background-color:var(--bs-body-bg); 
+        color:var(--bs-body-color); 
+    }
+
+    .leaflet-zoom-animated g[data-visible="false"] {
+        display: none;
+    }
 
     .leaflet-popup-content-wrapper, .leaflet-popup-tip {
         background: var(--love);
@@ -45,10 +72,11 @@
     
 </style>
 
-<div id="map" class="w-100 h-100 mt-2" ></div>
+<div id="map" class="w-100 h-100 mt-2"></div>
 
 {{ map_data|json_script:"map_data" }}
 {{ property_list|json_script:"property_list" }}
+{{ card_img_arr|json_script:"card_img_arr" }}
 
 <script data-loc-cookie="{{ request.COOKIES.coordinates }}">
     // Get the map data from the django context
@@ -109,15 +137,35 @@
 
     // Get the property list from the django context
     const propertyList = JSON.parse(document.getElementById('property_list').textContent);
+    const cardImgArr = JSON.parse(document.getElementById('card_img_arr').textContent);
+    let i = 0;
     propertyList.forEach(function (property) {
-        // L.marker([property.latLong.value.latitude, property.latLong.value.longitude], 
-        //     {
-        //         icon: L.divIcon({
-        //             className: 'markerDiv', 
-        //             html: `<span class="map-marker">${property.price.value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })}</span>`
-        //         })
-		//     }
-        // ).addTo(map)
+        let priceFormatted = property.price.value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
+        L.marker([property.latLong.value.latitude, property.latLong.value.longitude], 
+            {
+                icon: L.divIcon({
+                    className: 'markerDiv', 
+                    html: `<span class="map-marker">
+                            ${priceFormatted}
+                            <a href="/property/detail/${property.address.replace('/','|')}">
+                            <div class="card map-card p-0">
+                                <img 
+                                src="${ cardImgArr[i] }" 
+                                class="img-fluid card-img-top" 
+                                alt="..." 
+                                style="border-top-left-radius:10px;border-top-right-radius:10px;"
+                                >
+                                <div class="card-body text-wrap"
+                                    <h5><strong>${priceFormatted}</strong></h5>
+                                    <p class="mb-1">${property.beds ?? 0} Beds | ${property.baths ?? 0} Baths | ${property.sqFt.value ?? 0} sqft.</p>
+                                    <p class="text-muted mb-0">${property.address}</p>
+                                </div>
+                            </div>
+                            </a>
+                        </span>`
+                })
+		    }
+        ).addTo(map)
         L.circleMarker([property.latLong.value.latitude, property.latLong.value.longitude],
             {
                 color: 'white',
@@ -125,9 +173,43 @@
                 fillOpacity: 1
             }
         )
-        .setRadius(7)
+        .setRadius(8)
         .addTo(map)
-        .on('click', function(e) { window.location.replace(`/property/detail/${property.address.replace('/','|')}`) })
+        // .on('click', function(e) { window.location.replace(`/property/detail/${property.address.replace('/','|')}`) })
+        i++;
+    });
+
+
+    function displayCustomMarkerDiv() {
+        document.querySelectorAll('.markerDiv').forEach(function (marker) {
+            marker.setAttribute('data-visible', 'true')
+        })
+        document.querySelectorAll('.map-marker').forEach(function (marker) {
+            marker.setAttribute('data-visible', 'true')
+        })
+        document.querySelectorAll('.leaflet-zoom-animated g').forEach(function (marker) {
+            marker.setAttribute('data-visible', 'false')
+        })
+    }
+
+    function hideCustomMarkerDiv() {
+        document.querySelectorAll('.markerDiv').forEach(function (marker) {
+            marker.setAttribute('data-visible', 'false')
+        })
+        document.querySelectorAll('.map-marker').forEach(function (marker) {
+            marker.setAttribute('data-visible', 'false')
+        })
+        document.querySelectorAll('.leaflet-zoom-animated g').forEach(function (marker) {
+            marker.setAttribute('data-visible', 'true')
+        })
+    }
+
+    map.on('zoomend', function (e) {
+        if (e.target._zoom >= 13) {
+            displayCustomMarkerDiv()
+        } else {
+            hideCustomMarkerDiv()
+        }
     });
 
 </script>

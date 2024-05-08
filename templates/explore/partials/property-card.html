@@ -87,9 +87,9 @@ data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|
         {% elif property.cap_rate > 0.03 %}
         <span class="badge text-white fs-6" style="position: absolute; top: 10px; left: 10px; background-color:var(--love)">Great Deal</span>
         {% elif property.cap_rate > 0.02 %}
-        <span class="badge text-white fs-6" style="position: absolute; top: 10px; left: 10px; background-color:var(--love)">Good Deal</span>
+        <span class="badge fs-6" style="position: absolute; top: 10px; left: 10px; color: black; background-color: lightgray">Good Deal</span>
         {% elif property.cap_rate > 0.01 %}
-        <span class="badge text-white fs-6" style="position: absolute; top: 10px; left: 10px; background-color:var(--love)">Fair Deal</span>
+        <span class="badge fs-6" style="position: absolute; top: 10px; left: 10px; color: black; background-color: lightgray">Fair Deal</span>
         {% endif %}
    
         <div class="card-body text-wrap" style="color:var(--bs-body-color);">
