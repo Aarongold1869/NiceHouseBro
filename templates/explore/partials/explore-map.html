@@ -1,7 +1,6 @@
 <style>
 	.map-marker {
 		position: relative;
-		/* display: flex; */
 		background-color: var(--love);
 		color: white;
 		width: fit-content;
@@ -25,7 +24,6 @@
 		border-left: 10px solid transparent;
 		border-right: 10px solid transparent;
 		border-top: 10px solid var(--love);
-		/* display: flex; */
 		justify-content: center;
         display:none;
         /* box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4); */
@@ -37,15 +35,17 @@
 
     .map-card {
         position: absolute;
-        top: -100px; 
-        display: flex; 
+        top: -235px;
+        left: -70px; 
+        /* display: none!important;  */
         flex-direction: column;
         justify-content: center;
         text-align: left;
         width: 200px;
-        border-radius: 15px; 
+        border-radius: 20px; 
         background-color:var(--bs-body-bg); 
         color:var(--bs-body-color); 
+        z-index: 1000;
     }
 
     .leaflet-zoom-animated g[data-visible="false"] {
@@ -76,7 +76,6 @@
 
 {{ map_data|json_script:"map_data" }}
 {{ property_list|json_script:"property_list" }}
-{{ card_img_arr|json_script:"card_img_arr" }}
 
 <script data-loc-cookie="{{ request.COOKIES.coordinates }}">
     // Get the map data from the django context
@@ -137,35 +136,42 @@
 
     // Get the property list from the django context
     const propertyList = JSON.parse(document.getElementById('property_list').textContent);
-    const cardImgArr = JSON.parse(document.getElementById('card_img_arr').textContent);
-    let i = 0;
     propertyList.forEach(function (property) {
         let priceFormatted = property.price.value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
         L.marker([property.latLong.value.latitude, property.latLong.value.longitude], 
             {
                 icon: L.divIcon({
                     className: 'markerDiv', 
-                    html: `<span class="map-marker">
+                    html: `<span class="map-marker" >
                             ${priceFormatted}
-                            <a href="/property/detail/${property.address.replace('/','|')}">
-                            <div class="card map-card p-0">
-                                <img 
-                                src="${ cardImgArr[i] }" 
-                                class="img-fluid card-img-top" 
-                                alt="..." 
-                                style="border-top-left-radius:10px;border-top-right-radius:10px;"
-                                >
-                                <div class="card-body text-wrap"
-                                    <h5><strong>${priceFormatted}</strong></h5>
-                                    <p class="mb-1">${property.beds ?? 0} Beds | ${property.baths ?? 0} Baths | ${property.sqFt.value ?? 0} sqft.</p>
-                                    <p class="text-muted mb-0">${property.address}</p>
+                                <a 
+                            id="map-card-${property.propertyId}" 
+                            class="map-card"
+                            style="display:none;"
+                            href="/property/detail/${property.address.replace('/','|')}"
+                            >
+                                <div class="card p-0">
+                                    <img 
+                                    src="/static/media/awesome-house.jpg" 
+                                    class="img-fluid card-img-top" 
+                                    alt="..." 
+                                    >
+                                    <div class="card-body text-wrap"
+                                        <h5><strong>${priceFormatted}</strong></h5>
+                                        <p class="mb-1">${property.beds ?? 0} Beds | ${property.baths ?? 0} Baths | ${property.sqFt.value ?? 0} sqft.</p>
+                                        <p class="text-muted mb-0">${property.address}</p>
+                                    </div>
                                 </div>
-                            </div>
                             </a>
                         </span>`
                 })
 		    }
-        ).addTo(map)
+        )
+        .on('click', function (e) {
+            DisplayMapCard(property.propertyId)
+        })
+        .addTo(map)
+
         L.circleMarker([property.latLong.value.latitude, property.latLong.value.longitude],
             {
                 color: 'white',
@@ -175,8 +181,6 @@
         )
         .setRadius(8)
         .addTo(map)
-        // .on('click', function(e) { window.location.replace(`/property/detail/${property.address.replace('/','|')}`) })
-        i++;
     });
 
 
@@ -211,5 +215,11 @@
             hideCustomMarkerDiv()
         }
     });
+
+    function DisplayMapCard(propertyId) {
+        const mapCard = document.getElementById(`map-card-${propertyId}`);
+        mapCard.style.display = 'flex';
+        
+    }
 
 </script>
