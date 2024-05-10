@@ -27,7 +27,9 @@ class RedfinScraper():
         endpoint = 'gis?' + urllib.parse.urlencode(self.__dict__, safe=',%')                                                                                                                         #-122.54472%2047.44109%2C-122.11144%2047.44109%2C-122.11144%2047.78363%2C-122.54472%2047.78363%2C-122.54472%2047.44109'
         return endpoint
     
+    @lru_cache
     def get_property_list(self)-> List[Property]:
+        print('fetch property list')
         base_url = 'https://www.redfin.com/stingray/api/'
         url = base_url + self.get_endpoint()
         headers={  

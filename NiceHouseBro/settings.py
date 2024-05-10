@@ -47,6 +47,8 @@ SCRAPFLY_API_KEY = os.getenv('SCRAPFLY_API_KEY')
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -60,8 +62,11 @@ INSTALLED_APPS = [
 
     'account',
     'agent',
+    'notifications',
     'profiles',
     'property',
+
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -94,7 +99,20 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'NiceHouseBro.wsgi.application'
+ASGI_APPLICATION = 'NiceHouseBro.asgi.application'
 
+### Change to Redis for production! #######################
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+    # "default": {
+    #     "BACKEND": "channels_redis.core.RedisChannelLayer",
+    #     "CONFIG": {
+    #         "hosts": [("127.0.0.1", 6379)],
+    #     },
+    # },
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

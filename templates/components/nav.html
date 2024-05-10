@@ -6,6 +6,23 @@
         width:2rem; 
         height:2rem; 
         border-radius:100%; 
+        box-shadow: 0 0 2px var(--bs-dark-bg-subtle);
+    }
+
+    #notification-dropdown-tg::after {
+        content: none;
+    }
+    #profile-dropdown-tg::after {
+        content: none;
+    }
+
+    #notification-icon {
+        fill: var(--bs-body-color);
+        filter: drop-shadow(0 0 2px var(--bs-dark-bg-subtle));
+    }
+
+    #notification-icon:hover {
+        fill: var(--bs-secondary-color);
     }
 
     @media (max-width: 576px) {
@@ -27,7 +44,7 @@ data-bs-theme="dark"
             <span class="navbar-toggler-icon" ></span>
         </button>
 
-        <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+        <div class="collapse navbar-collapse justify-content-evenly" id="navbarSupportedContent">
 
             <a class="navbar-brand" href="/">NHB</a>
             <ul class="navbar-nav mb-2 mb-lg-0">
@@ -41,11 +58,11 @@ data-bs-theme="dark"
                         Explore
                     </a>
                 </li>
-                <li class="nav-item me-2 dropdown" >
+                <li class="nav-item me-2 dropdown">
                     <a class="nav-link dropdown-toggle {% if '/agents/' in request.get_full_path %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Agents
                     </a>    
-                    <ul id='nav-dropdown' class="dropdown-menu">
+                    <ul id='agent-dropdown' class="dropdown-menu">
                         <li><a class="dropdown-item" href="#">Find an Agent</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="/agents/become-an-agent/">Become an Agent</a></li>
@@ -60,8 +77,23 @@ data-bs-theme="dark"
                     <a class="nav-link" href="/account/register/">Login / Signup</a>
                 </li>
                 {% else %}
+
+                <li class="nav-item dropdown my-auto me-2" >
+                    <a id="notification-dropdown-tg" class="nav-link dropdown-toggle d-flex align-items-center position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <svg id="notification-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="var(--bs-body-color)" class="bi bi-bell-fill" viewBox="0 0 16 16">
+                            <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901"/>
+                        </svg>
+                        <span id="notification-number" class="badge rounded-pill position-absolute" style="top:0; right:0px; background-color: var(--bs-body-bg);"></span>
+                    </a>
+                    <ul id='notification-dropdown' class="dropdown-menu ">
+                        <li><a class="dropdown-item">Notifications</a></li>
+                        <div class="dropdown-divider"></div>
+                        
+                    </ul>
+                </li>
+
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a id="profile-dropdown-tg" class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         
                         <div id="profile-badge-container">
                         {% if not user.profile_set.first.profile_picture %}
@@ -71,9 +103,9 @@ data-bs-theme="dark"
                         {% endif %}
                         </div>
                         
-                        Profile
+                        {% comment %} Profile {% endcomment %}
                     </a>    
-                    <ul id='nav-dropdown' class="dropdown-menu">
+                    <ul id='profile-dropdown' class="dropdown-menu">
                         <li><a class="dropdown-item" href="{% url 'profile' username=user.username %}">My Profile</a></li>
                         <li><a class="dropdown-item" href="{% url 'saved_property_list' profile_id=user.profile_set.first.id %}">Saved Properties</a></li>
                         <li><a class="dropdown-item" href="#">Settings</a></li>
@@ -94,15 +126,24 @@ data-bs-theme="dark"
 
 <script data-theme="{{request.user.profile_set.first.theme}}" async>
 
-    function toggleTheme(e) {
-        var theme = document.documentElement.getAttribute('data-bs-theme');
-        var newTheme = theme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-bs-theme', newTheme);
-        document.cookie = `theme=${newTheme};`;
-        htmx.ajax('GET', '/profile/toggle-theme/', {swap:'none'});
-    }
+    let numberSpan = document.getElementById('notification-number');
+    document.body.addEventListener('htmx:wsAfterMessage', (event) => {
+        let notificationCount = numberSpan.innerHTML;
+        if (!notificationCount) {
+            notificationCount = 0;
+        }
+        numberSpan.innerHTML = parseInt(notificationCount) + 1;
+    });
 
-    const themeToggle = document.getElementById('theme-toggle');
-    themeToggle.addEventListener('change', toggleTheme, false);
+    // function toggleTheme(e) {
+    //     var theme = document.documentElement.getAttribute('data-bs-theme');
+    //     var newTheme = theme === 'dark' ? 'light' : 'dark';
+    //     document.documentElement.setAttribute('data-bs-theme', newTheme);
+    //     document.cookie = `theme=${newTheme};`;
+    //     htmx.ajax('GET', '/profile/toggle-theme/', {swap:'none'});
+    // }
 
-</script>
+    // const themeToggle = document.getElementById('theme-toggle');
+    // themeToggle.addEventListener('change', toggleTheme, false);
+
+</script> 

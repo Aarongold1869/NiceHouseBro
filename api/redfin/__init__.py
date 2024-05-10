@@ -5,6 +5,9 @@ from ..nominatim.types import  MapData
 import shapely.geometry as sg
 from typing import List
 
+import json
+
+
 def fetch_property_list_from_map_data(map_data: MapData)-> List[Property]:
     poly = sg.Polygon(map_data['boundry'])
     simple = poly.simplify(0.01, preserve_topology=False)
@@ -18,7 +21,9 @@ def fetch_property_list_from_map_data(map_data: MapData)-> List[Property]:
         page_number=1, 
         poly=poly_str
     )
-    property_list: List[Property] = scraper.get_property_list()
+    # property_list: List[Property] = scraper.get_property_list()
+    ### for testing only ###
+    property_list = json.load(open('api/redfin/test/property_list.json'))
     return property_list
 
 
