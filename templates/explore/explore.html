@@ -147,6 +147,38 @@
     let activeIndex = 0;
     const cards = document.getElementsByClassName("property-card");
 
+    const setImageAtIndex = (index) => {
+        if (index === 0) {
+            return
+        }
+        const cardAtIndex = document.querySelector(`[data-index="${index}"]`);
+        if (cardAtIndex.dataset.imgdidset === "true") {
+            return
+        }
+        const address = document.getElementById(`property-address-${cardAtIndex.id}`).innerText.replace('/','|');
+        htmx.ajax('GET', `/explore/get-card-image/`, { target:`#property-card-image-${ cardAtIndex.id }`, swap:'outerHTML', values: { address: address, property_id: cardAtIndex.id } })
+        cardAtIndex.dataset.imgdidset = "true";
+    }
+
+    const setPreciseCardIndex = (index) => {
+        const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
+        let nextIndex = index;
+        const nextCard = document.querySelector(`[data-index="${nextIndex}"]`);
+        currentCard.dataset.status = "left";
+        nextCard.dataset.status = "becoming-active-from-right";
+        setImageAtIndex(nextIndex);
+       
+        setTimeout(() => {
+            nextCard.dataset.status = "active";
+            activeIndex = nextIndex;
+        }, 100);  
+
+        document.getElementById("map-container").dataset.visible = "false" ;
+
+        setImageAtIndex(nextIndex + 1);
+        setImageAtIndex(nextIndex - 1);
+    }
+
     const handleNextCard = () => {
         const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
         let nextIndex = activeIndex + 1 <= cards.length - 1 ? activeIndex + 1 : 0;
@@ -157,19 +189,9 @@
             nextCard.dataset.status = "active";
             activeIndex = nextIndex;
         }, 100);  
-        // htmx.ajax('GET', `/explore/get-explore-controls/${nextCard.id}/`, { target:'#explore-controls', swap:'outerHTML' })
-        
-        let nextNextIndex = nextIndex + 1 <= cards.length - 1 ? nextIndex + 1 : 0;
-        if (nextNextIndex === 0) {
-            return
-        }
-        const nextNextCard = document.querySelector(`[data-index="${nextNextIndex}"]`);
-        if (nextNextCard.dataset.imgdidset === "true") {
-            return
-        }
-        const nextNextCardAddress = document.getElementById(`property-address-${nextNextCard.id}`).innerText.replace('/','|');
-        htmx.ajax('GET', `/explore/get-card-image/`, { target:`#property-card-image-${ nextNextCard.id }`, swap:'outerHTML', values: { address: nextNextCardAddress, property_id: nextNextCard.id } })
-        nextNextCard.dataset.imgdidset = "true";
+        setImageAtIndex(nextIndex + 1);
+
+        document.getElementById(`marker-div-${nextCard.id}`).style.backgroundColor = "green";
     }
 
     const handlePrevCard = () => {
@@ -182,16 +204,7 @@
             nextCard.dataset.status = "active";
             activeIndex = nextIndex;
         }, 100);  
-        // htmx.ajax('GET', `/explore/get-explore-controls/${nextCard.id}/`, { target:'#explore-controls', swap:'outerHTML' })
-    
-        let nextNextIndex = nextIndex - 1 >= 0 ? nextIndex - 1 : cards.length - 2;
-        const nextNextCard = document.querySelector(`[data-index="${nextNextIndex}"]`);
-        if (nextNextCard.dataset.imgdidset === "true") {
-            return
-        }
-        const nextNextCardAddress = document.getElementById(`property-address-${nextNextCard.id}`).innerText.replace('/','|');
-        htmx.ajax('GET', `/explore/get-card-image/`, { target:`#property-card-image-${ nextNextCard.id }`, swap:'outerHTML', values: { address: nextNextCardAddress, property_id: nextNextCard.id } })
-        nextNextCard.dataset.imgdidset = "true";
+        setImageAtIndex(nextIndex - 1);
     }
 
     const handleSaveCard = () => {
@@ -233,17 +246,7 @@
         // update explore controls
         // htmx.ajax('GET', `/explore/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
 
-        let nextNextIndex = nextIndex + 1 <= cards.length - 1 ? nextIndex + 1 : 0;
-        if (nextNextIndex === 0) {
-            return
-        }
-        const nextNextCard = document.querySelector(`[data-index="${nextNextIndex}"]`);
-        if (nextNextCard.dataset.imgdidset === "true") {
-            return
-        }
-        const nextNextCardAddress = document.getElementById(`property-address-${nextNextCard.id}`).innerText.replace('/','|');
-        htmx.ajax('GET', `/explore/get-card-image/`, { target:`#property-card-image-${ nextNextCard.id }`, swap:'outerHTML', values: { address: nextNextCardAddress, property_id: nextNextCard.id } })
-        nextNextCard.dataset.imgdidset = "true";
+        setImageAtIndex(nextIndex + 1);
     }
 
     function showFilterPopover() {

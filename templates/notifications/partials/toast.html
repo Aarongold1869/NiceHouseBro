@@ -1,7 +1,7 @@
 
-<div id="toast-container" class="toast-container" hx-swap-oob="afterbegin">
+<div id="toast-container" class="toast-container position-relative" hx-swap-oob="afterbegin">
     <div 
-    class="toast show" 
+    class="toast show mb-2" 
     role="alert" 
     aria-live="assertive" 
     aria-atomic="true" 
@@ -9,7 +9,7 @@
     
     >
         <div class="toast-header">
-            <strong class="me-auto">{{ toast.header }}</strong>
+            <strong class="me-auto">{{ notification.header }}</strong>
             <small class="text-muted">just now</small>
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"
             hx-trigger="click"
@@ -18,11 +18,13 @@
             ></button>
         </div>
         <div class="toast-body">
-            {{ toast.message }}
+            {{ notification.message }}
         </div>
     </div>
 </div>
 
 <ul id="notification-dropdown" hx-swap-oob="beforeend">
-    <li><a class="dropdown-item">{{ toast.header }}</a></li>
+    <li><a class="dropdown-item">{{ notification.header }}</a></li>
 </ul>
+
+{% comment %} <button id="clear-toast-button" type="button" class="btn love rounded-pill py-1 px-2 cursor-pointer" style="font-size:.75rem; position: absolute; top:0; right:0; z-index:1001" hx-swap-oob="true">x Clear all</button> {% endcomment %}

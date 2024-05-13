@@ -18,8 +18,8 @@ body {
 
 .love,
 .love a {
-  color: var(--love)  !important;
-  background-color: none !important;
+  color: var(--bs-body-bg)  !important;
+  background-color: var(--love) !important;
   border-color: var(--love)  !important;
 }
 .love:active,
@@ -28,6 +28,23 @@ body {
 .love.focus,
 .love:hover,
 .love a:hover {
+  background-color: var(--bs-body-bg) !important;
+  border-color: var(--love)  !important;
+  color: var(--love) !important;
+}
+
+.love-outline,
+.love-outline a {
+  color: var(--love)  !important;
+  background-color: none !important;
+  border-color: var(--love)  !important;
+}
+.love-outline:active,
+.love-outline.active,
+.love-outline:focus,
+.love-outline.focus,
+.love-outline:hover,
+.love-outline a:hover {
   background-color: var(--love) !important;
   border-color: var(--love)  !important;
   color: var(--bs-body-bg) !important;

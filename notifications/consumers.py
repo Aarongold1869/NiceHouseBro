@@ -9,7 +9,7 @@ class NotificationConsumer(WebsocketConsumer):
         if not self.user.is_authenticated:
             self.close()
             return
-        self.GROUP_NAME = 'user-notifications'
+        self.GROUP_NAME = f'user-notifications-{self.user.id}'
         async_to_sync(self.channel_layer.group_add)(
             self.GROUP_NAME, self.channel_name
         )
@@ -32,11 +32,10 @@ class NotificationConsumer(WebsocketConsumer):
             async_to_sync(self.channel_layer.group_discard)(
                 self.GROUP_NAME, self.channel_name
             )
-        
 
-    def comment_liked(self, event):
-        # Called when someone has liked your comment
-        html = get_template('components/partials/toast.html').render(
-            context={ "toast": event }
+    def comment_interaction(self, event):
+        # Called when someone has interacted w your comment
+        html = get_template('notifications/partials/toast.html').render(
+            context={ "notification": event['notification'] }
         )
         self.send(text_data=html)

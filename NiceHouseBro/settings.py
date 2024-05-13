@@ -62,6 +62,7 @@ INSTALLED_APPS = [
 
     'account',
     'agent',
+    'comment',
     'notifications',
     'profiles',
     'property',

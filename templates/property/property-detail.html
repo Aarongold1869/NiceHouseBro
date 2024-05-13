@@ -13,9 +13,17 @@
         object-fit: cover;
     }
 
+    #property-details-container {
+        padding: .5rem;
+    }
+
     @media (min-width: 768px) {
         .carousel-item img {
             height: 500px;
+        }
+
+        #property-details-container {
+            padding: 0;
         }
     }
 
@@ -31,7 +39,7 @@
 </style>
 
 <div id='property-detail' class="d-flex flex-column align-items-center justify-content-center position-relative">
-    <div class="col-sm-8">
+    <div class="col-sm-6">
     
         <div 
         id="user-controls"
@@ -96,7 +104,7 @@
         </div>
 
         {% comment %} property details {% endcomment %}
-        <div class="container py-3" >
+        <div id="property-details-container" class="container py-3">
 
             <ul class="nav nav-tabs mb-3">
                 <li class="nav-item" onclick="toggleTab('details')">

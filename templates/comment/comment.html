@@ -57,7 +57,7 @@
         <hr class="m-0 my-2"></hr>
         {% if not user.is_authenticated %}
 
-        {% include "property/partials/comment-actions-no-auth.html" %}
+        {% include "comment/comment-actions-no-auth.html" %}
 
         {% else %}
 
@@ -130,7 +130,7 @@
                 </ul>
             </div>
 
-            {% include "property/partials/report-modal.html" with object=comment model="Comment" %}
+            {% include "comment/report-modal.html" with object=comment model="Comment" %}
             {% endif %}
 
         </div>
@@ -141,7 +141,7 @@
     </div>
 
     <!-- Replies -->
-    {% include "property/partials/reply-section.html" with comment=comment %}
+    {% include "comment/reply-section.html" with comment=comment %}
 
 </div>
 

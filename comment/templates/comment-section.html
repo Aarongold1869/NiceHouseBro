@@ -47,7 +47,7 @@ hx-trigger="reload-comments from:body"
         {% else %}
             {% for comment in comment_list %}
                 {% if not comment.profile.user.id in blocked_user_list %}
-                    {% include "property/partials/comment.html" %}
+                    {% include "comment/comment.html" %}
                 {% endif %}
             {% endfor %}
         {% endif %}

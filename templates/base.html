@@ -32,7 +32,7 @@
     
     {% include 'components/nav.html' %}
 
-    {% include 'components/toast-container.html' %}
+    {% include 'notifications/toast-container.html' %}
 
     <div id="app-container" class="pt-5 position-relative" style="min-height: 80vh!important;">
     {% block content %}
@@ -42,6 +42,10 @@
 
     {% if not "/explore/" in request.get_full_path %}
         {% include 'components/footer.html' %}
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        {% include 'components/settings-drawer.html' %}
     {% endif %}
 
 </body>

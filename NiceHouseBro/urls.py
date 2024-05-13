@@ -10,6 +10,7 @@ urlpatterns = [
     path('', home_view, name='home'),
     path('account/', include('account.urls')),
     path('agents/', include('agent.urls')),
+    path('comment/', include('comment.urls')),
     path('explore/', include('explore.urls')),
     path('profile/', include('profiles.urls')),
     path('property/', include('property.urls'))
