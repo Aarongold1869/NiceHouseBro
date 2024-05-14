@@ -6,7 +6,7 @@
 		width: fit-content;
 		align-items: center;
 		padding: 10px;
-		font-size: 10px;
+		font-size: 12px;
 		font-weight: bold;
 		text-align: center;
 		border-radius: 15px;
@@ -17,6 +17,19 @@
 
     .map-marker[data-visible="true"] {
         display: flex;
+    }
+
+    .map-marker:hover {
+        cursor: pointer;
+        top: -1.8rem;
+        border: 2px solid white;
+        box-shadow: 0 0 4px 2px var(--love);
+    }
+
+    .map-marker[data-focused="true"] {
+        top: -1.8rem;
+        border: 2px solid white;
+        box-shadow: 0 0 4px 2px var(--love);
     }
 
 	.markerDiv {
@@ -128,7 +141,7 @@
             {
                 icon: L.divIcon({
                     className: 'markerDiv', 
-                    html: `<span id="marker-div-${property.propertyId}" data-index="${index}" class="map-marker">${priceFormatted}</span>`
+                    html: `<span id="marker-div-${property.propertyId}" data-index="${index}" data-focused="false" class="map-marker">${priceFormatted}</span>`
                 })
 		    }
         )

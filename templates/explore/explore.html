@@ -167,14 +167,15 @@
         currentCard.dataset.status = "left";
         nextCard.dataset.status = "becoming-active-from-right";
         setImageAtIndex(nextIndex);
-       
         setTimeout(() => {
             nextCard.dataset.status = "active";
             activeIndex = nextIndex;
         }, 100);  
 
-        document.getElementById("map-container").dataset.visible = "false" ;
+        document.getElementById(`marker-div-${currentCard.id}`).dataset.focused = "false";
+        document.getElementById(`marker-div-${nextCard.id}`).dataset.focused = "true";
 
+        document.getElementById("map-container").dataset.visible = "false" ;
         setImageAtIndex(nextIndex + 1);
         setImageAtIndex(nextIndex - 1);
     }
@@ -189,9 +190,10 @@
             nextCard.dataset.status = "active";
             activeIndex = nextIndex;
         }, 100);  
-        setImageAtIndex(nextIndex + 1);
+        document.getElementById(`marker-div-${currentCard.id}`).dataset.focused = "false";
+        document.getElementById(`marker-div-${nextCard.id}`).dataset.focused = "true";
 
-        document.getElementById(`marker-div-${nextCard.id}`).style.backgroundColor = "green";
+        setImageAtIndex(nextIndex + 1);
     }
 
     const handlePrevCard = () => {
@@ -204,6 +206,9 @@
             nextCard.dataset.status = "active";
             activeIndex = nextIndex;
         }, 100);  
+        document.getElementById(`marker-div-${currentCard.id}`).dataset.focused = "false";
+        document.getElementById(`marker-div-${nextCard.id}`).dataset.focused = "true";
+
         setImageAtIndex(nextIndex - 1);
     }
 
@@ -243,8 +248,9 @@
             nextCard.dataset.status = "active";
             activeIndex = nextIndex;
         }, 100);   
-        // update explore controls
-        // htmx.ajax('GET', `/explore/get-explore-controls/${nextCard.id}/`, {target:'#explore-controls', swap:'outerHTML'})
+        
+        document.getElementById(`marker-div-${currentCard.id}`).dataset.focused = "false";
+        document.getElementById(`marker-div-${nextCard.id}`).dataset.focused = "true";
 
         setImageAtIndex(nextIndex + 1);
     }
