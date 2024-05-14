@@ -1,0 +1,121 @@
+<style>
+th {
+    align-items: flex-end;
+    text-align: center;
+}
+th button {
+    display: flex;
+    flex-direction: row;
+    font-weight: bold!important;
+}
+
+td {
+    text-align: center;
+
+}
+
+@media (max-width: 768px) {
+    th, td {
+    font-size: 0.8rem!important;
+    }
+    th button {
+    font-size: 0.8rem!important;
+    padding: 0!important;
+    }
+}
+</style>
+
+<table id="lead-table" class="table table-striped table-sm table-hover mb-0">
+    <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col"><button class="btn w-100 h-100">User</button></th>
+          <th scope="col">
+            <button 
+            id="sort-button-first_name"
+            class="btn w-100 h-100"
+            hx-get="{% url 'agent_leads' %}"
+            hx-target="#lead-table-body"
+            hx-swap="outerHTML"
+            hx-select="#lead-table-body"
+            hx-vals='{ "sort_field": "first_name", "sort_order": "asc" }'
+            >
+            First
+            {% include "icons/arrow-sort.html" %}
+            </button>
+          </th>
+          <th scope="col">
+            <button 
+            id="sort-button-last_name"
+            class="btn w-100 h-100"
+            hx-get="{% url 'agent_leads' %}"
+            hx-target="#lead-table-body"
+            hx-swap="outerHTML"
+            hx-select="#lead-table-body"
+            hx-vals='{ "sort_field": "last_name", "sort_order": "asc" }'
+            >
+            Last
+            {% include "icons/arrow-sort.html" %}
+            </button>
+          </th>
+          <th scope="col">
+            <button 
+            id="sort-button-lead_score"
+            class="btn w-100 h-100"
+            hx-get="{% url 'agent_leads' %}"
+            hx-target="#lead-table-body"
+            hx-swap="outerHTML"
+            hx-select="#lead-table-body"
+            hx-vals='{ "sort_field": "lead_score", "sort_order": "asc" }'
+            >
+            Lead Score
+            {% include "icons/arrow-sort.html" %}
+            </button>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="lead-table-body">
+        {% for lead in leads %}
+        <tr onclick="console.log('clicked')">
+          <td scope="row">{{ forloop.counter }}</td>
+          <td> 
+            <div class="d-flex justify-content-start ps-3 align-items-center">
+              <div id="profile-badge-container">
+                {% if not lead.lead.profile_set.first.profile_picture %}
+                    {% include "icons/profile-icon.html" %}
+                {% else %}
+                    <img src="{{ lead.lead.profile_set.first.profile_picture.url }}" class="profile-badge me-1" alt="profile picture">
+                {% endif %}
+              </div>
+              @{{ lead.lead.username }}
+            </div>
+          </td>
+          <td>{{ lead.lead.first_name }}</td>
+          <td>{{ lead.lead.last_name }}</td>
+          <td>{{ lead.lead_score }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+</table>
+
+{% if request.htmx %}
+<button 
+id="sort-button-{{sort_field}}"
+class="btn w-100 h-100"
+hx-get="{% url 'agent_leads' %}"
+hx-target="#lead-table-body"
+hx-swap="outerHTML"
+hx-select="#lead-table-body"
+hx-vals='{ "sort_field": "{{ sort_field }}", "sort_order": "{{ sort_order_next }}" }'
+hx-swap-oob="true"
+>
+{{ sort_field }}
+{% if sort_order == 'asc' %}
+    {% include "icons/arrow-down.html" %}
+{% elif sort_order == 'desc' %}
+    {% include "icons/arrow-up.html" %}
+{% else %}
+    {% include "icons/arrow-sort.html" %}
+{% endif %}
+</button>
+{% endif %}

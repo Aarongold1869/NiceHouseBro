@@ -23,10 +23,10 @@ class CommentLike(models.Model):
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     
-    # class Meta:
-    #     constraints = [
-    #         models.UniqueConstraint('profile', 'comment', name='profile-comment'),
-    #     ]
+    class Meta:
+        constraints = [
+            models.UniqueConstraint('profile', 'comment', name='profile-comment'),
+        ]
     
     def __str__(self):
         return f'{self.profile.user.username} - {str(self.comment.id)} - {self.timestamp}'
@@ -48,10 +48,10 @@ class ReplyLike(models.Model):
     reply = models.ForeignKey(Reply, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    # class Meta:
-    #     constraints = [
-    #         models.UniqueConstraint('profile', 'reply', name='profile-reply'),
-    #     ]
+    class Meta:
+        constraints = [
+            models.UniqueConstraint('profile', 'reply', name='profile-reply'),
+        ]
 
     def __str__(self):
         return f'{self.profile.user.username} - {str(self.reply.id)} - {self.timestamp}'

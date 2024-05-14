@@ -161,6 +161,7 @@
         .setRadius(8)
         .on('click', function (e) {
             setPreciseCardIndex(index)
+            map.setView(e.latlng, 13); 
         })
         .addTo(map)
     });
