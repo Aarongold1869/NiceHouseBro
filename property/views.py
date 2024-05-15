@@ -8,6 +8,8 @@ from .models import SavedProperty
 from comment.forms import CommentForm, ReportFormForm
 from comment.models import Comment, CommentLike, ReplyLike
 from profiles.models import Profile, BlockedUser
+from agent.forms import AgentContactFormForm
+from agent.models import AgentContactForm
 from api.google import google_street_view_api
 from api.redfin import property_detail_api
 from api.redfin.redfin_types import Property
@@ -19,10 +21,21 @@ def property_detail_view(request, address:str='5663 Dunridge Drive, Pace FL 3257
     property = property_detail_api(address=address)
     # street_view_image = google_street_view_api(address=address)
     is_saved = False
+    contact_form = AgentContactFormForm()
     if request.user.is_authenticated:
         saved_qs = SavedProperty.objects.filter(Q(profile__user=request.user) & Q(property_id=property['propertyId']))
         is_saved = saved_qs.exists()
-    return render(request, 'property/property-detail.html', {'property': property, 'is_saved': is_saved })
+        contact_form = None
+        contact_form_qs = AgentContactForm.objects.filter(Q(user=request.user) & Q(address=address))
+        if not contact_form_qs.exists():
+            contact_form = AgentContactFormForm(initial = {
+                'user': request.user,
+                'name': request.user.get_full_name(),
+                'email': request.user.email,
+                'phone': Profile.objects.get(user=request.user).phone_number,
+                'address': address,
+            })
+    return render(request, 'property/property-detail.html', { 'property': property, 'is_saved': is_saved, 'contact_form': contact_form })
 
 @require_http_methods(['GET'])
 def retrieve_comment_section(request, property_id: str):

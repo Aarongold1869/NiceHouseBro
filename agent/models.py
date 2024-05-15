@@ -28,3 +28,13 @@ class Lead(models.Model):
         constraints = [
             models.UniqueConstraint('agent', 'lead', name='agent-lead'),
         ]
+
+class AgentContactForm(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    assigned_agent = models.ForeignKey(AgentProfile, on_delete=models.CASCADE, blank=True, null=True)
+    address = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=10)
+    message = models.TextField()
+    financing_info = models.BooleanField(default=False)

@@ -4,6 +4,7 @@ from django.dispatch import receiver
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
+from agent.models import AgentContactForm
 from comment.models import CommentLike, Reply
 from notifications.models import Notification
 
@@ -39,6 +40,22 @@ def send_notifications_on_reply(sender, instance: Reply, created, **kwargs):
         )
         channel_layer = get_channel_layer()
         group_name = f'user-notifications-{instance.comment.profile.user.id}'
+        event = {
+            'type': 'comment_interaction',
+            'notification': notification
+        }
+        async_to_sync(channel_layer.group_send)(group_name, event)
+
+@receiver(post_save, sender=AgentContactForm)
+def send_notifications_on_contact_form_submit(sender, instance: AgentContactForm, created, **kwargs):
+    if created:
+        notification = Notification.objects.create(
+            user=instance.user,
+            header=f'Contact Form Submitted.',
+            message=f'Your contact form for {instance.address} was submitted successfully. An agent will be in touch soon.',
+        )
+        channel_layer = get_channel_layer()
+        group_name = f'user-notifications-{instance.user.id}'
         event = {
             'type': 'comment_interaction',
             'notification': notification

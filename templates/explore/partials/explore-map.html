@@ -76,96 +76,115 @@
 {{ map_data|json_script:"map_data" }}
 {{ property_list|json_script:"property_list" }}
 
-<script data-loc-cookie="{{ request.COOKIES.coordinates }}">
-    // Get the map data from the django context
-    let coordinates = null;
-    let boundry = null;
-    let zoom = 16;
-    const map_data = JSON.parse(document.getElementById('map_data').textContent);
-    if (map_data) {
-        coordinates = map_data.coordinates;
-        boundry = map_data.boundry;
-        zoom = map_data.zoom;
-    }
+<script id="explore-map-script" data-loc-cookie="{{ request.COOKIES.coordinates }}">
 
-    // Initialize Map Global View 
-    var map = L.map('map').fitWorld();
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap'
-    }).addTo(map);
 
-    function onLocationFound(e) {
-        var radius = e.accuracy;
-        L.marker(e.latlng).addTo(map)
-        L.circle(e.latlng, radius).addTo(map);
-        console.log(e.latlng)
-        htmx.ajax('GET', '/accounts/locate/', {values: e.latlng, swap:'none'})
-        window.location.replace(`/explore/reverse/lng=${e.latlng.lng}lat=${e.latlng.lat}/`)
-    }
-    map.on('locationfound', onLocationFound);
-
-    function onLocationError(e) {
-      // no location provided, redirect to default location
-      window.location.href = '/explore/search%3DPensacola, FL, USA/';
-    }
-    // if coordinates or user location not provided and boundry  not provided, set the map view to the default location
-    map.on('locationerror', onLocationError);     
-
-    // get coordinates from django context
-    if (coordinates) { // if coordinates are provided, set the map view to the coordinates
-        map.setView(coordinates, zoom);
-        // var marker = L.marker(coordinates).addTo(map);
-    } else { // if no coordinates are provided, set the map view to the user's location
-        var cookieCoordinates = document.currentScript.getAttribute('data-loc-cookie')
-        if (cookieCoordinates !== '') {
-            var parsedCookie = JSON.parse(cookieCoordinates);
-            console.log(parsedCookie)
-            // window.location.replace(`/explore/reverse/lng=${parsedCookie.lng}lat=${parsedCookie.lat}/`)
-            // map.setView(parsedCookie, zoom);
-            // L.marker(parsedCookie).addTo(map)
-        } else {
-            map.locate({setView: true, maxZoom: zoom});
+    function buildMap() {
+        var container = L.DomUtil.get('map');
+        if(container != null){
+            container._leaflet_id = null;
         }
-    }
+        // Get the map data from the django context
+        let coordinates = null;
+        let boundry = null;
+        let zoom = 16;
+        const map_data = JSON.parse(document.getElementById('map_data').textContent);
+        if (map_data) {
+            coordinates = map_data.coordinates;
+            boundry = map_data.boundry;
+            zoom = map_data.zoom;
+        }
 
-    if (boundry) {
-        L.polygon(boundry).addTo(map);
-    } 
+        // Initialize Map Global View 
+        var map = L.map('map').fitWorld();
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
 
-    // Get the property list from the django context
-    const propertyList = JSON.parse(document.getElementById('property_list').textContent);
-    propertyList.forEach(function (property, index) {
-        let priceFormatted = property.price.value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
-        L.marker([property.latLong.value.latitude, property.latLong.value.longitude], 
-            {
-                icon: L.divIcon({
-                    className: 'markerDiv', 
-                    html: `<span id="marker-div-${property.propertyId}" data-index="${index}" data-focused="false" class="map-marker">${priceFormatted}</span>`
-                })
-		    }
-        )
-        .on('click', function (e) {
-            setPreciseCardIndex(index)
-        })
-        .addTo(map)
+        function onLocationFound(e) {
+            var radius = e.accuracy;
+            L.marker(e.latlng).addTo(map)
+            L.circle(e.latlng, radius).addTo(map);
+            htmx.ajax('GET', '/accounts/locate/', {values: e.latlng, swap:'none'})
+            window.location.replace(`/explore/reverse/lng=${e.latlng.lng}lat=${e.latlng.lat}/`)
+        }
+        map.on('locationfound', onLocationFound);
 
-        L.circleMarker([property.latLong.value.latitude, property.latLong.value.longitude],
-            {
-                color: 'white',
-                fillColor: 'var(--love)',
-                fillOpacity: 1,
+        function onLocationError(e) {
+        // no location provided, redirect to default location
+        window.location.href = '/explore/search%3DPensacola, FL, USA/';
+        }
+        // if coordinates or user location not provided and boundry  not provided, set the map view to the default location
+        map.on('locationerror', onLocationError);     
 
+        // get coordinates from django context
+        if (coordinates) { // if coordinates are provided, set the map view to the coordinates
+            map.setView(coordinates, zoom);
+            // var marker = L.marker(coordinates).addTo(map);
+        } else { // if no coordinates are provided, set the map view to the user's location
+            var cookieCoordinates = document.currentScript.getAttribute('data-loc-cookie')
+            if (cookieCoordinates !== '') {
+                var parsedCookie = JSON.parse(cookieCoordinates);
+                // window.location.replace(`/explore/reverse/lng=${parsedCookie.lng}lat=${parsedCookie.lat}/`)
+                // map.setView(parsedCookie, zoom);
+                // L.marker(parsedCookie).addTo(map)
+            } else {
+                map.locate({setView: true, maxZoom: zoom});
             }
-        )
-        .setRadius(8)
-        .on('click', function (e) {
-            setPreciseCardIndex(index)
-            map.setView(e.latlng, 13); 
-        })
-        .addTo(map)
-    });
+        }
 
+        if (boundry) {
+            L.polygon(boundry).addTo(map);
+        } 
+
+        // Get the property list from the django context
+        function renderMapPoints(propertyList) {
+            propertyList.forEach(function (property, index) {
+                let priceFormatted = property.price.value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
+                L.marker([property.latLong.value.latitude, property.latLong.value.longitude], 
+                    {
+                        icon: L.divIcon({
+                            className: 'markerDiv', 
+                            html: `<span id="marker-div-${property.propertyId}" data-index="${index}" data-focused="false" class="map-marker">${priceFormatted}</span>`
+                        })
+                    }
+                )
+                .on('click', function (e) {
+                    setPreciseCardIndex(index);
+                })
+                .addTo(map)
+
+                L.circleMarker([property.latLong.value.latitude, property.latLong.value.longitude],
+                    {
+                        color: 'white',
+                        fillColor: 'var(--love)',
+                        fillOpacity: 1,
+
+                    }
+                )
+                .setRadius(8)
+                .on('click', function (e) {
+                    map.setView(e.latlng, 13); 
+                    setPreciseCardIndex(index);
+                })
+                .addTo(map)
+            });
+        }
+
+        let propertyList = JSON.parse(document.getElementById('property_list').textContent);
+        renderMapPoints(propertyList);
+
+        map.on('zoomend', function (e) {
+            if (e.target._zoom >= 13) {
+                displayCustomMarkerDiv()
+            } else {
+                hideCustomMarkerDiv()
+            }
+        });
+
+    }
+    buildMap();
 
     function displayCustomMarkerDiv() {
         document.querySelectorAll('.markerDiv').forEach(function (marker) {
@@ -191,12 +210,16 @@
         })
     }
 
-    map.on('zoomend', function (e) {
-        if (e.target._zoom >= 13) {
-            displayCustomMarkerDiv()
-        } else {
-            hideCustomMarkerDiv()
-        }
-    });
-
+    // function rerenderMapPoints() {
+    //     console.log('rerender map')
+        
+    //     map.eachLayer(function (layer) {
+    //         if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
+    //             map.removeLayer(layer);
+    //         }
+    //     });
+    //     let propertyList = JSON.parse(document.getElementById('property_list_map').textContent);
+    //     renderMapPoints(propertyList);
+    // } 
+    
 </script>

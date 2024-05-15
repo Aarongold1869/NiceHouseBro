@@ -1,9 +1,10 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import QuerySet
+from django.http import HttpResponse
 from django.shortcuts import render
 
-from .forms import AgentRegistrationForm
+from .forms import AgentRegistrationForm, AgentContactFormForm
 from .models import AgentProfile, Lead
 
 from django_htmx.http import trigger_client_event
@@ -79,4 +80,16 @@ def crm_view(request):
 def create_listing_view(request):
     ...
 
-
+import re
+@login_required(login_url='/login/')
+def post_agent_contact_form_view(request):
+    contact_form = AgentContactFormForm(request.POST or None)
+    phone_number = request.POST.get('phone_number', None)
+    pattern = re.compile("(0|91)?[6-9][0-9]{9}")
+    if not pattern.match(phone_number):
+        contact_form.add_error('phone_number', 'Invalid phone number')
+    if not contact_form.is_valid():
+        return render(request, 'property/partials/agent-contact-form.html', {'contact_form': contact_form})
+    contact_form.save()
+    return HttpResponse('<p>Form Submitted Successfully! <br>An agent should be in contact with you soon.</p>', status=200)
+    

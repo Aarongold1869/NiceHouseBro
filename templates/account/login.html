@@ -3,12 +3,12 @@
 {% block content %}
 {% load crispy_forms_tags %}
 
-<div class='container col-sm-4 p-5 text-center'>
+<div class='container col-sm-4 col-10 text-center pt-3'>
     {% if user.is_authenticated %}
     <p class='text-light'> You are already logged in </p>
     {% else %}
 
-    <h1 class='mb-5'>Login</h1>
+    <h1 class='mb-3'>Login</h1>
 
     <form method='post'>
         {% csrf_token %}

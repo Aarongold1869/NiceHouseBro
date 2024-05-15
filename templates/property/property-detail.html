@@ -53,7 +53,9 @@
                     </svg>
                     Back
                 </button>
+
                 {% if user.is_authenticated %}
+                    
                     <button 
                     id="save-button" 
                     class='btn bg-transparent border-2'
@@ -70,7 +72,22 @@
                         Save
                     {% endif %}
                     </button>
+
+                {% else %}
+                
+                    <button 
+                    id="save-button" 
+                    class='btn bg-transparent border-2'
+                    style="color: var(--love);" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#registerModal"
+                    >
+                    {% include "icons/heart.html" with size=16 %}
+                    Save
+                    </button>
+                
                 {% endif %}
+
             </div>
         </div>
         
@@ -151,11 +168,21 @@
             </div>
 
             <div id="comments-tab" style="display:none;">
-                <div id="comment-section">
+                <div id="comment-section"></div>
             </div>
 
-            <div id="contact-tab" style="display:none;">
-                <p>Contact</p>
+            <div id="contact-tab" class="container"style="display:none;">
+
+                {% if not contact_form and user.is_authenticated %}
+
+                    <p>Form Submitted Successfully! <br>An agent should be in contact with you soon.</p>
+
+                {% else %}
+
+                    {% include 'property/partials/agent-contact-form.html' %}
+
+                {% endif %}
+                
             </div>
 
         </div>

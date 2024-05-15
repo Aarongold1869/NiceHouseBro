@@ -84,11 +84,11 @@ data-bs-theme="dark"
             <a class="navbar-brand px-2" href="/">NHB</a>
 
             <ul class="navbar-nav mb-2 mb-lg-0">
-                <li class="nav-item me-2">
+                {% comment %} <li class="nav-item me-2">
                     <a class="nav-link {% if request.get_full_path == '/' %}active{% endif %}" aria-current="page" href="/">
                         Home
                     </a>
-                </li>
+                </li> {% endcomment %}
                 <li class="nav-item me-2">
                     <a class="nav-link {% if '/explore/' in request.get_full_path %}active{% endif %}" href="/explore/">
                         Explore

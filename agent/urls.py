@@ -7,4 +7,6 @@ urlpatterns = [
     path('register/', views.agent_register_view, name='agent_register'),
     path('dashboard/', views.agent_dashboard_view, name='agent_dashboard'),
     path('my-leads/', views.crm_view, name='agent_leads'),
+
+    path('contact/', views.post_agent_contact_form_view, name='contact_agent'),
 ]

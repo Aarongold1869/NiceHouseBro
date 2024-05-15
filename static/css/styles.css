@@ -67,14 +67,14 @@ body {
 
 /* The slider */
 .slider {
-  position: absolute;
+  position: relative;
   cursor: pointer;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background-color: var(--bs-body-bg);
-  outline: 2px solid var(--bs-secondary-color);
+  /* outline: 2px solid var(--bs-secondary-color); */
   -webkit-transition: .4s;
   transition: .4s;
 }
