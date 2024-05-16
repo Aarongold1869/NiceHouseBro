@@ -345,16 +345,12 @@
                 property_list: propertyListInit,
                 filter_form: formValues()
             },
-            target: "#property-card-container",
-            select: "#property-card-container",
+            target: "#explore-container",
+            select: "#explore-container",
             swap: 'outerHTML',
         });
         
         buildMap();
-        // setTimeout(() => {
-        // }, 300);
-        
-        // rerenderMapPoints();
     }
 
     function resetFilterForm() {

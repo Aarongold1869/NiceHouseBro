@@ -74,14 +74,16 @@
 <div id="map" class="w-100 h-100 mt-2"></div>
 
 {{ map_data|json_script:"map_data" }}
-{{ property_list|json_script:"property_list" }}
+{{ property_list|json_script:"property_list_map" }}
 
 <script id="explore-map-script" data-loc-cookie="{{ request.COOKIES.coordinates }}">
 
-
     function buildMap() {
+        console.log('building map')
+        // Remove map container if exists
         var container = L.DomUtil.get('map');
         if(container != null){
+            console.log('removing map container')
             container._leaflet_id = null;
         }
         // Get the map data from the django context
@@ -102,37 +104,38 @@
             attribution: '© OpenStreetMap'
         }).addTo(map);
 
-        function onLocationFound(e) {
-            var radius = e.accuracy;
-            L.marker(e.latlng).addTo(map)
-            L.circle(e.latlng, radius).addTo(map);
-            htmx.ajax('GET', '/accounts/locate/', {values: e.latlng, swap:'none'})
-            window.location.replace(`/explore/reverse/lng=${e.latlng.lng}lat=${e.latlng.lat}/`)
-        }
-        map.on('locationfound', onLocationFound);
+        // function onLocationFound(e) {
+        //     var radius = e.accuracy;
+        //     L.marker(e.latlng).addTo(map)
+        //     L.circle(e.latlng, radius).addTo(map);
+        //     htmx.ajax('GET', '/accounts/locate/', {values: e.latlng, swap:'none'})
+        //     window.location.replace(`/explore/reverse/lng=${e.latlng.lng}lat=${e.latlng.lat}/`)
+        // }
+        // map.on('locationfound', onLocationFound);
 
-        function onLocationError(e) {
-        // no location provided, redirect to default location
-        window.location.href = '/explore/search%3DPensacola, FL, USA/';
-        }
-        // if coordinates or user location not provided and boundry  not provided, set the map view to the default location
-        map.on('locationerror', onLocationError);     
+        // function onLocationError(e) {
+        // // no location provided, redirect to default location
+        // window.location.href = '/explore/search%3DPensacola, FL, USA/';
+        // }
+        // // if coordinates or user location not provided and boundry  not provided, set the map view to the default location
+        // map.on('locationerror', onLocationError);     
 
         // get coordinates from django context
         if (coordinates) { // if coordinates are provided, set the map view to the coordinates
             map.setView(coordinates, zoom);
             // var marker = L.marker(coordinates).addTo(map);
-        } else { // if no coordinates are provided, set the map view to the user's location
-            var cookieCoordinates = document.currentScript.getAttribute('data-loc-cookie')
-            if (cookieCoordinates !== '') {
-                var parsedCookie = JSON.parse(cookieCoordinates);
-                // window.location.replace(`/explore/reverse/lng=${parsedCookie.lng}lat=${parsedCookie.lat}/`)
-                // map.setView(parsedCookie, zoom);
-                // L.marker(parsedCookie).addTo(map)
-            } else {
-                map.locate({setView: true, maxZoom: zoom});
-            }
-        }
+        } 
+        // else { // if no coordinates are provided, set the map view to the user's location
+        //     var cookieCoordinates = document.currentScript.getAttribute('data-loc-cookie')
+        //     if (cookieCoordinates !== '') {
+        //         var parsedCookie = JSON.parse(cookieCoordinates);
+        //         // window.location.replace(`/explore/reverse/lng=${parsedCookie.lng}lat=${parsedCookie.lat}/`)
+        //         // map.setView(parsedCookie, zoom);
+        //         // L.marker(parsedCookie).addTo(map)
+        //     } else {
+        //         map.locate({setView: true, maxZoom: zoom});
+        //     }
+        // }
 
         if (boundry) {
             L.polygon(boundry).addTo(map);
@@ -172,7 +175,7 @@
             });
         }
 
-        let propertyList = JSON.parse(document.getElementById('property_list').textContent);
+        let propertyList = JSON.parse(document.getElementById('property_list_map').textContent);
         renderMapPoints(propertyList);
 
         map.on('zoomend', function (e) {
@@ -209,17 +212,6 @@
             marker.setAttribute('data-visible', 'true')
         })
     }
-
-    // function rerenderMapPoints() {
-    //     console.log('rerender map')
-        
-    //     map.eachLayer(function (layer) {
-    //         if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
-    //             map.removeLayer(layer);
-    //         }
-    //     });
-    //     let propertyList = JSON.parse(document.getElementById('property_list_map').textContent);
-    //     renderMapPoints(propertyList);
-    // } 
     
 </script>
+

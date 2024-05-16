@@ -46,7 +46,7 @@ def explore_view(request, search_str:str='Pensacola, FL'):
         property_list = json.loads(json.dumps(request.POST.getlist('property_list')))
         property_list = list(map(lambda x: json.loads(x), property_list))
         filters = json.loads(request.POST.get('filter_form'))
-        property_list = list(filter(lambda x: x["cap_rate"] >= float(filters['cap-rate']), property_list))
+        property_list = list(filter(lambda x: x["cap_rate"] >= float(filters['cap-rate']), property_list))  
 
     property_init = None
     is_saved = False
@@ -64,10 +64,7 @@ def explore_view(request, search_str:str='Pensacola, FL'):
         'is_saved': is_saved,
         'search_str': search_str
     }
-    res = render(request, "explore/explore.html", context)
-    if request.htmx:
-        return trigger_client_event(res, 'property-list-updated')
-    return res
+    return render(request, "explore/explore.html", context)
 
 @require_http_methods(['POST'])
 def filter_properties(request, *args, **kwargs):
