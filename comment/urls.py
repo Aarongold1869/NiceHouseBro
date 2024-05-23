@@ -3,7 +3,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-
     # Comments
     # path('get-comments/<str:property_id>/', views.retrieve_comment_section, name='get_comments'),
     path('create-comment/<str:property_id>/', views.create_comment_view, name='create_comment'),

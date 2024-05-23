@@ -12,7 +12,8 @@
         <p class="m-0 ms-2">{{ reply.profile.user.username }}</p>
         <p class="m-0"><small class="text-muted">&ensp;&#8226;&ensp;{{ reply.timestamp|time_delta }}</small></p>
     </div>
-    <p id="reply-text-{{reply.id}}" class="card-text my-1 ms-1">{{ reply.text }}</p>
+
+    <p id="reply-text-{{reply.id}}" class="card-text my-1 ms-1">{{ reply.text_with_user_tags|safe  }}</p>
 
     <hr class="m-0 my-2"></hr>
     {% if not user.is_authenticated %}

@@ -9,6 +9,7 @@ from .models import Comment, CommentLike, Reply, ReplyLike, ReportForm
 from profiles.models import Profile, BlockedUser
 
 from django_htmx.http import trigger_client_event
+import re
 
 # Create your views here.
 
@@ -28,7 +29,7 @@ def create_comment_view(request, property_id: str):
 def edit_comment_view(request, comment_id: int):
     comment = Comment.objects.get(id=comment_id, profile=Profile.objects.get(user=request.user))
     form = CommentForm(instance=comment)
-    return render(request, "property/partials/edit-comment-form.html", {'comment': comment, 'form': form})
+    return render(request, "comment/edit-comment-form.html", {'comment': comment, 'form': form})
 
 @login_required()
 @require_http_methods(['POST'])
@@ -64,6 +65,11 @@ def toggle_comment_like(request, comment_id: int):
         liked=False
     return render(request, "comment/comment-like-button.html", {'comment': comment, 'liked': liked })
 
+# def text_with_user_tags(text: str)-> str:
+#     tags = re.findall(r'@(\w+)', text)
+#     for tag in tags:
+#         text = text.replace(f'@{tag}', f'<span class="user-tag">@{tag}</span>')
+
 @login_required()
 @require_http_methods(['POST'])
 def create_reply_view(request, comment_id: int):
@@ -83,7 +89,7 @@ def edit_reply_view(request, reply_id: int):
     reply = Reply.objects.get(id=reply_id, profile=Profile.objects.get(user=request.user))
     form = ReplyForm(instance=reply)
     context = {'comment': reply.comment, 'reply': reply, 'form': form }
-    return render(request, "property/partials/edit-reply-form.html", context)
+    return render(request, "comment/edit-reply-form.html", context)
 
 @login_required()
 @require_http_methods(['POST'])

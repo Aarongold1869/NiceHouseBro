@@ -155,9 +155,10 @@
         cardAtIndex.dataset.imgdidset = "true";
     }
 
-    const setPreciseCardIndex = (index) => {
+    const setPreciseCardIndex = (propertyId) => {
         const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
-        let nextIndex = index;
+        let cardElArray = Array.from(document.getElementsByClassName("property-card"));
+        let nextIndex = cardElArray.indexOf(document.getElementById(propertyId));
         const nextCard = document.querySelector(`[data-index="${nextIndex}"]`);
         currentCard.dataset.status = "left";
         nextCard.dataset.status = "becoming-active-from-right";
@@ -227,6 +228,10 @@
         // remove card from DOM following transition
         await new Promise(resolve => setTimeout(resolve, 300));
         currentCard.remove();
+        var currentMapMarker = document.getElementById(`marker-div-${currentCard.id}`).parentNode;
+        if (currentMapMarker) {
+            currentMapMarker.remove();
+        }
         // update index of remaining cards
         for (let i = 0; i < cards.length; i++) {
             cards[i].dataset.index = i;
@@ -247,10 +252,7 @@
             activeIndex = nextIndex;
         }, 100);   
         
-        var currentMapMarker = document.getElementById(`marker-div-${currentCard.id}`);
-        if (currentMapMarker) {
-            currentMapMarker.parentNode.remove();
-        }
+        
         document.getElementById(`marker-div-${nextCard.id}`).dataset.focused = "true";
 
         setImageAtIndex(nextIndex + 1);

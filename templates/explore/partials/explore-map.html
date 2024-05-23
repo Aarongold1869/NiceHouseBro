@@ -143,18 +143,21 @@
 
         // Get the property list from the django context
         function renderMapPoints(propertyList) {
+            // for (let index=propertyList.length-1; index>=0; index--) {
+            //     let property = propertyList[index];
             propertyList.forEach(function (property, index) {
                 let priceFormatted = property.price.value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
                 L.marker([property.latLong.value.latitude, property.latLong.value.longitude], 
                     {
                         icon: L.divIcon({
                             className: 'markerDiv', 
-                            html: `<span id="marker-div-${property.propertyId}" data-index="${index}" data-focused="false" class="map-marker">${priceFormatted}</span>`
+                            key: `marker-div-${property.propertyId}`,
+                            html: `<span id="marker-div-${property.propertyId}" data-index="${index}" data-focused="${index === 0 ? true : false}" class="map-marker">${priceFormatted}</span>`
                         })
                     }
                 )
                 .on('click', function (e) {
-                    setPreciseCardIndex(index);
+                    setPreciseCardIndex(property.propertyId);
                 })
                 .addTo(map)
 
@@ -169,10 +172,11 @@
                 .setRadius(8)
                 .on('click', function (e) {
                     map.setView(e.latlng, 13); 
-                    setPreciseCardIndex(index);
+                    setPreciseCardIndex(property.propertyId);
                 })
                 .addTo(map)
-            });
+            }
+            );
         }
 
         let propertyList = JSON.parse(document.getElementById('property_list_map').textContent);

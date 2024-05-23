@@ -52,7 +52,7 @@
             <p class="m-0 ms-2">{{ comment.profile.user.username }}</p>
             <p class="m-0"><small class="text-muted">&ensp;&#8226;&ensp;{{ comment.timestamp|time_delta }}</small></p>
         </div>
-        <p id="comment-text-{{comment.id}}" class="card-text my-1 ms-1">{{ comment.text }}</p>
+        <p id="comment-text-{{comment.id}}" class="card-text my-1 ms-1">{{ comment.text_with_user_tags|safe }}</p>
         
         <hr class="m-0 my-2"></hr>
         {% if not user.is_authenticated %}

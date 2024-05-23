@@ -47,7 +47,7 @@ style="display:{% if not comment.reply_set.all.exists %}none{% else %}block{% en
             hx-on::after-request="hideReplyForm({{comment.id}})"
             >
                 {% csrf_token %}
-                <input name="text" type="textarea" class="form-control mb-3" placeholder="Post a reply...">
+                <input id="text-input-{{comment.id}}" name="text" type="textarea" class="form-control mb-3" placeholder="Post a reply...">
                 <input type='submit' class='btn btn-sm love border-2' value="Reply">
                 <a class='btn btn-sm love border-2' onclick="hideReplyForm({{comment.id}})">Cancel</a>   
             </form>
@@ -74,7 +74,7 @@ style="display:{% if not comment.reply_set.all.exists %}none{% else %}block{% en
 
 </div>
 
-<script>
+<script data-comment-id="{{comment.id}}">
 
     function hideReplyForm(comment_id) {
         const form = document.getElementById(`create-reply-form-${comment_id}`)
@@ -82,5 +82,7 @@ style="display:{% if not comment.reply_set.all.exists %}none{% else %}block{% en
         const formContainer = document.getElementById(`create-reply-form-container-${comment_id}`)
         formContainer.style.display = 'none';
     }
+
+
 
 </script>
