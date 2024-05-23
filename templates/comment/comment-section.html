@@ -67,6 +67,20 @@ hx-trigger="reload-comments from:body"
 
 <script>
 
+    async function formatTextElTags(textEl) {
+        await htmx.ajax('GET', '/comment/format-user-tags/', {target: `#${textEl.id}`, swap: 'innerHTML', values: { text: textEl.innerHTML }})            
+    }
+
+    async function formatUserTags(){
+        let comments = document.querySelectorAll('.comment');
+        for (let i = 0; i < comments.length; i++) {
+            let commentEl = comments[i];
+            let textEl = commentEl.querySelector('.card-text');
+            await formatTextElTags(textEl);
+        };
+    }
+    formatUserTags();
+
     function clearForm() {
         form = document.getElementById('comment-form');
         form.reset();
@@ -74,6 +88,9 @@ hx-trigger="reload-comments from:body"
         if (noComments != null) {
             noComments.remove();
         }
+        formatUserTags();
     }
+
+
 
 </script>

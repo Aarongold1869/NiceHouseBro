@@ -1,6 +1,11 @@
 {% load time_delta %}
 
-<div id="reply-{{reply.id}}" class="card-body ms-4 my-0 pt-2 pb-1" style="border-left: 2px solid var(--bs-secondary-bg);">
+<div 
+id="reply-{{reply.id}}" 
+class="comment card-body ms-4 my-0 pt-2 pb-1" 
+style="border-left: 2px solid var(--bs-secondary-bg);"
+>
+
     <div class='d-flex align-items-start mb-2'>
 
         {% if not reply.profile.profile_picture %}
@@ -13,7 +18,7 @@
         <p class="m-0"><small class="text-muted">&ensp;&#8226;&ensp;{{ reply.timestamp|time_delta }}</small></p>
     </div>
 
-    <p id="reply-text-{{reply.id}}" class="card-text my-1 ms-1">{{ reply.text_with_user_tags|safe  }}</p>
+    <p id="reply-text-{{reply.id}}" class="card-text my-1 ms-1">{{ reply.text }}</p>
 
     <hr class="m-0 my-2"></hr>
     {% if not user.is_authenticated %}
@@ -39,7 +44,7 @@
 
         <button 
         class="btn comment-action m-0"
-        onclick="unhideReplyForm('{{ comment.id }}', '@{{ reply.profile.user.username }} ')"
+        onclick="unhideReplyForm('{{ reply.comment.id }}', '@{{ reply.profile.user.username }} ')"
         >
         <span class="me-2 comment-action-text">Reply</span>
         {% include "icons/reply.html" %}
@@ -50,7 +55,7 @@
         <button 
         class="btn comment-action m-0"
         hx-get="{% url 'edit_reply' reply_id=reply.id %}"
-        hx-target="#reply-{{reply.id}}"
+        hx-target="#reply-text-{{reply.id}}"
         hx-swap="outerHTML" 
         >
         <span class="me-2 comment-action-text">Edit</span>

@@ -81,6 +81,7 @@ style="display:{% if not comment.reply_set.all.exists %}none{% else %}block{% en
         form.reset();
         const formContainer = document.getElementById(`create-reply-form-container-${comment_id}`)
         formContainer.style.display = 'none';
+        formatUserTags();
     }
 
 

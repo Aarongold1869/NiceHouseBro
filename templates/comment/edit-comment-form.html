@@ -1,12 +1,12 @@
 {% load crispy_forms_tags %}
 
-<div id="comment-{{ comment.id }}" class="card my-1 border-0 border-bottom">
+<div id="comment-text-{{ comment.id }}" class="card my-1 border-0">
     <div class="card-body">
         <form 
         id='edit-comment-form'
         method='post'
         hx-post="{% url 'update_comment' comment_id=comment.id %}"
-        hx-target="#comment-{{ comment.id }}"
+        hx-target="#comment-text-{{ comment.id }}"
         hx-swap="outerHTML"
         >
             {% csrf_token %}

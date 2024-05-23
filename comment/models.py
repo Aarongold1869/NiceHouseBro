@@ -19,17 +19,6 @@ class Comment(models.Model):
     def detail_page_endpoint(self):
         return f'/property/detail/{self.property_address}/'
     
-    @property
-    def text_with_user_tags(self)-> str:
-        text = self.text
-        tags = re.findall(r'@(\w+)', text)
-        for tag in tags:
-            span_class = 'user-tag'
-            user_qs = User.objects.filter(username=tag)
-            if not user_qs.exists():
-                span_class = 'failed-user-tag'
-            text = text.replace(f'@{tag}', f'<span class="{span_class}">@{tag}</span>')
-        return text
     
 class CommentLike(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
@@ -56,17 +45,6 @@ class Reply(models.Model):
     def __str__(self):
         return f'{self.profile.user.username} - {str(self.comment.id)} - {self.timestamp}'
     
-    @property
-    def text_with_user_tags(self)-> str:
-        text = self.text
-        tags = re.findall(r'@(\w+)', text)
-        for tag in tags:
-            span_class = 'user-tag'
-            user_qs = User.objects.filter(username=tag)
-            if not user_qs.exists():
-                span_class = 'failed-user-tag'
-            text = text.replace(f'@{tag}', f'<span class="{span_class}">@{tag}</span>')
-        return text
     
 class ReplyLike(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)

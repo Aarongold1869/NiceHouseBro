@@ -39,7 +39,7 @@
 
 </style>
 
-<div id="comment-{{ comment.id }}" class="card mb-2 pb-2 border-0">
+<div id="comment-{{ comment.id }}" class="comment card mb-2 pb-2 border-0">
     <div class="card-body pt-3 pb-2">
         <div class='d-flex align-items-center mb-2'>
 
@@ -52,7 +52,8 @@
             <p class="m-0 ms-2">{{ comment.profile.user.username }}</p>
             <p class="m-0"><small class="text-muted">&ensp;&#8226;&ensp;{{ comment.timestamp|time_delta }}</small></p>
         </div>
-        <p id="comment-text-{{comment.id}}" class="card-text my-1 ms-1">{{ comment.text_with_user_tags|safe }}</p>
+
+        <p id="comment-text-{{comment.id}}" class="card-text my-1 ms-1" >{{ comment.text }}</p>
         
         <hr class="m-0 my-2"></hr>
         {% if not user.is_authenticated %}
@@ -90,7 +91,7 @@
             <button 
             class="btn comment-action m-0"
             hx-get="{% url 'edit_comment' comment_id=comment.id %}"
-            hx-target="#comment-{{comment.id}}"
+            hx-target="#comment-text-{{comment.id}}"
             hx-swap="outerHTML"
             >
             <span class="me-2 comment-action-text">Edit</span>

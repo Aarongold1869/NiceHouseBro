@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -12,6 +13,20 @@ from django_htmx.http import trigger_client_event
 import re
 
 # Create your views here.
+def format_tag_string(text: str)-> str:
+    tags = re.findall(r'@(\w+)', text)
+    for tag in tags:
+        span_class = 'user-tag'
+        user_qs = User.objects.filter(username=tag)
+        if not user_qs.exists():
+            span_class = 'failed-user-tag'
+        text = text.replace(f'@{tag}', f'<span class="{span_class}">@{tag}</span>')
+    return text
+
+@require_http_methods(['GET'])
+def format_user_tags(request):
+    text = format_tag_string(request.GET.get('text'))
+    return HttpResponse(text, status=200)
 
 @login_required()
 @require_http_methods(['POST'])
@@ -35,9 +50,11 @@ def edit_comment_view(request, comment_id: int):
 @require_http_methods(['POST'])
 def update_comment_view(request, comment_id: int):
     comment = Comment.objects.get(id=comment_id, profile=Profile.objects.get(user=request.user))
-    comment.text = request.POST.get('text')
+    text = request.POST.get('text', comment.text)
+    comment.text = text
     comment.save()
-    return render(request, "comment/comment.html", {'comment': comment })
+    p = f'<p id="comment-text-{comment.id}" class="card-text my-1 ms-1">{ format_tag_string(text) }</p>'
+    return HttpResponse(p, status=200)
 
 @login_required()
 @require_http_methods(['DELETE'])
@@ -65,11 +82,6 @@ def toggle_comment_like(request, comment_id: int):
         liked=False
     return render(request, "comment/comment-like-button.html", {'comment': comment, 'liked': liked })
 
-# def text_with_user_tags(text: str)-> str:
-#     tags = re.findall(r'@(\w+)', text)
-#     for tag in tags:
-#         text = text.replace(f'@{tag}', f'<span class="user-tag">@{tag}</span>')
-
 @login_required()
 @require_http_methods(['POST'])
 def create_reply_view(request, comment_id: int):
@@ -80,7 +92,7 @@ def create_reply_view(request, comment_id: int):
         comment=comment,
         text=request.POST.get('text')
     )
-    response = render(request, "comment/reply.html", {'comment': comment, 'reply': reply })
+    response = render(request, "comment/reply.html", { 'reply': reply })
     return trigger_client_event(response, f'update-reply-count-{comment.id}')
 
 @login_required()
@@ -88,16 +100,18 @@ def create_reply_view(request, comment_id: int):
 def edit_reply_view(request, reply_id: int):
     reply = Reply.objects.get(id=reply_id, profile=Profile.objects.get(user=request.user))
     form = ReplyForm(instance=reply)
-    context = {'comment': reply.comment, 'reply': reply, 'form': form }
+    context = { 'reply': reply, 'form': form }
     return render(request, "comment/edit-reply-form.html", context)
 
 @login_required()
 @require_http_methods(['POST'])
 def update_reply_view(request, reply_id: int):
     reply = Reply.objects.get(id=reply_id, profile=Profile.objects.get(user=request.user))
-    reply.text = request.POST.get('text')
+    text = request.POST.get('text', reply.text)
+    reply.text = text
     reply.save()
-    return render(request, "comment/reply.html", { 'comment': reply.comment, 'reply': reply })
+    p = f'<p id="reply-text-{reply.id}" class="card-text my-1 ms-1">{ format_tag_string(text) }</p>'
+    return HttpResponse(p, status=200)
 
 @login_required()
 @require_http_methods(['DELETE'])
@@ -148,3 +162,4 @@ def report_comment_view(request):
     )
     response = HttpResponse(status=200)
     return trigger_client_event(response, 'reload-comments')
+

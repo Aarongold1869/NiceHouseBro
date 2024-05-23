@@ -1,12 +1,12 @@
 {% load crispy_forms_tags %}
 
-<div id="reply-{{ reply.id }}" class="card my-1 ms-4 border-0">
+<div id="reply-text-{{ reply.id }}" class="card my-1 ms-4 border-0">
     <div class="card-body">
         <form 
         id='reply-form'
         method='post'
+        hx-target="#reply-text-{{ reply.id }}"
         hx-post="{% url 'update_reply' reply_id=reply.id %}"
-        hx-target="#reply-{{ reply.id }}"
         hx-swap="outerHTML"
         >
             {% csrf_token %}

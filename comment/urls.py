@@ -20,4 +20,5 @@ urlpatterns = [
     path('toggle-reply-like/<int:reply_id>/', views.toggle_reply_like, name='toggle_reply_like'),
 
     path('report-comment/', views.report_comment_view, name='report_comment'),
+    path("format-user-tags/", views.format_user_tags, name="format_user_tags"),
 ] 
