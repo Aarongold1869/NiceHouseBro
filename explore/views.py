@@ -40,9 +40,10 @@ def explore_view(request, search_str:str='Pensacola, FL'):
                                 **x, 
                                 'cap_rate': calculate_cap_rate(value=int(x['price']['value']), rent=random.randint(1000, 2000)),
                                 'address': f"{x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine']} {x['city']}, {x['state']} {x['postalCode']['value']}",
-                                'is_saved': SavedProperty.objects.filter(property_id=x['propertyId']).exists()
+                                'is_saved': SavedProperty.objects.filter(property_id=x['propertyId']).exists(),
+                                'image': None
                             }, property_list))
-   
+
     else:
         property_list = json.loads(json.dumps(request.POST.getlist('property_list')))
         property_list = list(map(lambda x: json.loads(x), property_list))
@@ -50,19 +51,16 @@ def explore_view(request, search_str:str='Pensacola, FL'):
         property_list = list(filter(lambda x: x["cap_rate"] >= float(filters['cap-rate']), property_list))  
 
     property_init = None
-    is_saved = False
-    card_img_arr = None
     if len(property_list) > 0:
         property_init = property_list[0]
-        # is_saved = SavedProperty.objects.filter(property_id=property_init['propertyId']).exists()
-        card_img_arr = fetch_card_image_arr(property_list)
+        end = 2 if len(property_list) > 2 else len(property_list)
+        for i in range(-1, end):
+            property_list[i]['image'] = google_street_view_api(address=property_list[i]['address'])
 
     context = {
         'map_data': map_data,
         'property_list': property_list, 
         'property_obj': property_init,
-        'card_img_arr': card_img_arr,
-        # 'is_saved': is_saved,
         'search_str': search_str
     }
     return render(request, "explore/explore.html", context)
@@ -81,28 +79,28 @@ def get_card_image_view(request, *args, **kwargs):
     image = google_street_view_api(address=address)
     return render(request, 'explore/partials/card-image.html', {'property_id': property_id, 'image': image})
 
+import ast 
 @login_required(login_url='/account/login/')
 @require_http_methods(['POST'])
-def toggle_property_saved_explore_view(request, property_id: str):
+def toggle_property_saved_explore_view(request):
     profile = Profile.objects.get(user=request.user)
-    saved_qs = SavedProperty.objects.filter(Q(profile=profile) & Q(property_id=property_id))
+    property_obj = Property(**json.loads(json.dumps(request.POST)))
+    saved_qs = SavedProperty.objects.filter(Q(profile=profile) & Q(property_id=property_obj['propertyId']))
     if not saved_qs.exists():
         SavedProperty.objects.create(
-            profile=profile,
-            property_id=property_id,
-            address=request.POST.get('address'),
-            image=request.POST.get('image')
+            profile=profile, 
+            property_id=property_obj['propertyId'],
+            address=property_obj['address'],
+            image=property_obj['image'],
+            price=property_obj['price'],
+            cap_rate=property_obj['cap_rate'],
+            beds=property_obj['beds'],
+            baths=property_obj['baths'],
+            sq_ft=property_obj['sq_ft']
         )
-        is_saved = True
-        # toast = { "type": "success", "header": "Explore", "message": "Property saved!" }
+        property_obj['is_saved'] = True
     else:
         saved_qs.delete()
-        is_saved = False
-        # toast = { "type": "success", "header": "Explore", "message": "Property unsaved." }
-    context = {
-        'property_id': property_id,
-        'is_saved': is_saved,
-        # 'toast': toast,
-    }
-    return render(request, 'explore/partials/explore-save-button.html', context)
+        property_obj['is_saved'] = False
+    return render(request, 'explore/partials/explore-save-button.html', { 'property': property_obj  })
 

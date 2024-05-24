@@ -1,6 +1,5 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
@@ -14,7 +13,7 @@ from api.google import google_street_view_api
 from api.redfin import property_detail_api
 from api.redfin.redfin_types import Property
 
-from django_htmx.http import trigger_client_event
+import json
 
 
 def property_detail_view(request, address:str='5663 Dunridge Drive, Pace FL 32571'):
@@ -52,22 +51,28 @@ def retrieve_comment_section(request, property_id: str):
         context['blocked_user_list'] = list(map(lambda x: x.blocked_user, BlockedUser.objects.filter(profile__user=request.user)) )
     return render(request, 'comment/comment-section.html', context)
 
+import ast 
 @login_required()
 @require_http_methods(['POST'])
-def toggle_property_saved(request, property_id: str):
+def toggle_property_saved_detail(request, *args, **kwargs):
     profile = Profile.objects.get(user=request.user)
-    saved_qs = SavedProperty.objects.filter(Q(profile=profile) & Q(property_id=property_id))
+    property_obj = Property(**json.loads(json.dumps(request.POST)))
+    saved_qs = SavedProperty.objects.filter(Q(profile=profile) & Q(property_id=property_obj['propertyId']))
     if not saved_qs.exists():
         SavedProperty.objects.create(
             profile=profile, 
-            property_id=property_id,
-            address=request.POST.get('address'),
-            image=request.POST.get('image')
+            property_id=property_obj['propertyId'],
+            address=property_obj['address'],
+            image=property_obj['image'],
+            price=property_obj['price'],
+            cap_rate=property_obj['cap_rate'],
+            beds=property_obj['beds'],
+            baths=property_obj['baths'],
+            sq_ft=property_obj['sq_ft']
         )
-        is_saved = True
+        property_obj['is_saved'] = True
     else:
         saved_qs.delete()
-        is_saved = False
-    property = Property(propertyId=property_id, address=request.POST.get('address'), photo=request.POST.get('image'))
-    return render(request, "property/partials/detail-save-button.html", {'property': property, 'is_saved': is_saved  })
+        property_obj['is_saved'] = False
+    return render(request, "property/partials/detail-save-button.html", { 'property': Property(**request.POST) })
 

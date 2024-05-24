@@ -135,7 +135,6 @@
 
 {% load static %}
 
-{% comment %} <script id="exploreJs" type="text/javascript" src={% static 'js/explore.js' %}></script> {% endcomment %}
 
 <script>
 
@@ -211,13 +210,17 @@
         setImageAtIndex(nextIndex - 1);
     }
 
-    const handleSaveCard = () => {
+    const handleSaveCard = (isSaved) => {
         const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
-        currentCard.classList.toggle("saved")
-        currentCard.classList.toggle("bounce2")
-        let imageStr = document.getElementById(`property-card-image-${currentCard.id}`).src;
-        let addressStr = document.getElementById(`property-address-${currentCard.id}`).innerText;
-        htmx.ajax('POST', `/explore/explore-toggle-saved/${currentCard.id}/`, {target:`#save-button-${currentCard.id}`, swap:'outerHTML', values: { address: addressStr, image: imageStr } })
+        if (isSaved !== "True") {
+            currentCard.classList.add("saved")
+            currentCard.classList.add("bounce2")
+            return
+        } else {
+            currentCard.classList.remove("saved")
+            currentCard.classList.remove("bounce2")
+            return
+        }
     }
 
     const handleHideCard = async () => {

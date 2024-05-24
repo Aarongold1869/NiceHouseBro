@@ -51,7 +51,7 @@
     }
 </style>
 
-<div id="property-card-{{property.propertyId}}" class="card mb-3 w-auto" style="box-shadow: 0 0 4px 2px var(--bs-dark-bg-subtle);">
+<div id="property-card-{{property.property_id}}" class="card mb-3 w-auto" style="box-shadow: 0 0 4px 2px var(--bs-dark-bg-subtle);">
     <div class="row g-0">
         <div class="col-4 col-md-4">
             <img src="{{property.image}}" class="img-fluid rounded-start h-100 card-image" alt="...">
@@ -59,8 +59,8 @@
         <div class="col-8 col-md-8">
             <div class="card-body h-100  align-items-center py-1 ps-3 pe-2">
 
-                <div class="property-card-details h-75">
-                    <h5>{{ property.address.address }}</h5>
+                <div class="property-card-details h-75 pt-2">
+                    <h5>{{ property.address }}</h5>
                     <h6 style="font-weight:600;">{{ property.price|currency:0 }}</h6>
                     <p class="mb-2" style="font-size:1rem;">
                         Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
@@ -68,16 +68,16 @@
                         br: <strong>{{ property.baths }}</strong>&ensp;|&ensp;
                         <strong>{{ property.sq_ft }} sqft.</strong>
                     </p>
-                    <p id="property-description" style="font-size: .8rem;">{{ property.remarks|truncatechars:140 }}</p>
+                    {% comment %} <p id="property-description" style="font-size: .8rem;">{{ property.remarks|truncatechars:140 }}</p> {% endcomment %}
                 </div>
 
                 <div id="card-button-container" class="d-flex pb-2 h-25">
                     <a href="/property/detail/{{property.address}}/">View Property</a>
                     {% comment %} <a href="#">Contact Agent</a> {% endcomment %}
-                    {% if user == profile.user %}
+                    {% if user == request.user %}
                         <a 
-                        hx-post="{% url 'toggle_saved_property' property_id=property.propertyId %}"
-                        hx-target="#property-card-{{property.propertyId}}"
+                        hx-post="{% url 'toggle_saved_property' property_id=property.property_id %}"
+                        hx-target="#property-card-{{property.property_id}}"
                         hx-vals='{"property_obj":"{{ property }}"}'
                         hx-swap="outerHTML" 
                         >Unsave</a>

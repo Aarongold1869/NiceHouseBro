@@ -76,7 +76,7 @@ data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|
     style="position: relative;">
         <img 
         id="property-card-image-{{ property.propertyId }}"
-        src="{{ card_img_arr|index:forloop.counter0 }}" 
+        src="{{ property.image }}" 
         class="img-fluid card-img-top" 
         alt="..." 
         style="border-top-left-radius:10px;border-top-right-radius:10px;"

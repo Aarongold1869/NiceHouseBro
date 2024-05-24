@@ -1,10 +1,14 @@
 
 <button 
-    id="save-button-{{ property_id }}" 
+    id="save-button-{{ property.propertyId }}" 
     class="btn mx-2 border-0"
-    onclick="handleSaveCard()"
+    hx-post="{% url 'toggle_saved_explore' %}"
+    hx-swap="outerHTML"
+    hx-target="#save-button-{{ property.propertyId }}"
+    hx-vals='{ "propertyId": "{{ property.propertyId }}", "address": "{{ property.address }}", "beds": "{{ property.beds }}", "baths": "{{ property.baths }}", "price": "{{ property.price }}", "cap_rate": "{{ property.cap_rate }}", "sq_ft": "{{ property.sq_ft }}", "image": "{{ property.image }}" }'
+    hx-on::before-swap="handleSaveCard(isSaved='{{property.is_saved}}')"
     >
-    {% if is_saved %}
+    {% if property.is_saved %}
         {% include "icons/heart-fill.html" with size=35 fill="var(--love)" %}
     {% else %}
         {% include "icons/heart.html" with size=35 fill="var(--love)" %}
