@@ -1,27 +1,13 @@
-<style>
-    /***** Slide Right *****/
-    .slide-right {
-        animation: 3s slide-right;
-    }
-    @keyframes slide-right {
-    from {
-        margin-left: -100%;
-    }
-    to {
-        margin-left: 0%;
-    }
-    }
-</style>
 
 
 <div id="toast-container" class="toast-container position-relative" hx-swap-oob="afterbegin">
     <div 
-    class="toast show mb-2 slide-right" 
-    role="alert" 
-    aria-live="assertive" 
+    class="toast show mb-2 fade-in" 
+    role="alert" aria-live="polite" 
     aria-atomic="true" 
+    data-bs-animation="true" 
     data-bs-autohide="true"
-    
+    data-bs-delay=5000
     >
         <div class="toast-header">
             <strong class="me-auto">{{ notification.header }}</strong>
