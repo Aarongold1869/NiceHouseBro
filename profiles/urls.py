@@ -5,7 +5,7 @@ from . import views
 urlpatterns = [
     path('user=<str:username>/', views.profile_view, name='profile'),
     path('locate/', views.locate_view, name='locate'),
-    path('saved/<int:profile_id>/', views.saved_property_list_view, name='saved_property_list'),
+    path('saved/', views.saved_property_list_view, name='saved_property_list'),
     path('update/<int:profile_id>/', views.update_profile_view, name='update_profile'),
     path('update-picture/', views.update_profile_picture, name='update_profile_picture'),
     path('toggle-saved/<str:property_id>/', views.toggle_saved_property_archived, name='toggle_saved_property'),

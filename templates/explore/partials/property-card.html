@@ -66,7 +66,7 @@
 
 <div 
 id='{{ property.propertyId }}' 
-class="card property-card"
+class="card property-card {% if property.is_saved %}saved{% endif %}"
 data-index="{{ forloop.counter0 }}" 
 data-status="{% if forloop.counter0 == 0 %}active{% else %}unknown{% endif %}"
 data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|length %}true{% else %}false{% endif %}"

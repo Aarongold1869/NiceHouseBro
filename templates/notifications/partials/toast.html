@@ -1,7 +1,22 @@
+<style>
+    /***** Slide Right *****/
+    .slide-right {
+        animation: 3s slide-right;
+    }
+    @keyframes slide-right {
+    from {
+        margin-left: -100%;
+    }
+    to {
+        margin-left: 0%;
+    }
+    }
+</style>
+
 
 <div id="toast-container" class="toast-container position-relative" hx-swap-oob="afterbegin">
     <div 
-    class="toast show mb-2" 
+    class="toast show mb-2 slide-right" 
     role="alert" 
     aria-live="assertive" 
     aria-atomic="true" 
@@ -19,6 +34,11 @@
         </div>
         <div class="toast-body">
             {{ notification.message }}
+            {% if link %}
+            <div class="mt-2 pt-2 border-top text-right">
+                <a style="color:var(--love);" href="{{ link.href }}">{{ link.alt }}</a>
+            </div>     
+            {% endif %}     
         </div>
     </div>
 </div>

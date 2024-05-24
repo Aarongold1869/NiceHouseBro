@@ -39,7 +39,8 @@ def explore_view(request, search_str:str='Pensacola, FL'):
         property_list = list(map(lambda x: { 
                                 **x, 
                                 'cap_rate': calculate_cap_rate(value=int(x['price']['value']), rent=random.randint(1000, 2000)),
-                                'address': f"{x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine']} {x['city']}, {x['state']} {x['postalCode']['value']}"
+                                'address': f"{x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine']} {x['city']}, {x['state']} {x['postalCode']['value']}",
+                                'is_saved': SavedProperty.objects.filter(property_id=x['propertyId']).exists()
                             }, property_list))
    
     else:
@@ -53,7 +54,7 @@ def explore_view(request, search_str:str='Pensacola, FL'):
     card_img_arr = None
     if len(property_list) > 0:
         property_init = property_list[0]
-        is_saved = SavedProperty.objects.filter(property_id=property_init['propertyId']).exists()
+        # is_saved = SavedProperty.objects.filter(property_id=property_init['propertyId']).exists()
         card_img_arr = fetch_card_image_arr(property_list)
 
     context = {
@@ -61,7 +62,7 @@ def explore_view(request, search_str:str='Pensacola, FL'):
         'property_list': property_list, 
         'property_obj': property_init,
         'card_img_arr': card_img_arr,
-        'is_saved': is_saved,
+        # 'is_saved': is_saved,
         'search_str': search_str
     }
     return render(request, "explore/explore.html", context)

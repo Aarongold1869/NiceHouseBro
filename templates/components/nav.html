@@ -156,7 +156,7 @@ data-bs-theme="dark"
                         </a>    
                         <ul id='profile-dropdown' class="dropdown-menu">
                             <li><a class="dropdown-item" href="{% url 'profile' username=user.username %}">My Profile</a></li>
-                            <li><a class="dropdown-item" href="{% url 'saved_property_list' profile_id=user.profile_set.first.id %}">Saved Properties</a></li>
+                            <li><a class="dropdown-item" href="{% url 'saved_property_list' %}">Saved Properties</a></li>
                             <li><a class="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" onclick="collapseNav()">Settings</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="/account/logout/">Log Out</a></li>
@@ -172,58 +172,6 @@ data-bs-theme="dark"
         </form> -->
         </div>
     </div>
-
-    <!-- <ul id="profile-notifications-nav" class="navbar-nav d-flex mb-2 mb-lg-0">
-        {% if not user.is_authenticated %}
-            <li class="nav-item">
-                <a class="nav-link" href="/account/register/">Login / Signup</a>
-            </li>
-            {% else %}
-
-            <li class="nav-item dropdown h-100 align-items-start me-2 " >
-                <a 
-                id="notification-dropdown-tg" 
-                class="nav-link dropdown-toggle d-flex align-items-center position-relative"
-                href="#" 
-                role="button" 
-                data-bs-toggle="dropdown" 
-                aria-expanded="false"
-                onclick="clearNotifications()"
-                >
-                    <svg id="notification-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="var(--bs-body-color)" class="bi bi-bell-fill" viewBox="0 0 16 16">
-                        <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901"/>
-                    </svg>
-                    <span id="notification-number" class="badge rounded-pill position-absolute" style="top:0; right:0px; background-color: var(--bs-body-bg);"></span>
-                </a>
-                <ul id='notification-dropdown' class="dropdown-menu ">
-                    <li><a class="dropdown-item">Notifications</a></li>
-                    <div class="dropdown-divider"></div>
-                </ul>
-            </li>
-
-            <li class="nav-item dropdown">
-                <a id="profile-dropdown-tg" class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    
-                    <div id="profile-badge-container">
-                    {% if not user.profile_set.first.profile_picture %}
-                        {% include "icons/profile-icon.html" %}
-                    {% else %}
-                        <img src="{{ user.profile_set.first.profile_picture.url }}" class="profile-badge me-1" alt="profile picture">
-                    {% endif %}
-                    </div>
-                    
-                    {% comment %} Profile {% endcomment %}
-                </a>    
-                <ul id='profile-dropdown' class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'profile' username=user.username %}">My Profile</a></li>
-                    <li><a class="dropdown-item" href="{% url 'saved_property_list' profile_id=user.profile_set.first.id %}">Saved Properties</a></li>
-                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="/account/logout/">Log Out</a></li>
-                </ul>
-            </li>
-        {% endif %}
-    </ul> -->
 </nav>
 
 <script data-theme="{{request.user.profile_set.first.theme}}" async>

@@ -36,6 +36,6 @@ class NotificationConsumer(WebsocketConsumer):
     def comment_interaction(self, event):
         # Called when someone has interacted w your comment
         html = get_template('notifications/partials/toast.html').render(
-            context={ "notification": event['notification'] }
+            context={ "notification": event['notification'], "link": event.get('link', None) }
         )
         self.send(text_data=html)

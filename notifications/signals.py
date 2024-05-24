@@ -6,12 +6,11 @@ from asgiref.sync import async_to_sync
 
 from agent.models import AgentContactForm
 from comment.models import CommentLike, Reply
+from property.models import SavedProperty
 from notifications.models import Notification
-
 
 @receiver(post_save, sender=CommentLike)
 def send_notifications_on_comment_like(sender, instance: CommentLike, created, **kwargs):
-
     if created:
         if(instance.profile.user == instance.comment.profile.user):
             return
@@ -59,5 +58,22 @@ def send_notifications_on_contact_form_submit(sender, instance: AgentContactForm
         event = {
             'type': 'comment_interaction',
             'notification': notification
+        }
+        async_to_sync(channel_layer.group_send)(group_name, event)
+
+@receiver(post_save, sender=SavedProperty)
+def send_notifications_on_property_saved(sender, instance: SavedProperty, created, **kwargs):
+    if created:
+        notification = Notification.objects.create(
+            user=instance.profile.user,
+            header=f'Property Saved.',
+            message=f'You can view this property in the saved properties menu.',
+        )
+        channel_layer = get_channel_layer()
+        group_name = f'user-notifications-{instance.profile.user.id}'
+        event = {
+            'type': 'comment_interaction',
+            'notification': notification,
+            'link': { 'href': '/profile/saved/', 'alt': 'View Saved Properties' }
         }
         async_to_sync(channel_layer.group_send)(group_name, event)

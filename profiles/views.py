@@ -16,7 +16,6 @@ import ast
 import json
 import os
 
-
 # Create your views here.
 @login_required(login_url='/account/login/')
 def profile_view(request, username:str, *args, **kwargs):
@@ -66,10 +65,9 @@ def update_profile_view(request, profile_id:int, *args, **kwargs):
     
     return render(request, 'profile/profile-detail.html', {'profile': profile, 'form': form })
     
-
 @login_required(login_url='/account/login/')
-def saved_property_list_view(request, profile_id:int, *args, **kwargs):
-    profile = Profile.objects.get(id=profile_id)
+def saved_property_list_view(request, *args, **kwargs):
+    profile = Profile.objects.get(user=request.user)
     saved_properties_qs = SavedProperty.objects.filter(profile=profile).filter(archived=False).order_by('-timestamp')
     property_list = list(map(lambda x: {
                                 **property_detail_api(address=x.address), 
