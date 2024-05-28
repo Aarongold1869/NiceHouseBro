@@ -62,32 +62,23 @@ def update_profile_view(request, profile_id:int, *args, **kwargs):
     profile.location = form.cleaned_data.get('location')
     profile.goal = form.cleaned_data.get('goal')
     profile.save()
-    
     return render(request, 'profile/profile-detail.html', {'profile': profile, 'form': form })
     
 @login_required(login_url='/account/login/')
 def saved_property_list_view(request, *args, **kwargs):
     profile = Profile.objects.get(user=request.user)
     saved_properties_qs = SavedProperty.objects.filter(profile=profile).filter(archived=False).order_by('-timestamp')
-    # property_list = list(map(lambda x: {
-    #                             **property_detail_api(address=x.address), 
-    #                             'image': x.image
-    #                         }, saved_properties_qs ))
     return render(request, 'profile/saved-properties.html', { 'profile': profile, 'saved_properties': saved_properties_qs })
 
 @login_required(login_url='/account/login/')
 @require_http_methods(['POST'])
-def toggle_saved_property_archived(request, property_id: str, *args, **kwargs):
+def toggle_property_saved_view(request, property_id: str, *args, **kwargs):
     profile = Profile.objects.get(user=request.user)
     saved_qs = SavedProperty.objects.filter(profile=profile, property_id=property_id)
     if not saved_qs.exists():
-        property_obj = SavedProperty.objects.create(**json.loads(json.dumps(request.POST)))
-        template = 'profile/partials/saved-property-card.html'
-    else:    
-        property_obj = saved_qs.first()
-        property_obj.delete()
-        template = 'profile/partials/property-removed.html'
-    return render(request, template, {"property": property_obj })
+        return HttpResponse(status=400)
+    saved_qs.first().delete()
+    return render(request, 'profile/partials/property-removed.html')
 
 @login_required(login_url='/account/login/')
 @require_http_methods(['POST'])

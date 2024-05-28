@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver    
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -77,3 +77,14 @@ def send_notifications_on_property_saved(sender, instance: SavedProperty, create
             'link': { 'href': '/profile/saved/', 'alt': 'View Saved Properties' }
         }
         async_to_sync(channel_layer.group_send)(group_name, event)
+
+import os
+@receiver(post_delete, sender=SavedProperty)
+def auto_delete_file_on_delete(sender, instance: SavedProperty, **kwargs):
+    """
+    Deletes file from filesystem
+    when corresponding `SavedProperty` object is deleted.
+    """
+    if instance.image:
+        if os.path.isfile(instance.image.path) and not 'default' in instance.image.path:
+            os.remove(instance.image.path)

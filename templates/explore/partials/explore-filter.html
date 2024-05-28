@@ -1,4 +1,4 @@
-{% load as_json %}
+{% load decimal %}
 
 <style>
     .offcanvas-bottom  {
@@ -53,14 +53,14 @@
         <form id="explore-filter-form" class="container col-sm-6 mx-auto">
 
             <div id="cap-rate-filter-container" class="d-flex justify-content-between my-4 align-items-center">
-                <label for="cap-rate">Cap Rate</label>
-                <input type="range" min="0" max="0.2" value="0.05" step="0.01" class="slider" id="cap-rate-input" name="cap-rate" style="width: 60%;"
+                <label for="cap-rate" class='d-flex'>
+                    Cap Rate&ensp;
+                    <p id="cap-rate-value" class="m-0" style="font-weight:bold;">{{ filters.cap_rate|decimal }}% +</p>
+                </label>
+                
+                <input type="range" min="0" max="0.2" value="{{filters.cap_rate}}" step="0.01" class="slider" id="cap-rate-input" name="cap-rate" style="width: 80%;"
                 oninput="updateSliderValue()"
                 >
-                <div class="d-flex">
-                    <p id="cap-rate-value">5</p>
-                    <p>% +</p>
-                </div>
             </div>
     
             <div id="price-filter-container" class="d-flex justify-content-between align-items-center my-4">
@@ -321,15 +321,15 @@
 {{ property_list|json_script:"property_list" }}
 
 <script>
-    const propertyListInit = JSON.parse(document.getElementById('property_list').textContent);
     
     function updateSliderValue() {
         const slider = document.getElementById("cap-rate-input");
         const output = document.getElementById("cap-rate-value");
-        output.innerHTML = slider.value * 100;
+        output.innerHTML = parseFloat(slider.value * 100).toFixed(0) + "% +";
     }
 
-    async function applyFilters () {
+    function applyFilters () {
+
         const formValues = () => {
             const form = document.getElementById("explore-filter-form");
             const formData = new FormData(form);
@@ -339,18 +339,8 @@
             }
             return values;
         }
-        
-        await htmx.ajax('POST', '/explore/', {
-            values: {
-                property_list: propertyListInit,
-                filter_form: formValues()
-            },
-            target: "#explore-container",
-            select: "#explore-container",
-            swap: 'outerHTML',
-        });
-        
-        buildMap();
+        const formData = formValues();
+        window.location.replace(`/explore/filter/search=Pensacola, FL&cap_rate=${formData['cap-rate']}/`);
     }
 
     function resetFilterForm() {

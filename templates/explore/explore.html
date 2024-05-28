@@ -129,7 +129,7 @@
 
 </div>
 
-{% include "explore/partials/explore-filter2.html" %}
+{% include "explore/partials/explore-filter.html" %}
 
 {% include "components/register-modal.html" %}
 
@@ -137,7 +137,7 @@
 
 
 <script>
-
+    
     let activeIndex = 0;
     const cards = document.getElementsByClassName("property-card");
 
@@ -151,7 +151,7 @@
         }
         const address = document.getElementById(`property-address-${cardAtIndex.id}`).innerText.replace('/','|');
         htmx.ajax('GET', `/explore/get-card-image/`, { target:`#property-card-image-${ cardAtIndex.id }`, swap:'outerHTML', values: { address: address, property_id: cardAtIndex.id } })
-        cardAtIndex.dataset.imgdidset = "true";
+        cardAtIndex.dataset.imgdidset = "true";      
     }
 
     const setPreciseCardIndex = (propertyId) => {
@@ -234,6 +234,10 @@
         var currentMapMarker = document.getElementById(`marker-div-${currentCard.id}`).parentNode;
         if (currentMapMarker) {
             currentMapMarker.remove();
+        }
+        var circleMapMarker = document.getElementById(`circle-marker-${currentCard.id}`)
+        if (circleMapMarker) {
+            circleMapMarker.remove();
         }
         // update index of remaining cards
         for (let i = 0; i < cards.length; i++) {

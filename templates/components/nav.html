@@ -176,8 +176,8 @@ data-bs-theme="dark"
 
 <script data-theme="{{request.user.profile_set.first.theme}}" async>
 
-    let numberSpan = document.getElementById('notification-number');
     document.body.addEventListener('htmx:wsAfterMessage', (event) => {
+        let numberSpan = document.getElementById('notification-number');
         let notificationCount = numberSpan.innerHTML;
         if (!notificationCount) {
             notificationCount = 0;
@@ -186,6 +186,7 @@ data-bs-theme="dark"
     });
 
     function clearNotifications() {
+        let numberSpan = document.getElementById('notification-number');
         numberSpan.innerHTML = '';
     }
 

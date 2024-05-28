@@ -1,11 +1,13 @@
 from django.conf import settings
+from django.core.files.base import ContentFile
 
 import base64
 from functools import lru_cache
 import requests
 
 @lru_cache
-def google_street_view_api(address:str) -> str:
+def google_street_view_api_base64(address:str) -> str:
+    print('fetch image')
     params = {
         "key": settings.GOOGLE_MAPS_API_KEY,
         "location": address,

@@ -161,20 +161,20 @@
                 })
                 .addTo(map)
 
-                L.circleMarker([property.latLong.value.latitude, property.latLong.value.longitude],
+                var circleMarker = L.circleMarker([property.latLong.value.latitude, property.latLong.value.longitude],
                     {
                         color: 'white',
                         fillColor: 'var(--love)',
                         fillOpacity: 1,
-
+                        radius: 8
                     }
                 )
-                .setRadius(8)
-                .on('click', function (e) {
+                circleMarker.on('click', function (e) {
                     map.setView(e.latlng, 13); 
                     setPreciseCardIndex(property.propertyId);
                 })
-                .addTo(map)
+                circleMarker.setValues({propertyId: `circle-marker-${property.propertyId}`});
+                circleMarker.addTo(map)
             }
             );
         }

@@ -9,7 +9,7 @@ from comment.models import Comment, CommentLike, ReplyLike
 from profiles.models import Profile, BlockedUser
 from agent.forms import AgentContactFormForm
 from agent.models import AgentContactForm
-from api.google import google_street_view_api
+from api.google import google_street_view_api_base64
 from api.redfin import property_detail_api
 from api.redfin.redfin_types import Property
 
@@ -18,7 +18,7 @@ import json
 
 def property_detail_view(request, address:str='5663 Dunridge Drive, Pace FL 32571'):
     property = property_detail_api(address=address)
-    # street_view_image = google_street_view_api(address=address)
+    # street_view_image = google_street_view_api_base64(address=address)
     is_saved = False
     contact_form = AgentContactFormForm()
     if request.user.is_authenticated:

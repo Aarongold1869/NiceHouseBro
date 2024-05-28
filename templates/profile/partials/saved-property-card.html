@@ -7,6 +7,7 @@
     #card-button-container {
         display: flex;
         justify-content: flex-end;
+        align-items: flex-end;
     }
 
     #card-button-container a {
@@ -54,7 +55,7 @@
 <div id="property-card-{{property.property_id}}" class="card mb-3 w-auto" style="box-shadow: 0 0 4px 2px var(--bs-dark-bg-subtle);">
     <div class="row g-0">
         <div class="col-4 col-md-4">
-            <img src="{{property.image}}" class="img-fluid rounded-start h-100 card-image" alt="...">
+            <img src="{{property.image.url}}" class="img-fluid rounded-start h-100 card-image" alt="...">
         </div>
         <div class="col-8 col-md-8">
             <div class="card-body h-100  align-items-center py-1 ps-3 pe-2">
@@ -78,7 +79,7 @@
                         <a 
                         hx-post="{% url 'toggle_saved_property' property_id=property.property_id %}"
                         hx-target="#property-card-{{property.property_id}}"
-                        hx-vals='{"property_obj":"{{ property }}"}'
+                        {% comment %} hx-vals='{"property_obj":"{{ property }}"}' {% endcomment %}
                         hx-swap="outerHTML" 
                         >Unsave</a>
                     {% endif %}
