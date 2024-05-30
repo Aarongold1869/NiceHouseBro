@@ -1,5 +1,7 @@
 from django.contrib.auth.decorators import login_required
+from django.core.files.base import ContentFile
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
@@ -13,16 +15,16 @@ from api.google import google_street_view_api_base64
 from api.redfin import property_detail_api
 from api.redfin.redfin_types import Property
 
+import base64
 import json
 
-
-def property_detail_view(request, address:str='5663 Dunridge Drive, Pace FL 32571'):
-    property = property_detail_api(address=address)
+def property_detail_view(request, state:str, city:str, address:str, zip:int, propertyId:str):
+    property = property_detail_api(state='FL', city=city, address=address, zip=zip, propertyId=propertyId)
     # street_view_image = google_street_view_api_base64(address=address)
     is_saved = False
     contact_form = AgentContactFormForm()
     if request.user.is_authenticated:
-        saved_qs = SavedProperty.objects.filter(Q(profile__user=request.user) & Q(property_id=property['propertyId']))
+        saved_qs = SavedProperty.objects.filter(Q(profile__user=request.user) & Q(property_id=propertyId))
         is_saved = saved_qs.exists()
         contact_form = None
         contact_form_qs = AgentContactForm.objects.filter(Q(user=request.user) & Q(address=address))
@@ -34,7 +36,9 @@ def property_detail_view(request, address:str='5663 Dunridge Drive, Pace FL 3257
                 'phone': Profile.objects.get(user=request.user).phone_number,
                 'address': address,
             })
-    return render(request, 'property/property-detail.html', { 'property': property, 'is_saved': is_saved, 'contact_form': contact_form })
+    property = { **property, 'propertyId': propertyId, 'address': address, 'state': state, 'city': city, 'zip': zip, 'is_saved': is_saved }
+    context = { 'property': property, 'contact_form': contact_form }
+    return render(request, 'property/property-detail.html', context)
 
 @require_http_methods(['GET'])
 def retrieve_comment_section(request, property_id: str):
@@ -51,28 +55,54 @@ def retrieve_comment_section(request, property_id: str):
         context['blocked_user_list'] = list(map(lambda x: x.blocked_user, BlockedUser.objects.filter(profile__user=request.user)) )
     return render(request, 'comment/comment-section.html', context)
 
-import ast 
 @login_required()
 @require_http_methods(['POST'])
-def toggle_property_saved_detail(request, *args, **kwargs):
+def toggle_property_saved(request, *args, **kwargs):
     profile = Profile.objects.get(user=request.user)
-    property_obj = Property(**json.loads(json.dumps(request.POST)))
-    saved_qs = SavedProperty.objects.filter(Q(profile=profile) & Q(property_id=property_obj['propertyId']))
+    property_data = json.loads(json.dumps(request.POST))
+    property_id = property_data.get('propertyId', None)
+    address = property_data.get('address', None)
+    if not property_id or not address:
+        return HttpResponse(status=400)
+    saved_qs = SavedProperty.objects.filter(Q(profile=profile) & Q(property_id=property_id))
     if not saved_qs.exists():
-        SavedProperty.objects.create(
-            profile=profile, 
-            property_id=property_obj['propertyId'],
-            address=property_obj['address'],
-            image=property_obj['image'],
-            price=property_obj['price'],
-            cap_rate=property_obj['cap_rate'],
-            beds=property_obj['beds'],
-            baths=property_obj['baths'],
-            sq_ft=property_obj['sq_ft']
+        price = property_data.get('price', 0)
+        beds = property_data.get('beds', 0)
+        baths = property_data.get('baths', 0)
+        sq_ft = property_data.get('sq_ft', 0)
+        saved_property = SavedProperty.objects.create(
+            profile = profile, 
+            property_id = property_id,
+            address = address,
+            price = price if not type(price) == str else 0,
+            cap_rate = property_data.get('cap_rate', 0),
+            beds = beds if not type(beds) == str else 0,
+            baths = baths if not type(baths) == str else 0,
+            sq_ft = sq_ft if not type(sq_ft) == str else 0
         )
-        property_obj['is_saved'] = True
+
+        image_data = property_data.get('image', None)
+        if not image_data or not 'base64' in image_data:
+            image_data = google_street_view_api_base64(address=address)
+        format, imgstr = image_data.split(';base64,')
+        ext = format.split('/')[-1]
+        data = ContentFile(base64.b64decode(imgstr))  
+        file_name = f"{property_id}.{ext}"
+        try:
+            saved_property.image.save(file_name, data, save=True)
+        except:
+            pass
+        property_data['is_saved'] = True
     else:
         saved_qs.delete()
-        property_obj['is_saved'] = False
-    return render(request, "property/partials/detail-save-button.html", { 'property': Property(**request.POST) })
+        property_data['is_saved'] = False
+
+    view = request.POST.get('view', None)
+    if view == 'detail':
+        template = 'property/partials/detail-save-button.html'
+    elif view == 'explore':
+        template = 'explore/partials/explore-save-button.html'  
+    elif view == 'profile':
+        template = 'profile/partials/property-removed.html'
+    return render(request, template, { 'property': property_data  })
 

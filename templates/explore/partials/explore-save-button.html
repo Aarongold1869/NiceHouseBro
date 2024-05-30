@@ -2,10 +2,10 @@
 <button 
     id="save-button-{{ property.propertyId }}" 
     class="btn mx-2 border-0"
-    hx-post="{% url 'toggle_saved_explore' %}"
+    hx-post="{% url 'toggle_property_saved' %}"
     hx-swap="outerHTML"
     hx-target="#save-button-{{ property.propertyId }}"
-    hx-vals='{ "propertyId": "{{ property.propertyId }}", "address": "{{ property.address }}", "beds": "{{ property.beds }}", "baths": "{{ property.baths }}", "price": "{{ property.price }}", "cap_rate": "{{ property.cap_rate }}", "sq_ft": "{{ property.sq_ft }}", "image": "{{ property.image }}" }'
+    hx-vals='{ "view": "explore", "propertyId": "{{ property.propertyId }}", "address": "{{ property.address }}", "beds": "{{ property.beds }}", "baths": "{{ property.baths }}", "price": "{{ property.price }}", "cap_rate": "{{ property.cap_rate }}", "sq_ft": "{{ property.sq_ft }}", "image": "{{ property.image }}" }'
     hx-on::before-swap="handleSaveCard(isSaved='{{property.is_saved}}')"
     >
     {% if property.is_saved %}

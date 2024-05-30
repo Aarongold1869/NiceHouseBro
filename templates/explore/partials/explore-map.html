@@ -3,14 +3,17 @@
 		position: relative;
 		background-color: var(--love);
 		color: white;
-		width: fit-content;
+		width: 80px;
+        text-align: center;
+        justify-content: center;
 		align-items: center;
-		padding: 10px;
+		padding: 2px 8px;
 		font-size: 12px;
 		font-weight: bold;
 		text-align: center;
 		border-radius: 15px;
-		top: -1.6rem;
+		top: -1.8rem;
+        left: -40px;
 		box-shadow: 3px -3px 10px rgba(0, 0, 0, 0.4);
         display: none;
 	}
@@ -21,34 +24,44 @@
 
     .map-marker:hover {
         cursor: pointer;
-        top: -1.8rem;
+        top: -2rem;
         border: 2px solid white;
         box-shadow: 0 0 4px 2px var(--love);
     }
 
     .map-marker[data-focused="true"] {
-        top: -1.8rem;
+        top: -2rem;
         border: 2px solid white;
         box-shadow: 0 0 4px 2px var(--love);
     }
 
-	.markerDiv {
-		background-color: transparent;
-		border-left: 10px solid transparent;
-		border-right: 10px solid transparent;
-		border-top: 10px solid var(--love);
-		justify-content: center;
-        display:none;
+    .markerDiv {
+        width: 18px!important;
+        height: 18px!important;
+        background-color: var(--love);
+        border: 3px solid white;
+        border-radius: 50%!important;
+    }
+
+    .markerDiv:hover {
+        border: 3px solid white;
+        box-shadow: 0 0 6px 2px var(--love);
+    }
+
+	.markerDiv[data-zoom="true"] {
+		background-color: transparent!important;
+        border-radius: 0!important;
+		border-left: 10px solid transparent!important;
+		border-right: 10px solid transparent!important;
+		border-top: 10px solid var(--love)!important;
+		justify-content: center!important;
+        box-shadow: none!important;
         /* box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4); */
 	}
 
-    .markerDiv[data-visible="true"] {
-        display: flex;
-    }
-
-    .leaflet-zoom-animated g[data-visible="false"] {
+    /* .leaflet-zoom-animated g[data-visible="false"] {
         display: none;
-    }
+    } */
 
     .leaflet-popup-content-wrapper, .leaflet-popup-tip {
         background: var(--love);
@@ -157,24 +170,24 @@
                     }
                 )
                 .on('click', function (e) {
+                    map.setView(e.latlng, 13); 
                     setPreciseCardIndex(property.propertyId);
                 })
                 .addTo(map)
 
-                var circleMarker = L.circleMarker([property.latLong.value.latitude, property.latLong.value.longitude],
-                    {
-                        color: 'white',
-                        fillColor: 'var(--love)',
-                        fillOpacity: 1,
-                        radius: 8
-                    }
-                )
-                circleMarker.on('click', function (e) {
-                    map.setView(e.latlng, 13); 
-                    setPreciseCardIndex(property.propertyId);
-                })
-                circleMarker.setValues({propertyId: `circle-marker-${property.propertyId}`});
-                circleMarker.addTo(map)
+                // var circleMarker = L.circleMarker([property.latLong.value.latitude, property.latLong.value.longitude],
+                //     {
+                //         color: 'white',
+                //         fillColor: 'var(--love)',
+                //         fillOpacity: 1,
+                //         radius: 8
+                //     }
+                // )
+                // circleMarker.on('click', function (e) {
+                //     map.setView(e.latlng, 13); 
+                //     setPreciseCardIndex(property.propertyId);
+                // })
+                // circleMarker.addTo(map)
             }
             );
         }
@@ -195,26 +208,26 @@
 
     function displayCustomMarkerDiv() {
         document.querySelectorAll('.markerDiv').forEach(function (marker) {
-            marker.setAttribute('data-visible', 'true')
+            marker.setAttribute('data-zoom', 'true')
         })
         document.querySelectorAll('.map-marker').forEach(function (marker) {
             marker.setAttribute('data-visible', 'true')
         })
-        document.querySelectorAll('.leaflet-zoom-animated g').forEach(function (marker) {
-            marker.setAttribute('data-visible', 'false')
-        })
+        // document.querySelectorAll('.leaflet-zoom-animated g').forEach(function (marker) {
+        //     marker.setAttribute('data-visible', 'false')
+        // })
     }
 
     function hideCustomMarkerDiv() {
         document.querySelectorAll('.markerDiv').forEach(function (marker) {
-            marker.setAttribute('data-visible', 'false')
+            marker.setAttribute('data-zoom', 'false')
         })
         document.querySelectorAll('.map-marker').forEach(function (marker) {
             marker.setAttribute('data-visible', 'false')
         })
-        document.querySelectorAll('.leaflet-zoom-animated g').forEach(function (marker) {
-            marker.setAttribute('data-visible', 'true')
-        })
+        // document.querySelectorAll('.leaflet-zoom-animated g').forEach(function (marker) {
+        //     marker.setAttribute('data-visible', 'true')
+        // })
     }
     
 </script>

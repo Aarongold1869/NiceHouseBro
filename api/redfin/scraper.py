@@ -1,10 +1,10 @@
 from bs4 import BeautifulSoup
 from functools import lru_cache
 import json
+import re
 import requests
 from typing import List, Dict
 import urllib
-
 
 from .redfin_types import Property, RedfinResponse
 # from redfin_types import Property, RedfinResponse
@@ -56,14 +56,15 @@ class RedfinScraper():
 
 
 class RedfinPropertyDetailScraper():
-    def __init__(self, state:str, city:str, address:str, id:int):
+    def __init__(self, state:str, city:str, address:str, zip:int, id:int):
         self.state = state
         self.city = city
         self.address = address
+        self.zip = zip
         self.id = id
 
     def get_endpoint(self)-> str:
-        endpoint = f'{self.state}/{self.city}/{self.address}/home/{self.id}'
+        endpoint = f'{self.state}/{self.city}/{self.address.replace(" ","-")}-{self.zip}/home/{self.id}'
         return endpoint
     
     def get_soup(self)-> Dict:
@@ -93,12 +94,15 @@ class RedfinPropertyDetailScraper():
         stat_blocks = top_stats[0].find_all('div', class_='stat-block')
         for el in stat_blocks:
             key = el.find(class_='statsLabel').text.replace(' ', '_').lower()
-            if 'Get pre-approved' in key:
+            if 'get_pre-approved' in key:
                 key = 'price'
             val = el.find(class_='statsValue').text
             data[key] = val 
         data['remarks'] = soup.find('div', class_='remarks').find('p').find('span').text
-        data['photo'] = soup.find('div', id_='MBImage0')#.find('a').find('span').find('img')['src']
+        data['images'] = []
+        images = soup.findAll('span', id=re.compile('^MBImage'))
+        for image in images:
+            data['images'].append(image.find('img')['src'])
         return data
 
 

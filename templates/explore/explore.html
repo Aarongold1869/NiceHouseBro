@@ -235,10 +235,6 @@
         if (currentMapMarker) {
             currentMapMarker.remove();
         }
-        var circleMapMarker = document.getElementById(`circle-marker-${currentCard.id}`)
-        if (circleMapMarker) {
-            circleMapMarker.remove();
-        }
         // update index of remaining cards
         for (let i = 0; i < cards.length; i++) {
             cards[i].dataset.index = i;

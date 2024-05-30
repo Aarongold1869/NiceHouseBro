@@ -72,7 +72,7 @@ data-status="{% if forloop.counter0 == 0 %}active{% else %}unknown{% endif %}"
 data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|length %}true{% else %}false{% endif %}"
 >
     <a 
-    href="{% url 'property_detail' address=property.address|remove_slashes %}" 
+    href="{% url 'property_detail' state=map_data.address.state city=map_data.address.city address=property.street|remove_slashes zip=property.postalCode.value propertyId=property.propertyId %}" 
     style="position: relative;">
         <img 
         id="property-card-image-{{ property.propertyId }}"

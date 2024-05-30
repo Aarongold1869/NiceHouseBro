@@ -2,11 +2,11 @@
 id="save-button" 
 class='btn bg-transparent border-2'
 style="color: var(--love);"
-hx-post="{% url 'toggle_saved' property_id=property.propertyId %}"
-hx-vals='{"address": "{{ property.address }}", "image": "{{ property.photo }}"}'
+hx-post="{% url 'toggle_property_saved' %}"
+hx-vals='{ "view": "detail", "propertyId": "{{ property.propertyId }}", "address": "{{ property.address }}", "beds": "{{ property.beds }}", "baths": "{{ property.baths }}", "price": "{{ property.price }}", "cap_rate": "{{ property.cap_rate }}", "sq_ft": "{{ property.sqFt.value }}", "image": "{{ property.images.0 }}" }'
 hx-swap="outerHTML"
 >
-{% if is_saved %}
+{% if property.is_saved %}
     {% include "icons/heart-fill.html" with size=16 %}
     Saved
 {% else %}

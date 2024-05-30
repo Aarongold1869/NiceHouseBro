@@ -32,3 +32,4 @@ class BlockedUser(models.Model):
     
     def __str__(self):
         return f'{self.profile.user.username} - {self.blocked_user}'
+    

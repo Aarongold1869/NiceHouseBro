@@ -53,7 +53,7 @@ hx-trigger="reload-comments from:body"
     
     <div id="comment-list" class="container mt-4 px-2 pt-2 pb-1 rounded" style="background-color:var(--bs-secondary-bg);">
         {% if not comment_list %}
-            <h5 id="no-comments">No comments yet.</h5>
+            <p id="no-comments">No comments yet.</p>
         {% else %}
             {% for comment in comment_list %}
                 {% if not comment.profile.user.id in blocked_user_list %}
@@ -68,7 +68,10 @@ hx-trigger="reload-comments from:body"
 <script>
 
     async function formatTextElTags(textEl) {
-        await htmx.ajax('GET', '/comment/format-user-tags/', {target: `#${textEl.id}`, swap: 'innerHTML', values: { text: textEl.innerHTML }})            
+        let text = textEl.innerHTML;
+        if (text.includes('@')) {
+            await htmx.ajax('GET', '/comment/format-user-tags/', {target: `#${textEl.id}`, swap: 'innerHTML', values: { text: text }}) 
+        }           
     }
 
     async function formatUserTags(){

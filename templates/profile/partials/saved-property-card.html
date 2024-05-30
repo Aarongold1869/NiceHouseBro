@@ -77,9 +77,9 @@
                     {% comment %} <a href="#">Contact Agent</a> {% endcomment %}
                     {% if user == request.user %}
                         <a 
-                        hx-post="{% url 'toggle_saved_property' property_id=property.property_id %}"
+                        hx-post="{% url 'toggle_property_saved' %}"
                         hx-target="#property-card-{{property.property_id}}"
-                        {% comment %} hx-vals='{"property_obj":"{{ property }}"}' {% endcomment %}
+                        hx-vals='{ "view": "profile", "propertyId": "{{ property.property_id }}", "address": "{{ property.address }}" }'
                         hx-swap="outerHTML" 
                         >Unsave</a>
                     {% endif %}
