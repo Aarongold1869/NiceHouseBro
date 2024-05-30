@@ -6,6 +6,9 @@ class SavedProperty(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     property_id = models.CharField(max_length=100)
     address = models.CharField(max_length=250)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=2)
+    zip = models.IntegerField()
     image = models.ImageField(upload_to='property_images/', default='property_images/default/shrek.webp')
     price = models.DecimalField(max_digits=10, decimal_places=2)
     cap_rate = models.DecimalField(max_digits=5, decimal_places=2)
@@ -23,3 +26,10 @@ class SavedProperty(models.Model):
     def __str__(self):
         return f'{self.profile.user.username} - {str(self.property_id)} - {self.timestamp}'
     
+    @property
+    def endpoint(self):
+        return f'/property/detail/state={self.state}&city={self.city}&address={self.address}&zip={self.zip}&id={self.property_id}/'
+    
+    @property
+    def address_full(self):
+        return f'{self.address}, {self.city}, {self.state} {self.zip}'

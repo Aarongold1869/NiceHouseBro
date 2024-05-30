@@ -133,9 +133,6 @@
 
 {% include "components/register-modal.html" %}
 
-{% load static %}
-
-
 <script>
     
     let activeIndex = 0;
@@ -210,12 +207,14 @@
         setImageAtIndex(nextIndex - 1);
     }
 
-    const handleSaveCard = (isSaved) => {
+    const handleSaveCard = (propertyId, isSaved) => {
         const currentCard = document.querySelector(`[data-index="${activeIndex}"]`);
+        const propertyData = JSON.parse(document.getElementById(`json-data-${propertyId}`).dataset.property);
+        htmx.ajax('POST', '/property/toggle-property-saved/', { target: `#save-button-${propertyId}`, values: { view: "explore", property: propertyData }, swap:'outerHTML' });
         if (isSaved !== "True") {
             currentCard.classList.add("saved")
             currentCard.classList.add("bounce2")
-            return
+            return  
         } else {
             currentCard.classList.remove("saved")
             currentCard.classList.remove("bounce2")

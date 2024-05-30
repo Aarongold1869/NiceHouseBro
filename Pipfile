@@ -16,6 +16,7 @@ beautifulsoup4 = "*"
 scrapfly-sdk = "*"
 lxml = "*"
 pytz = "*"
+django-after-response = "*"
 
 [dev-packages]
 

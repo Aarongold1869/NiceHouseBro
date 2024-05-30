@@ -8,6 +8,7 @@ from api.google import google_street_view_api_base64
 from api.nominatim import fetch_map_data_from_search_str 
 from api.nominatim.types import MapData
 
+from profiles.models import Profile
 from property.models import SavedProperty
 from property.functions import calculate_cap_rate
 
@@ -30,9 +31,12 @@ def explore_view(request, search_str:str='Pensacola, FL'):
     property_list = list(map(lambda x: { 
                             **x, 
                             'cap_rate': calculate_cap_rate(value=int(x['price']['value']), rent=random.randint(1000, 2000)),
-                            'address': f"{x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine']} {x['city']}, {x['state']} {x['postalCode']['value']}",
-                            'is_saved': SavedProperty.objects.filter(property_id=x['propertyId']).exists(),
+                            'address': x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine'],
+                            'address_full': f"{x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine']} {x['city']}, {x['state']} {x['postalCode']['value']}",
+                            'is_saved': SavedProperty.objects.filter(property_id=x['propertyId']).filter(profile=Profile.objects.filter(user=request.user.id).first()).exists(),
                             'street': x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine'],
+                            'price': x['price']['value'] if 'value' in x['price'] else x['price'],
+                            'sq_ft': x['sqFt']['value'] if 'value' in x['sqFt'] else x['sqFt'],
                             # 'image': None
                         }, property_list))
     property_init = None

@@ -61,7 +61,7 @@
             <div class="card-body h-100  align-items-center py-1 ps-3 pe-2">
 
                 <div class="property-card-details h-75 pt-2">
-                    <h5>{{ property.address }}</h5>
+                    <p class="text-muted mb-2">{{ property.address_full }}</p>
                     <h6 style="font-weight:600;">{{ property.price|currency:0 }}</h6>
                     <p class="mb-2" style="font-size:1rem;">
                         Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
@@ -73,13 +73,13 @@
                 </div>
 
                 <div id="card-button-container" class="d-flex pb-2 h-25">
-                    <a href="/property/detail/{{property.address}}/">View Property</a>
-                    {% comment %} <a href="#">Contact Agent</a> {% endcomment %}
+                    <a style="color:var(--love);" href="{{property.endpoint}}">View Property</a>
                     {% if user == request.user %}
                         <a 
+                        style="color:var(--love);"
                         hx-post="{% url 'toggle_property_saved' %}"
                         hx-target="#property-card-{{property.property_id}}"
-                        hx-vals='{ "view": "profile", "propertyId": "{{ property.property_id }}", "address": "{{ property.address }}" }'
+                        hx-vals='{ "view": "profile", "property": { "propertyId": "{{property.property_id}}" }}'
                         hx-swap="outerHTML" 
                         >Unsave</a>
                     {% endif %}

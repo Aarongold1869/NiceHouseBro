@@ -159,7 +159,7 @@
             // for (let index=propertyList.length-1; index>=0; index--) {
             //     let property = propertyList[index];
             propertyList.forEach(function (property, index) {
-                let priceFormatted = property.price.value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
+                let priceFormatted = property.price.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
                 L.marker([property.latLong.value.latitude, property.latLong.value.longitude], 
                     {
                         icon: L.divIcon({

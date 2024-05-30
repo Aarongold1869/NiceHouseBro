@@ -1,16 +1,37 @@
-<button 
-id="save-button" 
-class='btn bg-transparent border-2'
-style="color: var(--love);"
-hx-post="{% url 'toggle_property_saved' %}"
-hx-vals='{ "view": "detail", "propertyId": "{{ property.propertyId }}", "address": "{{ property.address }}", "beds": "{{ property.beds }}", "baths": "{{ property.baths }}", "price": "{{ property.price }}", "cap_rate": "{{ property.cap_rate }}", "sq_ft": "{{ property.sqFt.value }}", "image": "{{ property.images.0 }}" }'
-hx-swap="outerHTML"
->
-{% if property.is_saved %}
-    {% include "icons/heart-fill.html" with size=16 %}
-    Saved
+{% load as_json %}
+
+{% if user.is_authenticated %}
+
+    <button 
+    id="save-button" 
+    class='btn bg-transparent border-2'
+    style="color: var(--love);"
+    onclick="toggleSaved()"
+    {% comment %} hx-post="{% url 'toggle_property_saved' %}" {% endcomment %}
+    {% comment %} hx-vals='{ "view": "detail", "propertyId": "{{ property.propertyId }}", "address": "{{ property.address }}", "beds": "{{ property.beds }}", "baths": "{{ property.baths }}", "price": "{{ property.price }}", "cap_rate": "{{ property.cap_rate }}", "sq_ft": "{{ property.sqFt.value }}", "image": "{{ property.images.0 }}" }' {% endcomment %}
+    {% comment %} hx-vals='{ "view": "detail", "property" : "{{ property }}" }'
+    hx-swap="outerHTML" {% endcomment %}
+    >
+    {% if property.is_saved %}
+        {% include "icons/heart-fill.html" with size=16 %}
+        Saved
+    {% else %}
+        {% include "icons/heart.html" with size=16 %}
+        Save
+    {% endif %}
+    </button>
+
 {% else %}
+                
+    <button 
+    id="save-button" 
+    class='btn bg-transparent border-2'
+    style="color: var(--love);" 
+    data-bs-toggle="modal" 
+    data-bs-target="#registerModal"
+    >
     {% include "icons/heart.html" with size=16 %}
     Save
+    </button>
+
 {% endif %}
-</button>

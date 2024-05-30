@@ -94,14 +94,14 @@ data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|
    
         <div class="card-body text-wrap" style="color:var(--bs-body-color);">
             {% comment %} <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.estimatedValue|currency:0 }}</h5> {% endcomment %}
-            <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.price.value|currency:0 }}</h5>
+            <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.price|currency:0 }}</h5>
             <p class="card-subtitle mb-2" style="font-size:.8rem!important;">
                 {% if property.cap_rate != 0 %}
                     Cap: <strong >{{ property.cap_rate|percentage }}</strong>&ensp;|&ensp;
                 {% endif %}
                 beds: <strong>{{ property.beds }}</strong>&ensp;|&ensp;
                 baths: <strong>{{ property.baths }}</strong>&ensp;|&ensp;
-                <strong>{{ property.sqFt.value|comma }} sqft.</strong>
+                <strong>{{ property.sq_ft|comma }} sqft.</strong>
             </p>
             <h6 id="property-address-{{ property.propertyId }}" class="card-subtitle mb-2" style="font-size:.8rem;">{{ property.address }}</h6>
             {% comment %} <p class="card-text text-muted" style="font-size:.8rem;">This is a short description of the property.</p>   {% endcomment %}

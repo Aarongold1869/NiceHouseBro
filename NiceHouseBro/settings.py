@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'profiles',
     'property',
 
+    'after_response',
     'channels'
 ]
 

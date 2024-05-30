@@ -15,6 +15,7 @@ from api.google import google_street_view_api_base64
 from api.redfin import property_detail_api
 from api.redfin.redfin_types import Property
 
+import after_response
 import base64
 import json
 
@@ -55,43 +56,53 @@ def retrieve_comment_section(request, property_id: str):
         context['blocked_user_list'] = list(map(lambda x: x.blocked_user, BlockedUser.objects.filter(profile__user=request.user)) )
     return render(request, 'comment/comment-section.html', context)
 
+@after_response.enable
+def process_model_image(saved_property: SavedProperty, image_data):
+    if not image_data or not 'base64' in image_data:
+        image_data = google_street_view_api_base64(address=saved_property.address_full)
+    format, imgstr = image_data.split(';base64,')
+    ext = format.split('/')[-1]
+    data = ContentFile(base64.b64decode(imgstr))  
+    file_name = f"{saved_property.property_id}.{ext}"
+    try:
+        saved_property.image.save(file_name, data, save=True)
+    except:
+        pass
+    return
+
 @login_required()
 @require_http_methods(['POST'])
 def toggle_property_saved(request, *args, **kwargs):
     profile = Profile.objects.get(user=request.user)
-    property_data = json.loads(json.dumps(request.POST))
+    property_data = None
+    try:
+        property_data: Property = json.loads(request.POST.get('property'))
+        print(property_data)
+    except:
+        return HttpResponse(status=400)
     property_id = property_data.get('propertyId', None)
     address = property_data.get('address', None)
-    if not property_id or not address:
-        return HttpResponse(status=400)
     saved_qs = SavedProperty.objects.filter(Q(profile=profile) & Q(property_id=property_id))
     if not saved_qs.exists():
-        price = property_data.get('price', 0)
-        beds = property_data.get('beds', 0)
-        baths = property_data.get('baths', 0)
-        sq_ft = property_data.get('sq_ft', 0)
+        price = property_data.get('price')
+        beds = property_data.get('beds')
+        baths = property_data.get('baths')
+        sq_ft = property_data.get('sq_ft')
         saved_property = SavedProperty.objects.create(
             profile = profile, 
             property_id = property_id,
             address = address,
+            city = property_data.get('city', ''),
+            state = property_data.get('state', ''),
+            zip = property_data.get('zip', 0),
             price = price if not type(price) == str else 0,
             cap_rate = property_data.get('cap_rate', 0),
             beds = beds if not type(beds) == str else 0,
             baths = baths if not type(baths) == str else 0,
             sq_ft = sq_ft if not type(sq_ft) == str else 0
         )
-
-        image_data = property_data.get('image', None)
-        if not image_data or not 'base64' in image_data:
-            image_data = google_street_view_api_base64(address=address)
-        format, imgstr = image_data.split(';base64,')
-        ext = format.split('/')[-1]
-        data = ContentFile(base64.b64decode(imgstr))  
-        file_name = f"{property_id}.{ext}"
-        try:
-            saved_property.image.save(file_name, data, save=True)
-        except:
-            pass
+        saved_property.save()
+        process_model_image.after_response(saved_property, property_data.get('photo', None))
         property_data['is_saved'] = True
     else:
         saved_qs.delete()

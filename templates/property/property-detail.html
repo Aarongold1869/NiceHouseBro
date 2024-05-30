@@ -54,39 +54,7 @@
                     Back
                 </button>
 
-                {% if user.is_authenticated %}
-                    
-                    <button 
-                    id="save-button" 
-                    class='btn bg-transparent border-2'
-                    style="color: var(--love);"
-                    hx-post="{% url 'toggle_property_saved' %}"
-                    hx-vals='{ "view": "detail", "propertyId": "{{ property.propertyId }}", "address": "{{ property.address }}", "beds": "{{ property.beds }}", "baths": "{{ property.baths }}", "price": "{{ property.price }}", "cap_rate": "{{ property.cap_rate }}", "sq_ft": "{{ property.sqFt.value }}", "image": "{{ property.images.0 }}" }'
-                    hx-swap="outerHTML"
-                    >
-                    {% if property.is_saved %}
-                        {% include "icons/heart-fill.html" with size=16 %}
-                        Saved
-                    {% else %}
-                        {% include "icons/heart.html" with size=16 %}
-                        Save
-                    {% endif %}
-                    </button>
-
-                {% else %}
-                
-                    <button 
-                    id="save-button" 
-                    class='btn bg-transparent border-2'
-                    style="color: var(--love);" 
-                    data-bs-toggle="modal" 
-                    data-bs-target="#registerModal"
-                    >
-                    {% include "icons/heart.html" with size=16 %}
-                    Save
-                    </button>
-                
-                {% endif %}
+                {% include "property/partials/detail-save-button.html" %}
 
             </div>
         </div>
@@ -248,6 +216,11 @@
             default:
                 break;
         }
+    }
+
+    function toggleSaved() {
+        const propertyData = JSON.parse(document.getElementById('property').textContent);
+        htmx.ajax('POST', '/property/toggle-property-saved/', { target: "#save-button", values: { view: "detail", property: propertyData }, swap:'outerHTML' });
     }
 
     // Lazy load comment section

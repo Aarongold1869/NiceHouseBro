@@ -5,5 +5,4 @@ register = template.Library()
 
 @register.filter(name='as_json')
 def as_json(value)-> str:
-    
-    return json.loads(json.dumps(value))
+    return json.dumps(value)

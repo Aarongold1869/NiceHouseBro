@@ -1,3 +1,5 @@
+{% load as_json %}
+
 <div id="explore-controls" class="d-flex justify-content-center py-3 ">
     <button 
     id="back-button" 
@@ -17,30 +19,7 @@
     </button>
     
 
-    {% if request.user.is_authenticated %}
-        <button 
-        id="save-button-{{ property.propertyId }}" 
-        class="btn mx-2 border-0"
-        hx-post="{% url 'toggle_property_saved' %}"
-        hx-swap="outerHTML"
-        hx-target="#save-button-{{ property.propertyId }}"
-        hx-vals='{ "view": "explore", "propertyId": "{{ property.propertyId }}", "address": "{{ property.address }}", "beds": "{{ property.beds }}", "baths": "{{ property.baths }}", "price": "{{ property.price.value }}", "cap_rate": "{{ property.cap_rate }}", "sq_ft": "{{ property.sqFt.value }}", "image": "{{ property.image }}" }'
-        hx-on::before-swap="handleSaveCard(isSaved='{{property.is_saved}}')"
-        >
-        {% if property.is_saved %}
-            {% include "icons/heart-fill.html" with size=35 fill="var(--love)" %}
-        {% else %}
-            {% include "icons/heart.html" with size=35 fill="var(--love)" %}
-        {% endif %}
-        </button>
-    {% else %}
-        <button 
-        id="save-button" 
-        class="btn mx-2 border-0"
-        data-bs-toggle="modal" data-bs-target="#registerModal"
-        > {% include "icons/heart.html" with size=35 fill="var(--love)" %}
-        </button>
-    {% endif %}
+    {% include "explore/partials/explore-save-button.html" %}
 
     <button 
     id="next-button" 
@@ -51,3 +30,5 @@
         {% include "icons/arrow-right.html" with size=35 %}
     </button>
 </div>
+
+<div id="json-data-{{property.propertyId}}" class="d-none" data-property="{{property|as_json}}"></div>
