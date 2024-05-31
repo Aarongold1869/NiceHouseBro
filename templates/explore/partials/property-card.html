@@ -10,11 +10,16 @@
 .property-card {
     position: absolute;
     top: 8px;
-    border-radius: 15px;
+    border-radius: 10px;
     transform: translateX(0) rotate(0) scale(1);
-    transition: transform 400ms ease, box-shadow 300ms ease, border 300ms ease;
+    transition: transform 400ms ease, box-shadow 200ms ease, border 300ms ease;
     width: 95%;
     box-shadow: 0 0 4px 2px var(--bs-dark-bg-subtle);
+}
+
+.property-card:hover {
+    /* transition: none; */
+    box-shadow: 0 0 10px 2px var(--love);
 }
 
 .property-card[data-status="unknown"] {

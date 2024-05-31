@@ -17,18 +17,19 @@ from typing import List
 
 
 def get_additional_property_list_context(property_data: List[Property], user_profile:Profile):
-    property_list = list(map(lambda x: { 
-                            **x, 
-                            'cap_rate': calculate_cap_rate(value=int(x['price']['value']), rent=random.randint(1000, 2000)),
-                            'address': x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine'],
-                            'address_full': f"{x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine']} {x['city']}, {x['state']} {x['postalCode']['value']}",
-                            'is_saved': SavedProperty.objects.filter(property_id=x['propertyId']).filter(profile=user_profile).exists(),
-                            'street': x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine'],
-                            'price': x['price']['value'] if 'value' in x['price'] else x['price'],
-                            'sq_ft': x['sqFt']['value'] if 'value' in x['sqFt'] else '-',
-                            # 'image': None
-                        }, property_data))
+
+    def set_property_obj_context(obj, user_profile):
+        price = obj['price']['value'] if 'value' in obj['price'] else 0
+        obj['price'] = price
+        obj['cap_rate'] = calculate_cap_rate(value=int(price), rent=random.randint(1000, 2000))
+        obj['address'] = obj['streetLine']['value'] if 'value' in obj['streetLine'] else obj['streetLine']
+        obj['address_full'] = f"{obj['streetLine']['value'] if 'value' in obj['streetLine'] else obj['streetLine']} {obj['city']}, {obj['state']} {obj['postalCode']['value']}"
+        obj['is_saved'] = SavedProperty.objects.filter(property_id=obj['propertyId']).filter(profile=user_profile).exists()
+        obj['street'] = obj['streetLine']['value'] if 'value' in obj['streetLine'] else obj['streetLine']
+        obj['sq_ft'] = obj['sqFt']['value'] if 'value' in obj['sqFt'] else '-'
+        return obj
     
+    property_list = list(map(lambda x: { **x, **set_property_obj_context(x, user_profile) }, property_data))
     if len(property_list) > 0:
         end = 2 if len(property_list) > 2 else len(property_list)
         for i in range(-1, end):
@@ -108,6 +109,8 @@ def get_card_image_view(request, *args, **kwargs):
     property_id = request.GET.get('property_id')
     address = request.GET.get('address')
     image = google_street_view_api_base64(address=address)
+    if len(image) == 0:
+        image = '/media/property_images/default/awesome-house.jpg'
     return render(request, 'explore/partials/card-image.html', {'property_id': property_id, 'image': image})
 
 

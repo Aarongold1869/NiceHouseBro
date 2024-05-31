@@ -11,7 +11,7 @@ class SavedProperty(models.Model):
     zip = models.IntegerField()
     image = models.ImageField(upload_to='property_images/', default='property_images/default/shrek.webp')
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    cap_rate = models.DecimalField(max_digits=5, decimal_places=2)
+    cap_rate = models.DecimalField(max_digits=7, decimal_places=4)
     beds = models.IntegerField()
     baths = models.DecimalField(max_digits=2, decimal_places=1)
     sq_ft = models.IntegerField()

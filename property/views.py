@@ -15,12 +15,16 @@ from api.google import google_street_view_api_base64
 from api.redfin import property_detail_api
 from api.redfin.redfin_types import Property
 
+from .functions import calculate_cap_rate
+
 import after_response
 import base64
 import json
+import random
 
 def property_detail_view(request, state:str, city:str, address:str, zip:int, propertyId:str):
     property = property_detail_api(state='FL', city=city, address=address, zip=zip, propertyId=propertyId)
+    property['cap_rate'] = calculate_cap_rate(int(property['price'].replace('$','').replace(',','')), random.randint(1000, 2000))
     # street_view_image = google_street_view_api_base64(address=address)
     is_saved = False
     contact_form = AgentContactFormForm()
@@ -84,10 +88,10 @@ def toggle_property_saved(request, *args, **kwargs):
     address = property_data.get('address', None)
     saved_qs = SavedProperty.objects.filter(Q(profile=profile) & Q(property_id=property_id))
     if not saved_qs.exists():
-        price = property_data.get('price')
-        beds = property_data.get('beds')
-        baths = property_data.get('baths')
-        sq_ft = property_data.get('sq_ft')
+        price = property_data.get('price', 0)
+        beds = property_data.get('beds', 0)
+        baths = property_data.get('baths', 0)
+        sq_ft = property_data.get('sq_ft', 0)
         saved_property = SavedProperty.objects.create(
             profile = profile, 
             property_id = property_id,

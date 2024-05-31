@@ -31,7 +31,6 @@ def property_detail_api(state:str, city:str, address:str, zip:int, propertyId:st
     print('scraping redfin')
     scraper = RedfinPropertyDetailScraper(state=state, city=city, address=address, zip=zip, id=propertyId)
     property = scraper.get_property_detail_data()
-    property['cap_rate'] = 0.1
     print(property)
     # property = {
     #     'propertyId': 0, 

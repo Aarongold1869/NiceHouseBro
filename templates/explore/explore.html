@@ -40,6 +40,10 @@
         transition: transform 300ms ease;
     }
 
+    .explore-component-header {
+        display: flex;
+    }
+
     @media only screen and (min-width: 1000px) {
         #explore-container {
             height: 95vh;
@@ -49,8 +53,8 @@
             transform: translateX(0%)!important;
             display: block;
         }
-        #map-button {
-            display: none; 
+        .explore-component-header {
+            display: none!important;
         }
     }
 
@@ -58,7 +62,7 @@
     
 <div id='explore-container' class="d-flex flex-column align-items-center position-relative" >
 
-    <div id='current-search' class="d-flex w-100 pt-3 pb-2 px-2 m-0 mb-1" style="background-color: var(--bs-dark-bg-subtle)">
+    <div id='current-search' class="d-flex w-100 pt-4 pb-2 px-2 m-0">
         <div class="d-flex col-lg-4">
             <input id="location-search" type="text" class="form-control me-2" style="border:3px solid var(--bs-secondary-color);" placeholder="{{ search_str }}" >
             <button id="search-button" class="btn btn-sm love-outline border-3 me-2">Search</button>
@@ -70,9 +74,9 @@
 
     <div class="d-flex justify-content-center w-100 h-100">
 
-        <div id='swiping-component' class="col-12 col-md-8 col-lg-4 overflow-hidden p-1 px-2">
+        <div id='swiping-component' class="col-12 col-md-8 col-lg-4 overflow-hidden py-0 px-2">
 
-            <div class="d-flex align-items-center justify-content-between px-3 pt-1 pb-2">
+            <div class="explore-component-header d-flex align-items-center justify-content-between px-3 pt-1 pb-2">
                 <h3 class="mb-0">Explore</h3>
                 <button 
                 id="map-button" 
@@ -81,7 +85,7 @@
                 >
                     {% include "icons/map-icon.html" %}
                 </button>
-            </div>
+            </div> 
 
             <!-- Swiping Property List -->
             <div id='property-card-container'>
@@ -109,8 +113,9 @@
 
         </div>
 
-        <div id='map-container' class="col-12 col-lg-8 p-1 h-100" style="background-color: var(--bs-body-bg);" data-visible="false">
-            <div id="map-header" class="d-flex align-items-center justify-content-between px-3 pt-1 pb-2">
+        <div id='map-container' class="col-12 col-lg-8 p-0 h-100" style="background-color: var(--bs-body-bg);" data-visible="false">
+            
+            <div id="map-header" class="explore-component-header d-flex align-items-center justify-content-between px-3 pt-1 pb-2">
                 <h3 class="mb-0">Map</h3>
                 <button 
                 id="map-button" 
@@ -142,11 +147,12 @@
         if (index === 0) {
             return
         }
-        const cardAtIndex = document.querySelector(`[data-index="${index}"]`);
+        let cardAtIndex = document.querySelector(`[data-index="${index}"]`);
         if (cardAtIndex.dataset.imgdidset === "true") {
+            console.log('image already set')
             return
         }
-        const address = document.getElementById(`property-address-${cardAtIndex.id}`).innerText.replace('/','|');
+        let address = document.getElementById(`property-address-${cardAtIndex.id}`).innerText.replace('/','|');
         htmx.ajax('GET', `/explore/get-card-image/`, { target:`#property-card-image-${ cardAtIndex.id }`, swap:'outerHTML', values: { address: address, property_id: cardAtIndex.id } })
         cardAtIndex.dataset.imgdidset = "true";      
     }
@@ -172,7 +178,9 @@
         }, 800);
 
         setImageAtIndex(nextIndex + 1);
-        setImageAtIndex(nextIndex - 1);
+        setTimeout(() => {
+            setImageAtIndex(nextIndex - 1);
+        }, 800);
     }
 
     const handleNextCard = () => {
