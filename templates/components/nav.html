@@ -2,9 +2,9 @@
     .navbar {
         display: flex!important;
         flex-direction: row!important;
-    }
-    .navbar a {
-        color: white!important;
+        background: linear-gradient(to bottom, var(--bs-body-bg) 65%, var(--bs-body-bg), var(--love));
+        z-index: 9998;
+        box-shadow: 0 0 5px var(--bs-dark-bg-subtle);
     }
 
     .navbar-nav {
@@ -37,12 +37,12 @@
     }
 
     #notification-icon {
-        fill: var(--bs-body-color);
+        fill: var(--bs-secondary-color);
         /* filter: drop-shadow(0 0 1px var(--bs-dark-bg-subtle)); */
     }
 
     #notification-icon:hover {
-        fill: var(--bs-secondary-color);
+        fill: var(--bs-body-color);
     }
 
     @media (max-width: 576px) {
@@ -70,8 +70,6 @@
 <nav 
 id="navbar" 
 class="navbar navbar-expand-lg position-fixed w-100 py-1" 
-style="z-index: 9998; background-color: var(--love);"
-data-bs-theme="dark"
 >
     <div class="container-fluid m-0">
 
@@ -133,7 +131,7 @@ data-bs-theme="dark"
                             <svg id="notification-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" class="bi bi-bell-fill" viewBox="0 0 16 16">
                                 <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901"/>
                             </svg>
-                            <span id="notification-number" class="badge rounded-pill position-absolute" style="top:0; right:0px; background-color: var(--bs-body-bg);"></span>
+                            <span id="notification-number" class="badge rounded-pill position-absolute" style="top:0; right:0px; background-color: var(--love); color:white;"></span>
                         </a>
                         <ul id='notification-dropdown' class="dropdown-menu ">
                             <li><a class="dropdown-item">Notifications</a></li>

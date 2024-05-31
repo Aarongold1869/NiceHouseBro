@@ -109,3 +109,7 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 } 
+
+.nav-link:hover {
+  text-decoration: underline!important;
+}

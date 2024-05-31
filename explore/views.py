@@ -16,6 +16,26 @@ import random
 from typing import List
 
 
+def get_additional_property_list_context(property_data: List[Property], user_profile:Profile):
+    property_list = list(map(lambda x: { 
+                            **x, 
+                            'cap_rate': calculate_cap_rate(value=int(x['price']['value']), rent=random.randint(1000, 2000)),
+                            'address': x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine'],
+                            'address_full': f"{x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine']} {x['city']}, {x['state']} {x['postalCode']['value']}",
+                            'is_saved': SavedProperty.objects.filter(property_id=x['propertyId']).filter(profile=user_profile).exists(),
+                            'street': x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine'],
+                            'price': x['price']['value'] if 'value' in x['price'] else x['price'],
+                            'sq_ft': x['sqFt']['value'] if 'value' in x['sqFt'] else '-',
+                            # 'image': None
+                        }, property_data))
+    
+    if len(property_list) > 0:
+        end = 2 if len(property_list) > 2 else len(property_list)
+        for i in range(-1, end):
+            property_list[i]['image'] = google_street_view_api_base64(address=property_list[i]['address'])
+    return property_list
+
+
 def explore_view(request, search_str:str='Pensacola, FL'):
     ''' View recieves search string as an argument and returns a list of properties, 
     and map data based on the search string. If no search string is provided, the 
@@ -24,32 +44,12 @@ def explore_view(request, search_str:str='Pensacola, FL'):
     map_data: MapData = fetch_map_data_from_search_str(search_str=search_str) 
     if not map_data:
         return HttpResponse(status=500)
-    # fetch property list from map data (specifically boundry info)
-    property_list: List[Property] = fetch_property_list_from_map_data(map_data=map_data)
-    # calculate cap rate for each property
-    # create address string for each property
-    property_list = list(map(lambda x: { 
-                            **x, 
-                            'cap_rate': calculate_cap_rate(value=int(x['price']['value']), rent=random.randint(1000, 2000)),
-                            'address': x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine'],
-                            'address_full': f"{x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine']} {x['city']}, {x['state']} {x['postalCode']['value']}",
-                            'is_saved': SavedProperty.objects.filter(property_id=x['propertyId']).filter(profile=Profile.objects.filter(user=request.user.id).first()).exists(),
-                            'street': x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine'],
-                            'price': x['price']['value'] if 'value' in x['price'] else x['price'],
-                            'sq_ft': x['sqFt']['value'] if 'value' in x['sqFt'] else x['sqFt'],
-                            # 'image': None
-                        }, property_list))
-    property_init = None
-    if len(property_list) > 0:
-        property_init = property_list[0]
-        end = 2 if len(property_list) > 2 else len(property_list)
-        for i in range(-1, end):
-            property_list[i]['image'] = google_street_view_api_base64(address=property_list[i]['address'])
-
+    redfin_property_data: List[Property] = fetch_property_list_from_map_data(map_data=map_data)
+    property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=Profile.objects.filter(user=request.user.id).first())
     context = {
         'map_data': map_data,
         'property_list': property_list, 
-        'property_obj': property_init,
+        'property_obj': property_list[0] if len(property_list) > 0 else None,
         'search_str': search_str,
         'filters': {
             'cap_rate': 0,
@@ -61,6 +61,11 @@ def explore_view(request, search_str:str='Pensacola, FL'):
         }
     }
     return render(request, "explore/explore.html", context)
+
+
+def filter_property_list(property_list: List[Property], filters: dict):
+    filtered_property_list = list(filter(lambda x: x["cap_rate"] >= float(filters['cap_rate']), property_list))
+    return filtered_property_list
 
 def explore_view_filtered(
         request, 
@@ -74,45 +79,27 @@ def explore_view_filtered(
         *args, 
         **kwargs
     ):
-    ''' View recieves search string as an argument and returns a list of properties, 
-    and map data based on the search string. If no search string is provided, the 
-    view returns data for Pensacola, FL.'''
 
     map_data: MapData = fetch_map_data_from_search_str(search_str=search_str) 
     if not map_data:
         return HttpResponse(status=500)
-    
-    property_list: List[Property] = fetch_property_list_from_map_data(map_data=map_data)
-    property_list = list(
-        map(lambda x: { 
-                **x, 
-                'cap_rate': calculate_cap_rate(value=int(x['price']['value']), rent=random.randint(1000, 2000)),
-                'address': f"{x['streetLine']['value'] if 'value' in x['streetLine'] else x['streetLine']} {x['city']}, {x['state']} {x['postalCode']['value']}",
-                'is_saved': SavedProperty.objects.filter(property_id=x['propertyId']).exists(),
-                # 'image': None
-            }, filter(lambda x: x["cap_rate"] >= float(cap_rate), property_list)
-        )
-    )
-    property_init = None
-    if len(property_list) > 0:
-        property_init = property_list[0]
-        end = 2 if len(property_list) > 2 else len(property_list)
-        for i in range(-1, end):
-            property_list[i]['image'] = google_street_view_api_base64(address=property_list[i]['address'])
-
+    redfin_property_data: List[Property] = fetch_property_list_from_map_data(map_data=map_data)
+    property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=Profile.objects.filter(user=request.user.id).first())
+    filters = { 
+        'cap_rate':cap_rate, 
+        'min_price':min_price,
+        'max_price':max_price,
+        'beds':beds,
+        'baths':baths,
+        'sq_ft':sq_ft,
+    }
+    filtered_property_list = filter_property_list(property_list=property_list, filters=filters)
     context = {
         'map_data': map_data,
-        'property_list': property_list, 
-        'property_obj': property_init,
+        'property_list': filtered_property_list, 
+        'property_obj': filtered_property_list[0] if len(filtered_property_list) > 0 else None,
         'search_str': search_str,
-        'filters': {
-            'cap_rate': cap_rate,
-            'min_price': min_price,
-            'max_price': max_price,
-            'beds': beds,
-            'baths': baths,
-            'sq_ft': sq_ft
-        }
+        'filters': filters
     }
     return render(request, "explore/explore.html", context)
 
