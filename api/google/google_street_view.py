@@ -18,5 +18,5 @@ def google_street_view_api_base64(address:str) -> str:
         uri = f"data:{res.headers['Content-Type']};base64,{base64.b64encode(res.content).decode('utf-8')}"
         res.close()
     else:
-        uri = ''
+        uri = '/media/property_images/default/awesome-house.jpg'
     return uri

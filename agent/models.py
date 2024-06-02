@@ -8,6 +8,11 @@ class AgentProfile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     license_number = models.CharField(max_length=100)
     license_state = models.CharField(max_length=100)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint('user', name='unique-agent'),
+        ]
  
 class Wallet(models.Model):
     agent = models.ForeignKey(AgentProfile, on_delete=models.CASCADE)

@@ -1,13 +1,16 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import QuerySet
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect 
 
 from .forms import AgentRegistrationForm, AgentContactFormForm
 from .models import AgentProfile, Lead
+from profiles.models import Profile
 
 from django_htmx.http import trigger_client_event
+
+AGENT_GROUP = Group.objects.get(name='Agent') 
 
 # Create your views here.
 def is_agent(user: User)-> bool:
@@ -17,7 +20,20 @@ def agent_splash_view(request):
     return render(request, 'agent/agent-splash.html')
 
 def agent_register_view(request):
-    form = AgentRegistrationForm()
+    user: User = request.user
+    profile = Profile.objects.get(user=user)
+    if is_agent(user):
+        return redirect('/agent/dashboard/')
+    initial_data = {}
+    if user.is_authenticated:
+        initial_data = {'first_name': user.first_name, 'last_name': user.last_name, 'phone_number': profile.phone_number, 'email': user.email, 'zip_code': ''}
+    form = AgentRegistrationForm(initial=initial_data)
+    if request.method == 'POST':
+        form = AgentRegistrationForm(request.POST)
+        if form.is_valid():
+            AgentProfile.objects.create(user=user, license_number='123', license_state='FL')
+            AGENT_GROUP.user_set.add(user)
+            return redirect('/agent/dashboard/')
     return render(request, 'agent/agent-register.html', {'form': form})
 
 def subscription_view(request):

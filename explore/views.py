@@ -109,8 +109,6 @@ def get_card_image_view(request, *args, **kwargs):
     property_id = request.GET.get('property_id')
     address = request.GET.get('address')
     image = google_street_view_api_base64(address=address)
-    if len(image) == 0:
-        image = '/media/property_images/default/awesome-house.jpg'
     return render(request, 'explore/partials/card-image.html', {'property_id': property_id, 'image': image})
 
 
