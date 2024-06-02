@@ -1,6 +1,5 @@
 .env
-media/property_images/
-media/profile_pictures/
+media/
 
 !media/property_images/default/
 !media/profile_pictures/default/

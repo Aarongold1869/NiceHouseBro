@@ -25,6 +25,8 @@ def register_view(request, *args, **kwargs):
         form = RegisterForm()
         return render(request, "account/register.html", {"form":form})
 
+def more_info_view(request, *args, **kwargs):
+    pass
 
 def login_view(request, *args, **kwargs):
     form = AuthenticationForm()
