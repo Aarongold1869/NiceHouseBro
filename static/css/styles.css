@@ -28,7 +28,7 @@ body {
 .love.focus,
 .love:hover,
 .love a:hover {
-  background-color: var(--bs-body-bg) !important;
+  background-color: rgba(0,0,0,0) !important;
   border-color: var(--love)  !important;
   color: var(--love) !important;
 }

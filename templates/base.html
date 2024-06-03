@@ -34,7 +34,7 @@
 
     {% include 'notifications/toast-container.html' %}
 
-    <div id="app-container" class="pt-5 position-relative" style="min-height: 80vh!important;">
+    <div id="app-container" class="position-relative" style="min-height:100vh; {% if request.get_full_path != '/' %}padding-top:2.9rem;{% endif %}">
     {% block content %}
     
     {% endblock %}

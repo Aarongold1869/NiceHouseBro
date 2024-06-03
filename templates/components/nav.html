@@ -1,28 +1,41 @@
 <style>
-    .navbar {
-        display: flex!important;
-        flex-direction: row!important;
-        background-color: var(--bs-body-bg);
-        /* background: linear-gradient(to bottom, var(--bs-body-bg) 65%, var(--bs-body-bg), var(--love)); */
-        border-bottom: 3px solid var(--love);
-        z-index: 9998;
-        box-shadow: 0 0 10px var(--bs-dark-bg-subtle);
-    }
+    {% if request.get_full_path == '/' %}
+        .navbar {
+            position: absolute;
+            display: flex!important;
+            flex-direction: row!important;
+            z-index: 9998;
+            max-height: 3.2rem;
+        }
+    {% else %}
+        .navbar {
+            position: fixed;
+            display: flex!important;
+            flex-direction: row!important;
+            background-color: var(--bs-body-bg);
+            z-index: 9998;
+            box-shadow: 0 0 10px var(--bs-dark-bg-subtle);
+            max-height: 3.2rem;
+        }
+    {% endif %}
 
     .navbar-nav {
         align-items: center!important;
     }
 
-    .nav-link {
-        padding: .5rem!important;
+    #brand {
+        font-weight: bold;
+        color: {% if request.get_full_path == '/' %} white {% else %} var(--bs-body-color) {% endif %}!important;
     }
 
-    /* #profile-notifications-nav {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        color: white;
-    } */
+    .nav-link {
+        padding: .5rem!important;
+        color: {% if request.get_full_path == '/' %} white {% else %} var(--bs-body-color) {% endif %};
+    }
+
+    .nav-link:hover {
+        color: {% if request.get_full_path == '/' %} white {% else %} var(--bs-secondary-color) {% endif %};
+    }
 
     .profile-badge {
         width:2rem; 
@@ -39,21 +52,14 @@
     }
 
     #notification-icon {
-        fill: var(--bs-secondary-color);
-        /* filter: drop-shadow(0 0 1px var(--bs-dark-bg-subtle)); */
+        fill: {% if request.get_full_path == '/' %} white {% else %} var(--bs-secondary-color) {% endif %};
     }
 
     #notification-icon:hover {
-        fill: var(--bs-body-color);
+        filter: drop-shadow(0 0 10px var(--love));
     }
 
     @media (max-width: 576px) {
-        /* #profile-badge-container {
-            display: none;
-        } */
-        /* .dropdown-menu {
-            width: 100%!important;
-        } */
         .navbar-nav {
             align-items: flex-start!important;
         }
@@ -64,6 +70,22 @@
             margin: 0!important;
             width: 100%!important;
         }
+        #brand {
+            font-weight: bold;
+            color: var(--bs-body-color)!important;
+        }
+        #navbarSupportedContent {
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color)!important;
+            border-radius: 15px;
+        }
+        .nav-link {
+            padding: .5rem!important;
+            color: var(--bs-body-color)!important;
+        }
+        #notification-icon {
+            fill: var(--bs-secondary-color)!important;
+        }
     }
 </style>
 
@@ -71,17 +93,17 @@
 
 <nav 
 id="navbar" 
-class="navbar navbar-expand-lg position-fixed w-100 py-1" 
+class="navbar navbar-expand-lg w-100 py-1" 
 >
     <div class="container-fluid m-0">
 
-        <button id="navbar-toggler" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button id="navbar-toggler" class="navbar-toggler"  type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon" ></span>
         </button>
 
-        <div class="collapse navbar-collapse justify-content-evenly" id="navbarSupportedContent">
+        <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
 
-            <a class="navbar-brand px-2" href="/">NHB</a>
+            <a id='brand' class="navbar-brand px-2" href="/">NHB</a>
 
             <ul class="navbar-nav mb-2 mb-lg-0">
                 {% comment %} <li class="nav-item me-2">
@@ -135,7 +157,7 @@ class="navbar navbar-expand-lg position-fixed w-100 py-1"
                             </svg>
                             <span id="notification-number" class="badge rounded-pill position-absolute" style="top:0; right:0px; background-color: var(--love); color:white;"></span>
                         </a>
-                        <ul id='notification-dropdown' class="dropdown-menu ">
+                        <ul id='notification-dropdown' class="dropdown-menu" style="right:0; left:auto;">
                             <li><a class="dropdown-item">Notifications</a></li>
                             <div class="dropdown-divider"></div>
                         </ul>
@@ -154,7 +176,7 @@ class="navbar navbar-expand-lg position-fixed w-100 py-1"
                             
                             {% comment %} Profile {% endcomment %}
                         </a>    
-                        <ul id='profile-dropdown' class="dropdown-menu">
+                        <ul id='profile-dropdown' class="dropdown-menu" style="right:0; left:auto;">
                             <li><a class="dropdown-item" href="{% url 'profile' username=user.username %}">My Profile</a></li>
                             <li><a class="dropdown-item" href="{% url 'saved_property_list' %}">Saved Properties</a></li>
                             <li><a class="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" onclick="collapseNav()">Settings</a></li>
