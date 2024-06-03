@@ -12,7 +12,7 @@ GOAL_CHOICES = [
 
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    theme = models.CharField(choices=[('light','light'), ('dark','dark')], max_length=100, default='dark')
+    theme = models.CharField(choices=[('light','light'), ('dark','dark')], max_length=100, default='light')
     goal = models.CharField(choices=GOAL_CHOICES, max_length=100, default='Searching for Investment Property')
     phone_number = models.CharField(max_length=10, blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)

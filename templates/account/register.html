@@ -3,17 +3,39 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container d-flex flex-column align-items-center">
-    <h1 class="mt-3">Create an Account</h1>
 
-    <form method="POST" class="form-group col-sm-6 pt-3">
-	{% csrf_token %}
-	{{ form|crispy }}
-    <div class="d-flex justify-content-center">
-	    <button type="submit" class="btn love-outline">Register</button>
-    </div>
+<div class="container d-flex flex-column align-items-center mt-5" >
+    <form method="POST" class="form-group col-sm-10 px-5 py-4 shadow" style="border: 1px solid lightgray; border-radius: 10px;">
+        <p class="text-center text-muted mb-3">{{ progress }}</p>
+        <h1 class="text-center">{{ title }}</h1>
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn love-outline w-25 mt-3">{{ button_text }}</button>
+        </div>
+        
+        {% if title == 'Create an Account' %}
+            <p class="mt-5 text-center">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+        {% else %}
+            <a href="{% if step == 3%}/{% else %}/account/register/step-3/{% endif %}" style="color:var(--love); text-decoration:none;">
+                <p style="text-align:right!important; margin-top: 1rem;">Skip ></p>
+            </a>
+        {% endif %}
+
     </form>
-    
-    <p class="mt-4">Already have an account? <a href="{% url 'login' %}">Login</a></p>
 </div>
+    
+<script>
+
+    function initialize() {
+      new google.maps.places.Autocomplete(locationInupt);
+    }
+    
+    const locationInupt = document.getElementById('id_location');
+    if (locationInupt) {
+        locationInupt.addEventListener('keypress', initialize);
+    }
+  
+</script>
+
 {% endblock %}

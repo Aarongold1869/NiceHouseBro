@@ -3,13 +3,19 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
 
-from .forms import RegisterForm
+from .forms import RegisterForm, LocationForm, GoalForm
 from profiles.models import Profile
 
 # Create your views here.
 
-# Create your views here.
-def register_view(request, *args, **kwargs):
+REGISTER_STEPS = {
+    1: { "form": RegisterForm, 'title': 'Create an Account', 'button_text': 'Register', 'step': 1 },
+    2: { "form": LocationForm, 'title': 'Where are you from?', 'button_text': 'Next', 'step': 2 },
+    3: { "form": GoalForm, 'title': 'What are your realestate goals?', 'button_text': 'Finish', 'step': 3 }
+}
+
+def register_step_1_view(request, *args, **kwargs):
+    form = RegisterForm()
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -17,16 +23,34 @@ def register_view(request, *args, **kwargs):
             user = authenticate(request, username=request.POST.get('username'), password=request.POST.get('password1'))
             if user is not None:
                 login(request, user)
-                profile = Profile.objects.create(user=user)
-                return redirect("/")
-        else:
-            return render(request, "account/register.html", {"form":form})
-    else:
-        form = RegisterForm()
-        return render(request, "account/register.html", {"form":form})
+                Profile.objects.create(user=user)
+                return redirect("/account/register/step-2/")
+    context = { "form": form, 'title': 'Create an Account', 'button_text': 'Register', 'step': 1 }
+    return render(request, "account/register.html", context)
 
-def more_info_view(request, *args, **kwargs):
-    pass
+def register_step_2_view(request, *args, **kwargs):
+    form = LocationForm()
+    if request.method == 'POST':
+        form = LocationForm(request.POST)
+        if form.is_valid():
+            profile = Profile.objects.get(user=request.user)
+            profile.location = form.cleaned_data['location']
+            profile.save()
+            return redirect("/account/register/step-3/")
+    context = { "form": form, 'title': 'Where are you from?', 'button_text': 'Next', 'step': 2, 'progress': f'Step 2 of {len(REGISTER_STEPS)}' }
+    return render(request, "account/register.html", context)
+
+def register_step_3_view(request, *args, **kwargs):
+    form = GoalForm()
+    if request.method == 'POST':
+        form = GoalForm(request.POST)
+        if form.is_valid():
+            profile = Profile.objects.get(user=request.user)
+            profile.goal = form.cleaned_data['realestate_goal']
+            profile.save()
+            return redirect("/")
+    context = { "form": form, 'title': 'What are your realestate goals?', 'button_text': 'Finish', 'step': 3, 'progress': f'Step 3 of {len(REGISTER_STEPS)}' }
+    return render(request, "account/register.html", context)
 
 def login_view(request, *args, **kwargs):
     form = AuthenticationForm()
