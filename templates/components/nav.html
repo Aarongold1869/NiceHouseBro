@@ -35,13 +35,18 @@
 
     .nav-link:hover {
         color: {% if request.get_full_path == '/' %} white {% else %} var(--bs-secondary-color) {% endif %};
+        {% comment %} text-shadow: 0 0 10px var(--love); {% endcomment %}
     }
 
     .profile-badge {
         width:2rem; 
         height:2rem; 
         border-radius:100%; 
-        box-shadow: 0 0 2px var(--bs-dark-bg-subtle);
+        box-shadow: 0 0 10px var(--bs-dark-bg-subtle);
+    }
+
+    .profile-badge:hover {
+        box-shadow: 0 0 10px var(--love);
     }
 
     #notification-dropdown-tg::after {
@@ -56,6 +61,7 @@
     }
 
     #notification-icon:hover {
+        fill: gray;
         filter: drop-shadow(0 0 10px var(--love));
     }
 
@@ -106,11 +112,13 @@ class="navbar navbar-expand-lg w-100 py-1"
             <a id='brand' class="navbar-brand px-2" href="/">NHB</a>
 
             <ul class="navbar-nav mb-2 mb-lg-0">
-                {% comment %} <li class="nav-item me-2">
-                    <a class="nav-link {% if request.get_full_path == '/' %}active{% endif %}" aria-current="page" href="/">
-                        Home
-                    </a>
-                </li> {% endcomment %}
+                {% if request.get_full_path != '/' %}
+                    <li class="nav-item me-2">
+                        <a class="nav-link {% if request.get_full_path == '/' %}active{% endif %}" aria-current="page" href="/">
+                            Home
+                        </a>
+                    </li> 
+                {% endif %}
                 <li class="nav-item me-2">
                     <a class="nav-link {% if '/explore/' in request.get_full_path %}active{% endif %}" href="/explore/">
                         Explore

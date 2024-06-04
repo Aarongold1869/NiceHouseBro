@@ -340,7 +340,7 @@
             return values;
         }
         const formData = formValues();
-        window.location.replace(`/explore/filter/search=Pensacola, FL&cap_rate=${formData['cap-rate']}/`);
+        window.location.replace(`/explore/filter/search={{ search_str }}&cap_rate=${formData['cap-rate']}/`);
     }
 
     function resetFilterForm() {

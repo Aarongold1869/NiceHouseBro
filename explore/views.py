@@ -70,7 +70,7 @@ def filter_property_list(property_list: List[Property], filters: dict):
 
 def explore_view_filtered(
         request, 
-        search_str:str='Pensacola, FL', 
+        search_str:str, 
         cap_rate:str=0, 
         min_price:int=0,
         max_price:int=0,

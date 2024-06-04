@@ -64,8 +64,10 @@ class RedfinPropertyDetailScraper():
         self.id = id
 
     def get_endpoint(self)-> str:
-        endpoint = f'{self.state}/{self.city}/{self.address.replace(" ","-")}-{self.zip}/home/{self.id}'
-        return endpoint
+        if '#' in self.address:
+            street_line, apt_number = self.address.split('#')
+            return f'{self.state}/{self.city}/{street_line.replace(" ","-")}-{self.zip}/unit-{apt_number}/home/{self.id}'
+        return f'{self.state}/{self.city}/{self.address.replace(" ","-")}-{self.zip}/home/{self.id}'
     
     def get_soup(self)-> Dict:
         # https://www.redfin.com/TN/Elizabethton/121-Williams-Ave-37643/home/116345480

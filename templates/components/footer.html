@@ -1,12 +1,12 @@
 <style>
   hr {
-    border-top: 1px solid var(--bs-secondary-color)!important;
+    border-top: 1px solid lightgray!important;
     border-radius: 5px;
     opacity: .8!important;
   }
 
   footer {
-    background: linear-gradient(var(--bs-body-bg), var(--bs-body-bg), var(--bs-body-bg), var(--love));
+    background: var(--bs-body-bg);
   }
 
   footer .nav-link {
@@ -14,7 +14,8 @@
   }
 </style>
 
-<footer id="footer" class="py-5 position-absolute w-100" >
+<footer id="footer" class="py-5 position-absolute w-100 shadow" >
+  <hr class="w-75 mx-auto mb-5"></hr>
   <ul class="nav justify-content-center pb-3 mb-3">
     <li class="nav-item"><a href="/" class="nav-link px-2">Home</a></li>
     <li class="nav-item"><a href="#" class="nav-link px-2">Features</a></li>
@@ -22,8 +23,6 @@
     <li class="nav-item"><a href="#" class="nav-link px-2">FAQs</a></li>
     <li class="nav-item"><a href="#" class="nav-link px-2">About</a></li>
   </ul>
-  <div class="d-flex justify-content-center">
-    <hr class="w-50"></hr>
-  </div>
+  <hr class="w-75 mx-auto mt-5"></hr>
   <p class="text-center">© 2024 Company, Inc</p>
 </footer>
