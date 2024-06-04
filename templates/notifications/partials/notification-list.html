@@ -1,0 +1,9 @@
+<div id="notifications-list">
+    {% for notification in notifications %}
+        {% include "notifications/partials/notification.html" %}
+    {% endfor %}
+</div>
+
+{% if not notifications.has_next %}
+    <div id="load-more-button" class="notification text-center" hidden hx-swap-oob="true"></div>
+{% endif %}

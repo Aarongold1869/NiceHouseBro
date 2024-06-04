@@ -18,4 +18,4 @@ class LocationForm(forms.Form):
     location = forms.CharField(max_length=100)
 
 class GoalForm(forms.Form):
-    realestate_goal = forms.ChoiceField(choices=GOAL_CHOICES)
+    realestate_goal = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices=GOAL_CHOICES)

@@ -1,6 +1,6 @@
+{% load time_delta %}
 
-
-<div id="toast-container" class="toast-container position-relative" hx-swap-oob="afterbegin">
+ <div id="toast-container" class="toast-container position-relative" hx-swap-oob="afterbegin">
     <div class="toast show mb-2 fade-in" >
         <div class="toast-header">
             <strong class="me-auto">{{ notification.header }}</strong>
@@ -15,15 +15,16 @@
             {{ notification.message }}
             {% if link %}
             <div class="mt-2 pt-2 border-top text-right">
-                <a style="color:var(--love);" href="{{ link.href }}">{{ link.alt }}</a>
+                <a style="color:var(--love);" href="{{ notification.link }}">Click here to view</a>
             </div>     
             {% endif %}     
         </div>
     </div>
-</div>
+</div> 
 
-<ul id="notification-dropdown" hx-swap-oob="beforeend">
-    <li><a class="dropdown-item">{{ notification.header }}</a></li>
-</ul>
+{% comment %} 
+<div id="notifications-list" hx-swap-oob="afterbegin">
+    {% include "notifications/partials/notification.html" %}
+</div> {% endcomment %}
 
-{% comment %} <button id="clear-toast-button" type="button" class="btn love-outline rounded-pill py-1 px-2 cursor-pointer" style="font-size:.75rem; position: absolute; top:0; right:0; z-index:1001" hx-swap-oob="true">x Clear all</button> {% endcomment %}
+{% comment %} <button id="clear-toast-button" type="button" class="btn love rounded-pill py-1 px-2 cursor-pointer" style="font-size:.75rem; position: absolute; top:0; right:0; z-index:1001" hx-swap-oob="true">x Clear all</button> {% endcomment %}

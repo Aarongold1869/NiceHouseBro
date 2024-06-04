@@ -22,7 +22,7 @@ def send_notifications_on_comment_like(sender, instance: CommentLike, created, *
         channel_layer = get_channel_layer()
         group_name = f'user-notifications-{instance.comment.profile.user.id}'
         event = {
-            'type': 'comment_interaction',
+            'type': 'notification_created',
             'notification': notification
         }
         async_to_sync(channel_layer.group_send)(group_name, event)
@@ -40,7 +40,7 @@ def send_notifications_on_reply(sender, instance: Reply, created, **kwargs):
         channel_layer = get_channel_layer()
         group_name = f'user-notifications-{instance.comment.profile.user.id}'
         event = {
-            'type': 'comment_interaction',
+            'type': 'notification_created',
             'notification': notification
         }
         async_to_sync(channel_layer.group_send)(group_name, event)
@@ -56,7 +56,7 @@ def send_notifications_on_contact_form_submit(sender, instance: AgentContactForm
         channel_layer = get_channel_layer()
         group_name = f'user-notifications-{instance.user.id}'
         event = {
-            'type': 'comment_interaction',
+            'type': 'notification_created',
             'notification': notification
         }
         async_to_sync(channel_layer.group_send)(group_name, event)
@@ -66,13 +66,15 @@ def send_notifications_on_property_saved(sender, instance: SavedProperty, create
     if created:
         notification = Notification.objects.create(
             user=instance.profile.user,
-            header=f'Property Saved.',
+            header=f'Property Saved - {instance.address}',
             message=f'You can view this property in the saved properties menu.',
+            link_href='/profile/saved/',
+            link_alt_text='View Saved Properties'
         )
         channel_layer = get_channel_layer()
         group_name = f'user-notifications-{instance.profile.user.id}'
         event = {
-            'type': 'comment_interaction',
+            'type': 'notification_created',
             'notification': notification,
             'link': { 'href': '/profile/saved/', 'alt': 'View Saved Properties' }
         }

@@ -4,6 +4,27 @@
 
 {% block content %}
 
+<style>
+    .form-check {
+        display: flex;
+        border: 1px solid lightgray;
+        border-radius: 10px;
+        padding: 0 3rem;
+        margin: 1rem 0;
+        box-shadow: 0 0 10px lightgray;
+        align-items: center;
+    }
+
+    .form-check label {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    .form-check:hover {
+        box-shadow: 0 0 10px var(--love);
+    }
+</style>
+
 <div class="container d-flex flex-column align-items-center mt-5" >
     <form method="POST" class="form-group col-sm-10 px-5 py-4 shadow" style="border: 1px solid lightgray; border-radius: 10px;">
         <p class="text-center text-muted mb-3">{{ progress }}</p>

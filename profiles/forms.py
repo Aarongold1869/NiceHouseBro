@@ -17,4 +17,4 @@ class UpdateProfileForm(forms.Form):
                 'hx-target': '#div_id_phone_number',
             }))
     location = forms.CharField(max_length=100, required=False)
-    goal = forms.ChoiceField(choices=GOAL_CHOICES)
+    goal =  forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices=GOAL_CHOICES)

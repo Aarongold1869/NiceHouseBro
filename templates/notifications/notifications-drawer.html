@@ -1,0 +1,43 @@
+
+
+<div class="offcanvas offcanvas-end pt-5" tabindex="-1" id="notificationsDrawer" aria-labelledby="notificationsDrawerLabel" style="background:none;">
+    <div class="offcanvas-header mt-2 border-bottom border-1" style="background-color:var(--bs-body-bg);">
+      <h5 id="notificationsDrawerLabel">Notifications</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-0 pt-1" style="background-color: var(--bs-secondary-bg);">
+
+        <p id="page-number" hidden>0</p>
+
+        {% include "notifications/partials/notification-list.html" %}
+
+        <div id="load-more-button" class="notification">
+            <a class='w-100 h-100 text-center mx-auto' style="color:var(--love); cursor:pointer;" onclick="loadMoreNotifications()">
+                <p class="m-0">View More...</p>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function clearNotificationSpan() {
+        let numberSpan = document.getElementById('notification-number');
+        numberSpan.innerHTML = '';
+    }
+    
+    function loadMoreNotifications(fromNav=false) {
+        const pageNumberEl = document.getElementById('page-number')
+        let pageNumber = parseInt(pageNumberEl.innerText);
+        if (fromNav) {
+            pageNumber = 0;
+        }
+        let nextPage = pageNumber + 1;
+        htmx.ajax('GET', '/notifications/', { target: '#notifications-list', swap: 'beforeend', values: { "page": nextPage } })
+        pageNumberEl.innerText = nextPage;
+        if (pageNumber == 0) {
+            clearNotificationSpan();
+        }
+    }
+
+</script>

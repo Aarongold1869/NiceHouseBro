@@ -33,8 +33,7 @@ class NotificationConsumer(WebsocketConsumer):
                 self.GROUP_NAME, self.channel_name
             )
 
-    def comment_interaction(self, event):
-        # Called when someone has interacted w your comment
+    def notification_created(self, event):
         html = get_template('notifications/partials/toast.html').render(
             context={ "notification": event['notification'], "link": event.get('link', None) }
         )

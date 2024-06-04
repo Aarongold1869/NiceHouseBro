@@ -190,7 +190,7 @@
             <div id="saved-properties" class="mb-4">
                 <h3 class="mb-3">Saved Properties</h3>
                 <div class="container col-sm-10 m-0">
-                    {% for property in profile.savedproperty_set.all %}
+                    {% for property in profile.savedproperty_set.all|dictsortreversed:"id" %}
                         {% include "profile/partials/saved-property-card.html" %}
                     {% endfor %}
                 </div>

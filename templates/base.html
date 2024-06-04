@@ -45,6 +45,7 @@
     {% endif %}
 
     {% if user.is_authenticated %}
+        {% include 'notifications/notifications-drawer.html' %}
         {% include 'components/settings-drawer.html' %}
     {% endif %}
 

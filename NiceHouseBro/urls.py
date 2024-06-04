@@ -12,6 +12,7 @@ urlpatterns = [
     path('agent/', include('agent.urls')),
     path('comment/', include('comment.urls')),
     path('explore/', include('explore.urls')),
+    path('notifications/', include('notifications.urls')),
     path('profile/', include('profiles.urls')),
     path('property/', include('property.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

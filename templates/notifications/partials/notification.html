@@ -1,0 +1,30 @@
+{% load time_delta %}
+
+<style>
+    .notification {
+        padding: .7rem;
+        box-shadow: 0 0 10px var(--bs-dark-bg-subtle);
+        border-top: 1px solid var(--bs-dark-bg-subtle);
+        border-bottom: 1px solid var(--bs-dark-bg-subtle);
+        background-color: var(--bs-body-bg);
+    }
+    .notification a {
+        color: var(--bs-body-color);
+    }
+    .notification:hover {
+        background-color: var(--bs-secondary-bg)!important;
+    }
+    .notification a:hover {
+        color: var(--love)!important;
+    }
+</style>
+
+<div id="notification-{{notification.id}}" class="notification mx-0 mb-1" style="{% if notification.is_read %} background-color: var(--bs-gray-100); {% endif %}">
+    <a href="{{ notification.link_href }}" style="text-decoration: none; {% if notification.is_read %} color: var(--bs-secondary-color); {% endif %}">
+        <div class='d-flex align-items-center border-bottom border-1 pb-2 mb-2 justify-content-between'>
+            <p class="m-0">{{ notification.header }}</p>
+        </div>
+        <p class="m-0">{{ notification.message }}</p>
+        <p class="text-muted m-0 w-100" style="font-size: .7rem; text-align:right;">{{ notification.timestamp|time_delta }} ago</p>
+    </a>
+</div>

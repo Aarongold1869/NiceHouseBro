@@ -81,7 +81,7 @@ def toggle_property_saved(request, *args, **kwargs):
     property_data = None
     try:
         property_data: Property = json.loads(request.POST.get('property'))
-        print(property_data)
+        print(property_data['price'])
     except:
         return HttpResponse(status=400)
     property_id = property_data.get('propertyId', None)
@@ -89,6 +89,8 @@ def toggle_property_saved(request, *args, **kwargs):
     saved_qs = SavedProperty.objects.filter(Q(profile=profile) & Q(property_id=property_id))
     if not saved_qs.exists():
         price = property_data.get('price', 0)
+        if type(price) == str:
+            price = int(price.replace('$', '').replace(',', ''))
         beds = property_data.get('beds', 0)
         baths = property_data.get('baths', 0)
         sq_ft = property_data.get('sq_ft', 0)

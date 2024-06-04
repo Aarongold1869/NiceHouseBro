@@ -27,7 +27,7 @@ def profile_view(request, username:str, *args, **kwargs):
         'email': profile.user.email, 
         'phone_number': profile.phone_number, 
         'location': profile.location, 
-        'goal': profile.goal 
+        'goal': ast.literal_eval(profile.goal)
     })
     return render(request, 'profile/profile-detail.html', {'profile': profile, 'form': form })
 
