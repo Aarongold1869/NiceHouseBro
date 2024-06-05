@@ -40,6 +40,23 @@
         align-items: center;
     }
 
+    .nav-tabs {
+        justify-content: flex-start;
+    }
+    .nav-tabs li {
+        width: fit-content;
+        text-align: left;
+    }
+
+    .nav-link {
+        cursor: pointer;
+        color: var(--bs-secondary-color)!important;
+    } 
+
+    .active {
+        color: var(--love)!important;
+    }
+
     @media (max-width: 1000px) {
         .profile-container {
             flex-direction: column;
@@ -57,6 +74,17 @@
 
         #mobile-change-picture-button {
             display: flex;
+        }
+
+        .nav-tabs {
+            justify-content: center;
+        }
+        .nav-tabs li {
+            /* display: flex; */
+            width: 25%;
+            font-size: 0.8rem;
+            text-align: center;
+            align-items: center;
         }
     }
 
@@ -187,7 +215,22 @@
 
         <div class="profile-content">
 
-            <div id="saved-properties" class="mb-4">
+            <ul class="nav nav-tabs mb-3">
+                <li class="nav-item" onclick="toggleTab('saved-properties')">
+                  <a id="saved-properties-link" class="nav-link active" aria-current="page">Saved</a>
+                </li>
+                <li class="nav-item" onclick="toggleTab('comments')">
+                  <a id="comments-link" class="nav-link">Comments</a>
+                </li>
+                <li class="nav-item" onclick="toggleTab('contact-forms')">
+                  <a id="contact-forms-link" class="nav-link">Contacts</a>
+                </li>
+                <li class="nav-item" onclick="toggleTab('settings')">
+                    <a id="settings-link" class="nav-link">Settings</a>
+                </li>
+            </ul>
+
+            <div id="saved-properties">
                 <h3 class="mb-3">Saved Properties</h3>
                 <div class="container col-sm-10 m-0">
                     {% for property in profile.savedproperty_set.all|dictsortreversed:"id" %}
@@ -196,8 +239,8 @@
                 </div>
             </div>
 
-            <div id="comments">
-                <h3 class="mb-3">Comments and Replies</h3>
+            <div id="comments" style="display:none;">
+                <h3 class="mb-3">Comments</h3>
                 <div class="container col-sm-10 m-0">
                     {% for comment in profile.comment_set.all|dictsortreversed:"timestamp" %}
                         <div id="comment-{{ comment.id }}" class="card mb-2 p-2 border-0 border-bottom rounded-0">
@@ -211,6 +254,14 @@
                     {% endfor %}
 
                  </div>
+            </div>
+
+            <div id="contact-forms" style="display:none;"> 
+                <h3 class="mb-3">Contact Request Froms</h3>
+            </div>
+
+            <div id="settings-tab" style="display:none;">
+                <h3 class="mb-3">Settings and Preferences</h3>
             </div>
 
         </div>
@@ -238,6 +289,59 @@
     window.onload = (event) => {
         retrieveSavedProperties()
     }; 
+
+    function toggleTab(tab) {
+
+        const activateTab = (el, link)=> {
+            el.style.display = 'block';
+            link.classList.add('active');
+        }
+
+        const deactiveTab = (el, link)=> {
+            console.log(el, link)
+            el.style.display = 'none';
+            link.classList.remove('active');
+        }
+
+        const savedTab = document.getElementById('saved-properties');
+        const savedLink = document.getElementById('saved-properties-link');
+        const commentsTab = document.getElementById('comments');
+        const commentsLink = document.getElementById('comments-link');
+        const contactTab = document.getElementById('contact-forms');
+        const contactLink = document.getElementById('contact-forms-link');
+        const settingsTab = document.getElementById("settings-tab");
+        const settingsLink = document.getElementById("settings-link");
+
+        switch(tab) {
+            case 'saved-properties':
+                console.log('saved')
+                activateTab(savedTab, savedLink);
+                deactiveTab(commentsTab, commentsLink);
+                deactiveTab(contactTab, contactLink);
+                deactiveTab(settingsTab, settingsLink);
+                break;
+            case 'comments':
+                activateTab(commentsTab, commentsLink);
+                deactiveTab(savedTab, savedLink);
+                deactiveTab(contactTab, contactLink);
+                deactiveTab(settingsTab, settingsLink);
+                break;
+            case 'contact-forms':
+                activateTab(contactTab, contactLink);
+                deactiveTab(savedTab, savedLink);
+                deactiveTab(commentsTab, commentsLink);
+                deactiveTab(settingsTab, settingsLink);
+                break;
+            case 'settings':
+                activateTab(settingsTab, settingsLink);
+                deactiveTab(savedTab, savedLink);
+                deactiveTab(commentsTab, commentsLink);
+                deactiveTab(contactTab, contactLink);
+                break;
+            default:
+                break;
+        }
+    }
 
 </script>
 

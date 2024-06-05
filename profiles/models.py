@@ -20,6 +20,14 @@ class Profile(models.Model):
     
     def __str__(self):
         return self.user.username
+    
+    @property
+    def unread_notification_count(self):
+        return self.user.notification_set.filter(is_read=False).count()
+    
+    @property
+    def notifications(self):
+        return self.user.notification_set.all()
 
 class BlockedUser(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)

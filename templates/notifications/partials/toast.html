@@ -3,7 +3,7 @@
  <div id="toast-container" class="toast-container position-relative" hx-swap-oob="afterbegin">
     <div class="toast show mb-2 fade-in" >
         <div class="toast-header">
-            <strong class="me-auto">{{ notification.header }}</strong>
+            <strong class="me-auto">{{ notification.header|truncatechars:30 }}</strong>
             <small class="text-muted">just now</small>
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"
             hx-trigger="click"

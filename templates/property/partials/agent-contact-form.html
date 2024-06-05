@@ -9,7 +9,7 @@
         {% if user.is_authenticated %}
 
             <button 
-            class="btn love-outline-outline" 
+            class="btn love-outline mt-3" 
             type="button" 
             hx-post="{% url 'contact_agent' %}"
             hx-target="#contact-form"
@@ -18,7 +18,7 @@
 
         {% else %}
 
-            <button class="btn love-outline-outline" type="button" data-bs-toggle="modal" data-bs-target="#registerModal">Contact Me About This Property</button>
+            <button class="btn love-outline mt-3" type="button" data-bs-toggle="modal" data-bs-target="#registerModal">Contact Me About This Property</button>
         
         {% endif %}
 

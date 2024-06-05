@@ -30,6 +30,7 @@
         const pageNumberEl = document.getElementById('page-number')
         let pageNumber = parseInt(pageNumberEl.innerText);
         if (fromNav) {
+            document.getElementById('notifications-list').innerHTML = '';
             pageNumber = 0;
         }
         let nextPage = pageNumber + 1;

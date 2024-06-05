@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator
+from django.http import HttpResponse
 from django.shortcuts import render
 
 from .models import Notification
@@ -19,3 +20,10 @@ def retreive_notification_view(request, *args, **kwargs):
     paginated_qs = paginator.get_page(page_number)
     set_notifications_read.after_response(paginated_qs.object_list)
     return render(request, "notifications/partials/notification-list.html", {"notifications": paginated_qs })
+
+def delete_notification_view(request, id):
+    notification = Notification.objects.get(id=id)
+    if notification.user != request.user:
+        return 400
+    notification.delete()
+    return HttpResponse(status=200)

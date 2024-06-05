@@ -18,3 +18,15 @@ class Notification(models.Model):
     def __str__(self):
         return f"{self.header} - {self.user.username}"
     
+
+class UnreadNotificationManager(models.Manager):
+    def get_queryset(self):
+        return super(UnreadNotificationManager, self).get_queryset().filter(is_read=False)
+
+class UnreadNotification(Notification):
+    objects = UnreadNotificationManager()
+
+    class Meta:
+        proxy = True
+
+   

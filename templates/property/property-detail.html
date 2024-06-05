@@ -17,6 +17,14 @@
         padding: .5rem;
     }
 
+    .nav-tabs {
+        justify-content: center;
+    }
+    .nav-tabs li {
+        width: 33.33%;
+        text-align: center;
+    }
+
     @media (min-width: 768px) {
         .carousel-item img {
             height: 500px;
@@ -24,6 +32,14 @@
 
         #property-details-container {
             padding: 0;
+        }
+
+        .nav-tabs {
+            justify-content: flex-start;
+        }
+        .nav-tabs li {
+            width: fit-content;
+            text-align: left;
         }
     }
 
@@ -139,7 +155,7 @@
                 <div id="comment-section"></div>
             </div>
 
-            <div id="contact-tab" class="container"style="display:none;">
+            <div id="contact-tab" class="container" style="display:none;">
 
                 {% if not contact_form and user.is_authenticated %}
 
