@@ -95,6 +95,7 @@
     }
 </style>
 
+{% load static %}
 {% load is_agent %}
 
 <nav 
@@ -207,6 +208,12 @@ class="navbar navbar-expand-lg w-100 py-1"
 
 <script data-theme="{{request.user.profile_set.first.theme}}" async>
 
+    function PlayNotificationSound() {
+        var snd = new Audio('/static/sounds/bottle.mp3'); // buffers automatically when created
+        snd.loop = false;
+        snd.play();
+    }
+
     document.body.addEventListener('htmx:wsAfterMessage', (event) => {
         let numberSpan = document.getElementById('notification-number');
         let notificationCount = numberSpan.innerHTML;
@@ -214,6 +221,7 @@ class="navbar navbar-expand-lg w-100 py-1"
             notificationCount = 0;
         }
         numberSpan.innerHTML = parseInt(notificationCount) + 1;
+        PlayNotificationSound();
     });
 
     function clearNotificationSpan() {

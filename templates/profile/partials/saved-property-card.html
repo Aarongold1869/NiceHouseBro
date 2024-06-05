@@ -79,7 +79,7 @@
                         style="color:var(--love);"
                         hx-post="{% url 'toggle_property_saved' %}"
                         hx-target="#property-card-{{property.property_id}}"
-                        hx-vals='{ "view": "profile", "property": { "propertyId": "{{property.property_id}}" }}'
+                        hx-vals='{ "view": "profile", "property": { "propertyId": "{{ property.property_id }}" }}'
                         hx-swap="outerHTML" 
                         >Unsave</a>
                     {% endif %}

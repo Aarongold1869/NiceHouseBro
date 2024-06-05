@@ -81,7 +81,6 @@ def toggle_property_saved(request, *args, **kwargs):
     property_data = None
     try:
         property_data: Property = json.loads(request.POST.get('property'))
-        print(property_data['price'])
     except:
         return HttpResponse(status=400)
     property_id = property_data.get('propertyId', None)
