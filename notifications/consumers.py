@@ -35,6 +35,6 @@ class NotificationConsumer(WebsocketConsumer):
 
     def notification_created(self, event):
         html = get_template('notifications/partials/toast.html').render(
-            context={ "notification": event['notification'], "link": event.get('link', None) }
+            context={ "notification": event['notification'] }
         )
         self.send(text_data=html)

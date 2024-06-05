@@ -20,25 +20,19 @@
 </div>
 
 <script>
-
-    function clearNotificationSpan() {
-        let numberSpan = document.getElementById('notification-number');
-        numberSpan.innerHTML = '';
-    }
     
     function loadMoreNotifications(fromNav=false) {
         const pageNumberEl = document.getElementById('page-number')
         let pageNumber = parseInt(pageNumberEl.innerText);
-        if (fromNav) {
-            document.getElementById('notifications-list').innerHTML = '';
-            pageNumber = 0;
+        let swap = 'beforeend'
+        if (pageNumber == 0) {
+            swap = 'outerHTML'
         }
         let nextPage = pageNumber + 1;
-        htmx.ajax('GET', '/notifications/', { target: '#notifications-list', swap: 'beforeend', values: { "page": nextPage } })
+        htmx.ajax('GET', '/notifications/', { target: '#notifications-list', swap: swap, values: { "page": nextPage } })
         pageNumberEl.innerText = nextPage;
-        if (pageNumber == 0) {
-            clearNotificationSpan();
-        }
     }
+
+    window.onload(loadMoreNotifications());
 
 </script>

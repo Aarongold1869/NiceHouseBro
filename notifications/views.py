@@ -27,3 +27,8 @@ def delete_notification_view(request, id):
         return 400
     notification.delete()
     return HttpResponse(status=200)
+
+def clear_unread_notifications_read_view(request, *args, **kwargs):
+    notification = Notification.objects.filter(user=request.user)
+    notification.update(is_read = True)
+    return HttpResponse(status=200)
