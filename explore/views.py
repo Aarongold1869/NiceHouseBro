@@ -8,7 +8,7 @@ from api.google import google_street_view_api_base64
 from api.nominatim import fetch_map_data_from_search_str 
 from api.nominatim.types import MapData
 
-from profiles.models import Profile
+from profiles.models import Profile, UserSearches
 from property.models import SavedProperty
 from property.functions import calculate_cap_rate
 
@@ -17,14 +17,16 @@ import random
 from typing import List
 
 
+def get_search_str(user):
+    search_qs = UserSearches.objects.filter(user=user)
+    if search_qs.exists():
+        return UserSearches.objects.filter(user=user).latest('timestamp').search_str 
+    return 'Pensacola, FL'
+
 @after_response.enable
-def set_last_search(request, search_str:str):
-    profile_qs = Profile.objects.filter(user=request.user.id)
-    if not profile_qs.exists():
-        return
-    profile = profile_qs.first()
-    profile.last_search = search_str
-    profile.save()
+def set_last_search(user, search_str:str):
+    if user.is_authenticated:
+        UserSearches.objects.create(user=user, search_str=search_str)
 
 def get_additional_property_list_context(property_data: List[Property], user_profile:Profile):
 
@@ -52,15 +54,15 @@ def explore_view(request, search_str:str=None, *args, **kwargs):
     and map data based on the search string. If no search string is provided, the 
     view returns data for Pensacola, FL.'''
     if not search_str:
-        if not request.user.is_authenticated:
-            search_str = 'Pensacola, FL'
+        if request.user.is_authenticated:
+            search_str = get_search_str(request.user)
         else:
-            search_str = Profile.objects.get(user=request.user).last_search
-
+            search_str = 'Pensacola, FL'
+    
     map_data: MapData = fetch_map_data_from_search_str(search_str=search_str) 
     if not map_data:
         return HttpResponse(status=500)
-    set_last_search.after_response(request, search_str)
+    set_last_search.after_response(request.user, search_str)
     redfin_property_data: List[Property] = fetch_property_list_from_map_data(map_data=map_data)
     property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=Profile.objects.filter(user=request.user.id).first())
     context = {
@@ -98,14 +100,15 @@ def explore_view_filtered(
     ):
 
     if not search_str:
-        if not request.user.is_authenticated:
-            search_str = 'Pensacola, FL'
+        if request.user.is_authenticated:
+            search_str = get_search_str(request.user)
         else:
-            search_str = Profile.objects.get(user=request.user).last_search
+            search_str = 'Pensacola, FL'
+
     map_data: MapData = fetch_map_data_from_search_str(search_str=search_str) 
     if not map_data:
         return HttpResponse(status=500)
-    set_last_search.after_response(request, search_str)
+    set_last_search.after_response(request.user, search_str)
     redfin_property_data: List[Property] = fetch_property_list_from_map_data(map_data=map_data)
     property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=Profile.objects.filter(user=request.user.id).first())
     filters = { 

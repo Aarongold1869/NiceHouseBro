@@ -48,7 +48,7 @@
             type="search" 
             placeholder="Enter an address, city, state, or zip." 
             aria-label="Search"
-            value="{% if user.profile_set.first.last_search %}{{ user.profile_set.first.last_search }}{% endif %}"
+            value="{% if user.usersearches_set.exists %}{{ user.usersearches_set.last.search_str }}{% endif %}"
             >
 
             <div id="search-buttons-lg" class="d-flex">

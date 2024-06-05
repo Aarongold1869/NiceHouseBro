@@ -12,12 +12,11 @@ GOAL_CHOICES = [
 
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    theme = models.CharField(choices=[('light','light'), ('dark','dark')], max_length=100, default='light')
+    theme = models.CharField(choices=[('light','light'), ('dark','dark')], max_length=100, default='dark')
     goal = models.CharField(max_length=1000, default='Searching for Investment Property')
     phone_number = models.CharField(max_length=10, blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures', blank=True, null=True)
-    last_search = models.CharField(max_length=1000, blank=True, null=True)
     
     def __str__(self):
         return self.user.username
@@ -29,6 +28,19 @@ class Profile(models.Model):
     @property
     def notifications(self):
         return self.user.notification_set.all()
+    
+    @property
+    def last_search(self):
+        try:
+            return UserSearches.objects.filter(profile=self).latest('timestamp').search_str
+        except:
+            return None
+
+class UserSearches(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    search_str = models.CharField(max_length=1000)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
 
 class BlockedUser(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
