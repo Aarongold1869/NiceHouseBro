@@ -17,6 +17,7 @@ class Profile(models.Model):
     phone_number = models.CharField(max_length=10, blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures', blank=True, null=True)
+    last_search = models.CharField(max_length=1000, blank=True, null=True)
     
     def __str__(self):
         return self.user.username

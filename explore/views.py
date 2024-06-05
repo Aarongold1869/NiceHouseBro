@@ -12,9 +12,19 @@ from profiles.models import Profile
 from property.models import SavedProperty
 from property.functions import calculate_cap_rate
 
+import after_response
 import random
 from typing import List
 
+
+@after_response.enable
+def set_last_search(request, search_str:str):
+    profile_qs = Profile.objects.filter(user=request.user.id)
+    if not profile_qs.exists():
+        return
+    profile = profile_qs.first()
+    profile.last_search = search_str
+    profile.save()
 
 def get_additional_property_list_context(property_data: List[Property], user_profile:Profile):
 
@@ -37,14 +47,20 @@ def get_additional_property_list_context(property_data: List[Property], user_pro
     return property_list
 
 
-def explore_view(request, search_str:str='Pensacola, FL'):
+def explore_view(request, search_str:str=None, *args, **kwargs):
     ''' View recieves search string as an argument and returns a list of properties, 
     and map data based on the search string. If no search string is provided, the 
     view returns data for Pensacola, FL.'''
+    if not search_str:
+        if not request.user.is_authenticated:
+            search_str = 'Pensacola, FL'
+        else:
+            search_str = Profile.objects.get(user=request.user).last_search
 
     map_data: MapData = fetch_map_data_from_search_str(search_str=search_str) 
     if not map_data:
         return HttpResponse(status=500)
+    set_last_search.after_response(request, search_str)
     redfin_property_data: List[Property] = fetch_property_list_from_map_data(map_data=map_data)
     property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=Profile.objects.filter(user=request.user.id).first())
     context = {
@@ -70,7 +86,7 @@ def filter_property_list(property_list: List[Property], filters: dict):
 
 def explore_view_filtered(
         request, 
-        search_str:str, 
+        search_str:str=None,
         cap_rate:str=0, 
         min_price:int=0,
         max_price:int=0,
@@ -81,9 +97,15 @@ def explore_view_filtered(
         **kwargs
     ):
 
+    if not search_str:
+        if not request.user.is_authenticated:
+            search_str = 'Pensacola, FL'
+        else:
+            search_str = Profile.objects.get(user=request.user).last_search
     map_data: MapData = fetch_map_data_from_search_str(search_str=search_str) 
     if not map_data:
         return HttpResponse(status=500)
+    set_last_search.after_response(request, search_str)
     redfin_property_data: List[Property] = fetch_property_list_from_map_data(map_data=map_data)
     property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=Profile.objects.filter(user=request.user.id).first())
     filters = { 

@@ -38,7 +38,7 @@ def property_detail_view(request, state:str, city:str, address:str, zip:int, pro
                 'user': request.user,
                 'name': request.user.get_full_name(),
                 'email': request.user.email,
-                'phone': Profile.objects.get(user=request.user).phone_number,
+                'phone_number': Profile.objects.get(user=request.user).phone_number,
                 'address': address,
             })
     property = { **property, 'propertyId': propertyId, 'address': address, 'state': state, 'city': city, 'zip': zip, 'is_saved': is_saved }
