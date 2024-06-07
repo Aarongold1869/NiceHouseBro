@@ -15,7 +15,7 @@ def send_notifications_on_comment_like(sender, instance: CommentLike, created, *
         if(instance.profile.user == instance.comment.profile.user):
             return
         notification = Notification.objects.create(
-            user=instance.comment.profile.user,
+            profile=instance.profile,
             header=f'@{instance.profile.user.username} liked your comment.',
             message=f'"{instance.comment.text[:80]}..."',
         )
@@ -33,7 +33,7 @@ def send_notifications_on_reply(sender, instance: Reply, created, **kwargs):
         if(instance.profile.user == instance.comment.profile.user):
             return
         notification = Notification.objects.create(
-            user=instance.profile.user,
+            profile=instance.profile,
             header=f'@{instance.profile.user.username} replied to your comment.',
             message=f'"{instance.text[:80]}..."',
         )
@@ -49,7 +49,7 @@ def send_notifications_on_reply(sender, instance: Reply, created, **kwargs):
 def send_notifications_on_contact_form_submit(sender, instance: AgentContactForm, created, **kwargs):
     if created:
         notification = Notification.objects.create(
-            user=instance.user,
+            profile=instance.lead_profile,
             header=f'Contact Form Submitted.',
             message=f'Your contact form for {instance.address} was submitted successfully. An agent will be in touch soon.',
         )
@@ -65,7 +65,7 @@ def send_notifications_on_contact_form_submit(sender, instance: AgentContactForm
 def send_notifications_on_property_saved(sender, instance: SavedProperty, created, **kwargs):
     if created:
         notification = Notification.objects.create(
-            user=instance.profile.user,
+            profile=instance.profile,
             header=f'Property Saved - {instance.address}',
             message=f'You can view this property in the saved properties menu.',
             link_href='/profile/saved/',

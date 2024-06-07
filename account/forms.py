@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from .models import CustomUser
 
 from profiles.models import GOAL_CHOICES
 
@@ -11,7 +11,7 @@ class RegisterForm(UserCreationForm):
     phone_number = forms.CharField(max_length=10, required=False)
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ["first_name", "last_name", "username", "email", "phone_number", "password1", "password2"]
 
 class LocationForm(forms.Form):

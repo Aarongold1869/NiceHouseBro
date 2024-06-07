@@ -14,7 +14,7 @@ def set_notifications_read(notification_qs):
         notification.save()
 
 def retreive_notification_view(request, *args, **kwargs):
-    notification_qs = Notification.objects.filter(user=request.user)
+    notification_qs = Notification.objects.filter(profile=request.user.profile)
     paginator = Paginator(notification_qs, 10) 
     page_number = int(request.GET.get("page"))
     paginated_qs = paginator.get_page(page_number)
@@ -29,6 +29,6 @@ def delete_notification_view(request, id):
     return HttpResponse(status=200)
 
 def clear_unread_notifications_read_view(request, *args, **kwargs):
-    notification = Notification.objects.filter(user=request.user)
+    notification = Notification.objects.filter(profile=request.user.profile)
     notification.update(is_read = True)
     return HttpResponse(status=200)

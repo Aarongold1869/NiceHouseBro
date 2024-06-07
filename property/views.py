@@ -32,10 +32,10 @@ def property_detail_view(request, state:str, city:str, address:str, zip:int, pro
         saved_qs = SavedProperty.objects.filter(Q(profile__user=request.user) & Q(property_id=propertyId))
         is_saved = saved_qs.exists()
         contact_form = None
-        contact_form_qs = AgentContactForm.objects.filter(Q(user=request.user) & Q(address=address))
+        contact_form_qs = AgentContactForm.objects.filter(Q(lead_profile=request.user.profile) & Q(address=address))
         if not contact_form_qs.exists():
             contact_form = AgentContactFormForm(initial = {
-                'user': request.user,
+                'lead_profile': request.user.profile,
                 'name': request.user.get_full_name(),
                 'email': request.user.email,
                 'phone_number': Profile.objects.get(user=request.user).phone_number,

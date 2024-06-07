@@ -1,5 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
+
+User = settings.AUTH_USER_MODEL
 
 # Create your models here.
 GOAL_CHOICES = [
@@ -32,15 +34,14 @@ class Profile(models.Model):
     @property
     def last_search(self):
         try:
-            return UserSearches.objects.filter(profile=self).latest('timestamp').search_str
+            return UserSearches.objects.filter(user=self.user).latest('timestamp').search_str
         except:
             return None
 
 class UserSearches(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     search_str = models.CharField(max_length=1000)
     timestamp = models.DateTimeField(auto_now_add=True)
-
 
 class BlockedUser(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)

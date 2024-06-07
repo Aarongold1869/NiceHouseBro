@@ -23,7 +23,7 @@ def register_step_1_view(request, *args, **kwargs):
             user = authenticate(request, username=request.POST.get('username'), password=request.POST.get('password1'))
             if user is not None:
                 login(request, user)
-                Profile.objects.create(user=user)
+                Profile.objects.create(user=user, phone_number=form.cleaned_data['phone_number'])
                 return redirect("/account/register/step-2/")
     context = { "form": form, 'title': 'Create an Account', 'button_text': 'Register', 'step': 1 }
     return render(request, "account/register.html", context)

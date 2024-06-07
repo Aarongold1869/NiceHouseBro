@@ -14,9 +14,9 @@ class AgentRegistrationForm(forms.Form):
 class AgentContactFormForm(forms.ModelForm):
     class Meta:
         model = AgentContactForm
-        fields = ['user', 'address', 'name', 'email', 'phone_number', 'message', 'financing_info']
+        fields = ['lead_profile', 'address', 'name', 'email', 'phone_number', 'message', 'financing_info']
         widgets = {
-            'user': forms.HiddenInput(),
+            'lead_profile': forms.HiddenInput(),
             'address': forms.HiddenInput(),
             'message': forms.Textarea(attrs={'rows': 4, 'cols': 15, 'placeholder': 'I am interested in this property...'}),
             'phone_number': forms.TextInput(attrs={

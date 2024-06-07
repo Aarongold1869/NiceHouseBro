@@ -1,10 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
+from profiles.models import Profile
 
 # Create your models here.
 
 class Notification(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     header = models.CharField(max_length=255)
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -17,16 +17,5 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.header} - {self.user.username}"
-    
-
-class UnreadNotificationManager(models.Manager):
-    def get_queryset(self):
-        return super(UnreadNotificationManager, self).get_queryset().filter(is_read=False)
-
-class UnreadNotification(Notification):
-    objects = UnreadNotificationManager()
-
-    class Meta:
-        proxy = True
 
    

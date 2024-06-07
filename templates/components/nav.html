@@ -167,9 +167,9 @@ class="navbar navbar-expand-lg w-100 py-1"
                             <svg id="notification-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" class="bi bi-bell-fill" viewBox="0 0 16 16">
                                 <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901"/>
                             </svg>
-                            {% if  user.profile_set.first.unread_notification_count > 0 %} 
+                            {% if  user.profile.unread_notification_count > 0 %} 
                             <span id="notification-number" class="badge rounded-pill position-absolute" style="top:0; right:0px; background-color: var(--love); color:white;">
-                                    {{ user.profile_set.first.unread_notification_count }}
+                                    {{ user.profile.unread_notification_count }}
                             </span>
                             {% else %}
                             <span id="notification-number" class="badge rounded-pill position-absolute" style="top:0; right:0px; background-color: var(--love); color:white;"></span>
@@ -181,10 +181,10 @@ class="navbar navbar-expand-lg w-100 py-1"
                         <a id="profile-dropdown-tg" class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             
                             <div id="profile-badge-container">
-                            {% if not user.profile_set.first.profile_picture %}
+                            {% if not user.profile.profile_picture %}
                                 {% include "icons/profile-icon.html" %}
                             {% else %}
-                                <img src="{{ user.profile_set.first.profile_picture.url }}" class="profile-badge me-1" alt="profile picture">
+                                <img src="{{ user.profile.profile_picture.url }}" class="profile-badge me-1" alt="profile picture">
                             {% endif %}
                             </div>
                             
@@ -210,7 +210,7 @@ class="navbar navbar-expand-lg w-100 py-1"
     </div>
 </nav>
 
-<script data-theme="{{request.user.profile_set.first.theme}}" async>
+<script data-theme="{{request.user.profile.theme}}" async>
 
     function PlayNotificationSound() {
         var snd = new Audio('/static/sounds/bottle.mp3'); // buffers automatically when created

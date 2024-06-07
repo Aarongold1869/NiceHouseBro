@@ -1,5 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User
+from profiles.models import Profile
+from django.conf import settings
+
+User = settings.AUTH_USER_MODEL
 
 import random
 # Create your models here.
@@ -18,12 +21,9 @@ class Wallet(models.Model):
     agent = models.ForeignKey(AgentProfile, on_delete=models.CASCADE)
     credits = models.IntegerField(default=0)
 
-def calculate_lead_score(user: User) -> int:
-        return 10
-
 class Lead(models.Model):
     agent = models.ForeignKey(AgentProfile, on_delete=models.CASCADE)
-    lead = models.ForeignKey(User, on_delete=models.CASCADE)
+    lead_profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     archived = models.BooleanField(default=False)
     lead_score = models.IntegerField(default=0)
@@ -31,11 +31,11 @@ class Lead(models.Model):
     class Meta:
         ordering = ['-created_at']
         constraints = [
-            models.UniqueConstraint('agent', 'lead', name='agent-lead'),
+            models.UniqueConstraint('agent', 'lead_profile', name='agent-lead'),
         ]
 
 class AgentContactForm(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    lead_profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     assigned_agent = models.ForeignKey(AgentProfile, on_delete=models.CASCADE, blank=True, null=True)
     address = models.CharField(max_length=100)
     name = models.CharField(max_length=100)

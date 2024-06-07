@@ -8,6 +8,7 @@ from api.google import google_street_view_api_base64
 from api.nominatim import fetch_map_data_from_search_str 
 from api.nominatim.types import MapData
 
+from account.models import CustomUser
 from profiles.models import Profile, UserSearches
 from property.models import SavedProperty
 from property.functions import calculate_cap_rate
@@ -17,16 +18,18 @@ import random
 from typing import List
 
 
-def get_search_str(user):
-    search_qs = UserSearches.objects.filter(user=user)
+def get_search_str(user: CustomUser):
+    search_qs = UserSearches.objects.filter(profile__user=user)
     if search_qs.exists():
-        return UserSearches.objects.filter(user=user).latest('timestamp').search_str 
+        return search_qs.last().search_str 
+    elif user.profile.location:
+        return user.profile.location
     return 'Pensacola, FL'
 
 @after_response.enable
 def set_last_search(user, search_str:str):
     if user.is_authenticated:
-        UserSearches.objects.create(user=user, search_str=search_str)
+        UserSearches.objects.create(profile=user.profile, search_str=search_str)
 
 def get_additional_property_list_context(property_data: List[Property], user_profile:Profile):
 
