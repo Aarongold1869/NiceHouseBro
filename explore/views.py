@@ -9,14 +9,14 @@ from api.nominatim import fetch_map_data_from_search_str
 from api.nominatim.types import MapData
 
 from account.models import CustomUser
-from profiles.models import Profile, UserSearches
+from profiles.models import Profile, UserSearches, CapRateFormula
+from profiles.forms import CapRateForm
 from property.models import SavedProperty
 from property.functions import calculate_cap_rate
 
 import after_response
 import random
 from typing import List
-
 
 def get_search_str(user: CustomUser):
     search_qs = UserSearches.objects.filter(profile__user=user)
@@ -68,6 +68,11 @@ def explore_view(request, search_str:str=None, *args, **kwargs):
     set_last_search.after_response(request.user, search_str)
     redfin_property_data: List[Property] = fetch_property_list_from_map_data(map_data=map_data)
     property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=Profile.objects.filter(user=request.user.id).first())
+    cap_rate_formula = CapRateFormula()
+    if request.user.is_authenticated:
+        cap_rate_formula_qs = CapRateFormula.objects.filter(profile=request.user.profile)
+        if cap_rate_formula_qs.exists():
+            cap_rate_formula = cap_rate_formula_qs.first()
     context = {
         'map_data': map_data,
         'property_list': property_list, 
@@ -80,7 +85,8 @@ def explore_view(request, search_str:str=None, *args, **kwargs):
             'beds': '',
             'baths': '',
             'sq_ft': ''
-        }
+        },
+        'cap_rate_form': CapRateForm(instance=cap_rate_formula)
     }
     return render(request, "explore/explore.html", context)
 

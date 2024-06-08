@@ -1,0 +1,69 @@
+{% load crispy_forms_tags %}
+
+<!-- Modal -->
+<div class="modal fade" id="capRateModal" tabindex="-1" role="dialog" aria-labelledby="cap-rate-modal-title">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header justify-content-between">
+          <h5 class="modal-title" id="cap-rate-modal-title">Capitalization Rate</h5>
+          <button type="button" class="btn close" data-bs-dismiss="modal" aria-label="Close">
+            {% include "icons/x.html" with size=16 %}
+          </button>
+        </div>
+
+        <div class="modal-body page-1">
+            <form class="form-group" method='post'>
+                <p class='mb-2 fs-5'>Formula Default Values</p>
+                <p class="text-muted mb-2" style="font-size:.8rem;">
+                    By adjusting these default values, you are adjusting the cap rate formula for all properties on the site.
+                    The default values can be reset here or in the settings menu of your profile page.
+                </p>
+                {% csrf_token %}
+                {{ form|crispy }}
+                {% if form_error %}
+                    <p class='text-danger'>{{ form_error }}</p>
+                {% endif %}
+            </form>
+
+            <p class="text-center mb-1"> a2 + b2 = c2 </p>
+
+        </div>
+
+        <div class="modal-body page-2" style="display:none;">
+            <p> 
+                The capitalization rate (also known as cap rate) is used in the world of commercial real estate to indicate the rate of return that is expected to be generated on a real estate investment property. 
+                <br>This measure is computed based on the net income that the property is expected to generate and is calculated by dividing net operating income by property asset value and is expressed as a percentage. 
+                <br>It is used to estimate the investor's potential return on their investment in the real estate market. The figure also helps to determine the exit rate or terminal capitalization rate for a property when it is sold at the end of the projected holding period.
+            </p>
+        </div>
+
+        <div id="modal-page-controls" class="d-flex justify-content-center align-items-center mb-2">
+            <button type="button" class="btn" onclick="toggleModalPage(1)">{% include "icons/arrow-left.html" with size=20 %}</button>
+            <span id="currentModalPage">Page 1 of 2</span>
+            <button type="button" class="btn" onclick="toggleModalPage(2)">{% include "icons/arrow-right.html" with size=20 %}</button>
+        </div>
+
+        <div class="modal-footer justify-content-center">
+          <input type='submit' class='btn btn-sm love-outline' value='Update Formula Defaults'>
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Reset Defaults</button>
+        </div>
+      </div>
+    </div>
+</div>
+  
+
+<script>
+
+    function toggleModalPage(page) {
+        if (page == 1) {
+            document.querySelector('.modal-body.page-1').style.display = 'block';
+            document.querySelector('.modal-body.page-2').style.display = 'none';
+            document.getElementById('currentModalPage').innerText = 'Page 1 of 2';
+        } else {
+            document.querySelector('.modal-body.page-1').style.display = 'none';
+            document.querySelector('.modal-body.page-2').style.display = 'block';
+            document.getElementById('currentModalPage').innerText = 'Page 2 of 2';
+        }
+    }
+
+</script>

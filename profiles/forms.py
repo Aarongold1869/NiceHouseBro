@@ -1,5 +1,5 @@
 from django import forms 
-from .models import GOAL_CHOICES
+from .models import GOAL_CHOICES, CapRateFormula
 
 from django.urls import reverse_lazy
 
@@ -18,3 +18,12 @@ class UpdateProfileForm(forms.Form):
             }))
     location = forms.CharField(max_length=100, required=False)
     goal =  forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices=GOAL_CHOICES)
+
+class CapRateForm(forms.ModelForm):
+    class Meta:
+        model = CapRateFormula
+        fields = '__all__'
+        exclude = ['profile']
+        widgets = {
+            'property_tax_rate': forms.NumberInput(attrs={'step': 0.0001}),
+        }

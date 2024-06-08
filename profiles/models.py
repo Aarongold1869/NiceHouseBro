@@ -55,3 +55,8 @@ class BlockedUser(models.Model):
     def __str__(self):
         return f'{self.profile.user.username} - {self.blocked_user}'
     
+class CapRateFormula(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    property_tax_rate = models.DecimalField(max_digits=5, decimal_places=4, default=0.0091)
+    mgmt_fee_rate = models.DecimalField(max_digits=5, decimal_places=4, default=0.0091)
+    insurance = models.IntegerField(default=136)
