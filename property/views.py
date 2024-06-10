@@ -24,7 +24,7 @@ import random
 
 def property_detail_view(request, state:str, city:str, address:str, zip:int, propertyId:str):
     property = property_detail_api(state='FL', city=city, address=address, zip=zip, propertyId=propertyId)
-    property['cap_rate'] = calculate_cap_rate(int(property['price'].replace('$','').replace(',','')), random.randint(1000, 2000))
+    property['cap_rate'] = calculate_cap_rate(int(property['price'].replace('$','').replace(',','')), random.randint(1000, 2000))[3]
     # street_view_image = google_street_view_api_base64(address=address)
     is_saved = False
     contact_form = AgentContactFormForm()

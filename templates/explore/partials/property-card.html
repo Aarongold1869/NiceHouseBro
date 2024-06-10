@@ -66,6 +66,8 @@
 .cap-rate-link:hover {
     text-decoration: underline;
     color: var(--love)!important;
+    width: fit-content;
+    align-items: center;
 }
 
 .bounce2 {
@@ -112,8 +114,16 @@ data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|
             
             <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.price|currency:0 }}</h5>
             {% if property.cap_rate != 0 %}
-                <a class="cap-rate-link" data-bs-toggle="modal" data-bs-target="#capRateModal">
-                    <p class="card-subtitle mb-2 align-items-start" style="font-size:.9rem!important;">
+                <a 
+                class="cap-rate-link" 
+                data-bs-toggle="modal" 
+                data-bs-target="#capRateModal"
+                hx-get="{% url 'retrieve_new_formula' %}"
+                hx-target="#cap-rate-formula-table"
+                hx-swap="outerHTML"
+                hx-vals='{ "property_value": "{{ property.price }}", "rent": "{{ property.rent }}" }'
+                >
+                    <p class="card-subtitle mb-2 align-items-center" style="font-size:.9rem!important;">
                         Cap Rate: <strong>{{ property.cap_rate|percentage }}</strong>&ensp;
                         {% include "icons/question-circle.html" with size=16 fill="var(--love)"%}
                     </p>

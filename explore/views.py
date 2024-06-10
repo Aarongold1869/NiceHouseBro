@@ -35,8 +35,10 @@ def get_additional_property_list_context(property_data: List[Property], user_pro
 
     def set_property_obj_context(obj, user_profile):
         price = obj['price']['value'] if 'value' in obj['price'] else 0
+        rent = random.randint(1000, 2000)
         obj['price'] = price
-        obj['cap_rate'] = calculate_cap_rate(value=int(price), rent=random.randint(1000, 2000))
+        obj['rent'] = rent
+        obj['cap_rate'] = calculate_cap_rate(value=int(price), rent=rent)[3]
         obj['address'] = obj['streetLine']['value'] if 'value' in obj['streetLine'] else obj['streetLine']
         obj['address_full'] = f"{obj['streetLine']['value'] if 'value' in obj['streetLine'] else obj['streetLine']} {obj['city']}, {obj['state']} {obj['postalCode']['value']}"
         obj['is_saved'] = SavedProperty.objects.filter(property_id=obj['propertyId']).filter(profile=user_profile).exists()
@@ -86,7 +88,7 @@ def explore_view(request, search_str:str=None, *args, **kwargs):
             'baths': '',
             'sq_ft': ''
         },
-        'cap_rate_form': CapRateForm(instance=cap_rate_formula)
+        'cap_rate_form': CapRateForm(initial=cap_rate_formula.__dict__)
     }
     return render(request, "explore/explore.html", context)
 

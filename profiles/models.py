@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.core.validators import MinValueValidator
+from decimal import Decimal
 
 User = settings.AUTH_USER_MODEL
 
@@ -57,6 +59,10 @@ class BlockedUser(models.Model):
     
 class CapRateFormula(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    property_tax_rate = models.DecimalField(max_digits=5, decimal_places=4, default=0.0091)
-    mgmt_fee_rate = models.DecimalField(max_digits=5, decimal_places=4, default=0.0091)
-    insurance = models.IntegerField(default=136)
+    annual_property_tax_rate = models.DecimalField(max_digits=5, validators=[MinValueValidator(Decimal('0.0000'))], decimal_places=4, default=0.0091)
+    monthly_management_fee_rate = models.DecimalField(max_digits=3, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))], default=0.01)
+    monthly_insurance = models.PositiveIntegerField(default=136)
+    monthly_maintance_as_rate = models.DecimalField(max_digits=3, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))], default=0.08)
+    monthly_leasing_fee = models.PositiveIntegerField(default=0)
+    monthly_hoa_fee = models.PositiveIntegerField(default=0)
+    monthly_utilities = models.PositiveIntegerField(default=0)

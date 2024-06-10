@@ -1,0 +1,83 @@
+{% load currency %}
+{% load percentage %}
+{% load comma %}
+
+<style>
+    tbody > tr:last-child td {
+        font-weight: bold;
+        /* color: var(--love)!important; */
+        border-top: 3px solid var(--bs-secondary-color);
+    }
+
+    td {
+        padding: 0.5rem 0.25rem!important;
+        font-size: 0.8rem;
+    }
+
+    @media (min-width: 768px) {
+        td {
+            font-size: 1rem;
+        }
+    }
+
+</style>
+
+<div id="cap-rate-formula-table">
+    <table class='table table-sm w-100'>
+        <tbody>
+            <tr>
+                <td>Gross Income</td>
+                <td class="text-muted">Annualized Rent</td>
+                <td>{{ annual_gross_income|currency:0 }}</td>
+            </tr>
+
+            <tr>
+                <td>Annual Operating Expenses</td>
+                <td class="text-muted"></td>
+                <td>{{ annual_operating_expenses|currency:0 }}</td>
+            </tr>
+
+            <tr>
+                <td>Net Operating Income (NOI)</td>
+                <td class="text-muted">Gross Income - Operating Exp.</td>
+                <td>{{ net_operating_income|currency:0 }}</td>
+            </tr>
+
+            <tr>
+                <td>Purchase Price / Value</td>
+                <td class="text-muted"></td>
+                <td>{{ property_value|currency:0 }}</td>
+            </tr>
+
+            <tr>
+                <td style="background-color: var(--bs-secondary-bg);">Estimated Cap rate</td>
+                <td class="text-muted" style="background-color: var(--bs-secondary-bg);"> NOI &#247; Property Value</td>
+                <td style="background-color: var(--bs-secondary-bg);">{{ cap_rate|percentage }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-end">
+        {% comment %} {% if user.is_authenticated %} {% endcomment %}
+        <button class="btn btn-sm love-outline" onclick="ShowUpdateFormulaForm()">Modify Formula</button>
+        {% comment %} {% else %}
+        <button class="btn btn-sm love-outline" onclick="PromptRegister()">Modify Formula</button>
+        {% endif %} {% endcomment %}
+    </div>
+
+    <script>
+        function ShowUpdateFormulaForm() {
+            document.getElementById('update-formula-form').style.display = 'block';
+        }
+
+        function PromptRegister() {
+            alert('Please register or login to modify the formula');
+        }
+    </script>
+
+</div>
+
+<input hx-swap-oob="true" id="value-hidden-input" type='hidden' name='property_value' value='{{ property_value }}'>
+<input hx-swap-oob="true" id="rent-hidden-input" type='hidden' name='rent' value='{{ rent }}'>
+
+

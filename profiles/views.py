@@ -7,8 +7,9 @@ from django.contrib.auth.models import User
 from django_htmx.http import trigger_client_event
 from crispy_forms.templatetags.crispy_forms_filters import as_crispy_field
 
-from .models import Profile, BlockedUser, GOAL_CHOICES
+from .models import Profile, BlockedUser, CapRateFormula, GOAL_CHOICES
 from .forms import UpdateProfileForm
+from property.functions import calculate_cap_rate
 from property.models import SavedProperty
 from api.redfin import property_detail_api
 
@@ -118,3 +119,30 @@ def block_user_view(request, blocked_user_id:int ):
     BlockedUser.objects.create(profile=profile, blocked_user=blocked_user_id)
     response = HttpResponse(status=200)
     return trigger_client_event(response, 'reload-comments')
+
+# @login_required(login_url='/account/login/')
+@require_http_methods(['GET'])
+def retrieve_new_formula(request, *args, **kwargs):
+    print(request.GET)
+    property_value = int(request.GET.get('property_value'))
+    rent = int(request.GET.get('rent'))
+    annual_gross_income, annual_operating_expenses, net_operating_income, cap_rate = calculate_cap_rate(
+                            value=property_value, 
+                            rent=rent,
+                            annual_property_tax_rate=float(request.GET.get('annual_property_tax_rate', 0.0091)), 
+                            monthly_management_fee_rate=float(request.GET.get('monthly_management_fee_rate', 0.01)), 
+                            monthly_insurance=int(request.GET.get('monthly_insurance', 136)), 
+                            monthly_maintance_as_rate=float(request.GET.get('monthly_maintance_as_rate', 0.08)), 
+                            monthly_leasing_fee=int(request.GET.get('monthly_leasing_fee', 0)), 
+                            monthly_hoa_fee=int(request.GET.get('monthly_hoa_fee', 0)), 
+                            monthly_utilities=int(request.GET.get('monthly_utilities', 0))
+                        )
+    context = {
+        'property_value': property_value,
+        'rent': rent,
+        'annual_gross_income': annual_gross_income,
+        'annual_operating_expenses': annual_operating_expenses,
+        'net_operating_income': net_operating_income,
+        'cap_rate': cap_rate
+    }
+    return render(request, 'components/partials/cap-rate-formula-table.html', context)

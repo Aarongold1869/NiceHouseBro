@@ -13,4 +13,5 @@ urlpatterns = [
 
     path('validate-email/', views.validate_email, name='validate_email'),
     path('validate-phone-number/', views.validate_phone_number, name='validate_phone_number'),
+    path('retrieve-new-formula/', views.retrieve_new_formula, name='retrieve_new_formula'),
 ]
