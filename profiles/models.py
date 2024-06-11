@@ -36,7 +36,7 @@ class Profile(models.Model):
     @property
     def last_search(self):
         try:
-            return UserSearches.objects.filter(user=self.user).latest('timestamp').search_str
+            return UserSearches.objects.filter(user=self.user).last().search_str
         except:
             return None
 

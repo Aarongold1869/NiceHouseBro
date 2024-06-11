@@ -25,7 +25,7 @@ initially -->
 
 <div class="container-fluid py-4" >
     <div class="col-12 py-2">
-        <h2 class="text-center fs-5">Featured Properties in {% if user.usersearches_set.exists %}{{ user.usersearches_set.last.search_str }}{% else %}Pensacola, FL{% endif %}</h2>
+        <h2 class="text-center fs-5">Featured Properties in {% if user.profile.last_search %}{{ user.profile.last_search }}{% else %}Pensacola, FL{% endif %}</h2>
     </div>
     <div class="col-12" style="display:flex; justify-content: center;">
         <div class='col-sm-8 py-3' style="display: flex; flex-direction: row; overflow-x: scroll; white-space: nowrap; justify-content: flex-start;" >

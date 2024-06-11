@@ -123,7 +123,6 @@ def block_user_view(request, blocked_user_id:int ):
 # @login_required(login_url='/account/login/')
 @require_http_methods(['GET'])
 def retrieve_new_formula(request, *args, **kwargs):
-    print(request.GET)
     property_value = int(request.GET.get('property_value'))
     rent = int(request.GET.get('rent'))
     annual_gross_income, annual_operating_expenses, net_operating_income, cap_rate = calculate_cap_rate(

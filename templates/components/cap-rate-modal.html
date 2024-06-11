@@ -1,7 +1,27 @@
 {% load crispy_forms_tags %}
 
+<style>
+    .modal-form{
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
+        font-size: .8rem!important;
+    }
+
+    .modal-form div {
+        width: 48%;
+    }
+
+    .modal-footer button {
+        width: 30%;
+    }
+
+</style>
+
 <!-- Modal -->
-<div class="modal fade" id="capRateModal" tabindex="-1" role="dialog" aria-labelledby="cap-rate-modal-title">
+<div class="modal fade" id="capRateModal" tabindex="-1" role="dialog" aria-labelledby="cap-rate-modal-title" style="overflow-y: scroll; max-height:90%; top:3rem;">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header justify-content-between">
@@ -13,27 +33,44 @@
 
         <div class="modal-body page-1">
 
-            <form id="update-formula-form" class="form-group" method='post' style="display:none;">
-                <p class='mb-2 fs-5'>Formula Default Values</p>
-                <p class="text-muted mb-2" style="font-size:.8rem;">
-                    By adjusting these default values, you are adjusting the cap rate formula for all properties on the site.
-                    The default values can be reset here or in the settings menu of your profile page.
-                </p>
-                {% csrf_token %}
-                <input id="value-hidden-input" type='hidden' name='propery_value' value='0'>
-                <input id="rent-hidden-input" type='hidden' name='rent' value='0'>
-                {{ form|crispy }}
-                {% if form_error %}
-                    <p class='text-danger'>{{ form_error }}</p>
-                {% endif %}
-
-                <div class="modal-footer justify-content-center">
-                    <input type='submit' class='btn btn-sm love-outline' value='Save Formula'>
-                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Reset</button>
-                </div>
-            </form> 
-
             <div id="cap-rate-formula-table"></div>
+
+            <div class="collapse" id="modalFormContainer">
+                <form id="update-formula-form" class="form-group modal-form" method='post'>
+                    {% comment %} <p class='mb-2 fs-5'>Formula Default Values</p> {% endcomment %}
+                    <p class="text-muted mb-2" style="font-size:.8rem;">
+                        By adjusting these default values, you are adjusting the cap rate formula for all properties on the site.
+                        The default values can be reset here or in the settings menu of your profile page.
+                    </p>
+                    {% csrf_token %}
+                    <input id="value-hidden-input" type='hidden' name='propery_value' value='0'>
+                    <input id="rent-hidden-input" type='hidden' name='rent' value='0'>
+                    {{ form|crispy }}
+                    {% if form_error %}
+                        <p class='text-danger'>{{ form_error }}</p>
+                    {% endif %}
+
+                    <div class="modal-footer justify-content-center w-100">
+                        <button type='submit' class='btn btn-sm love-outline'>Save Values</button>
+                        <button 
+                        class="btn btn-sm btn-outline-info" 
+                        type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#modalFormContainer" 
+                        aria-expanded="false" 
+                        aria-controls="modalFormContainer"
+                        >Reset Values</button>
+                        <button 
+                        class="btn btn-sm btn-secondary" 
+                        type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#modalFormContainer" 
+                        aria-expanded="false" 
+                        aria-controls="modalFormContainer"
+                        >Cancel</button>
+                    </div>
+                </form> 
+            </div>
 
         </div>
 
@@ -51,8 +88,6 @@
             <button type="button" class="btn" onclick="toggleModalPage(2)">{% include "icons/arrow-right.html" with size=20 %}</button>
         </div>
 
-        
-        
       </div>
     </div>
 </div>

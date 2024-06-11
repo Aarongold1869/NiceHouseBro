@@ -33,7 +33,22 @@
 
             <tr>
                 <td>Annual Operating Expenses</td>
-                <td class="text-muted"></td>
+                <td>
+                    <div class="w-100 justify-content-start align-items-center d-flex">
+                        {% if user.is_authenticated %}
+                        <button 
+                        class="btn btn-sm love-outline" 
+                        type="button"
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#modalFormContainer" 
+                        aria-expanded="false" 
+                        aria-controls="modalFormContainer"
+                        >Modify Formula</button>
+                        {% else %}
+                        <button class="btn btn-sm love-outline" onclick="PromptRegister()">Modify Formula</button>
+                        {% endif %} 
+                    </div>
+                </td>
                 <td>{{ annual_operating_expenses|currency:0 }}</td>
             </tr>
 
@@ -57,18 +72,7 @@
         </tbody>
     </table>
 
-    <div class="d-flex justify-content-end">
-        {% comment %} {% if user.is_authenticated %} {% endcomment %}
-        <button class="btn btn-sm love-outline" onclick="ShowUpdateFormulaForm()">Modify Formula</button>
-        {% comment %} {% else %}
-        <button class="btn btn-sm love-outline" onclick="PromptRegister()">Modify Formula</button>
-        {% endif %} {% endcomment %}
-    </div>
-
     <script>
-        function ShowUpdateFormulaForm() {
-            document.getElementById('update-formula-form').style.display = 'block';
-        }
 
         function PromptRegister() {
             alert('Please register or login to modify the formula');

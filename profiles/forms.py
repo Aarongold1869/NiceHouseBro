@@ -33,6 +33,15 @@ class CapRateForm(forms.ModelForm):
         model = CapRateFormula
         fields = '__all__'
         exclude = ['profile']
+        labels = {
+            'annual_property_tax_rate': 'Property Tax Rate (%)',
+            'monthly_management_fee_rate': 'Management Fee Rate (%)',
+            'monthly_insurance': 'Monthly Insurance ($)',
+            'monthly_maintance_as_rate': 'Maintance Fee Rate (%)',
+            'monthly_leasing_fee': 'Monthly Leasing Fee ($)',
+            'monthly_hoa_fee': 'Monthly HOA Fee ($)',
+            'monthly_utilities': 'Monthly Utilities ($)'
+        }
         widgets = {
             'annual_property_tax_rate': forms.NumberInput(attrs={'step': 0.0001, 'min':0, **CAP_RATE_HTMX_ATTRS}),
             'monthly_management_fee_rate': forms.NumberInput(attrs={'step': 0.01, 'min':0, **CAP_RATE_HTMX_ATTRS}),
