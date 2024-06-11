@@ -118,7 +118,7 @@ data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|
                 class="cap-rate-link" 
                 data-bs-toggle="modal" 
                 data-bs-target="#capRateModal"
-                hx-get="{% url 'retrieve_new_formula' %}"
+                hx-get="{% url 'retrieve_new_formula_table' %}"
                 hx-target="#cap-rate-formula-table"
                 hx-swap="outerHTML"
                 hx-vals='{ "property_value": "{{ property.price }}", "rent": "{{ property.rent }}" }'

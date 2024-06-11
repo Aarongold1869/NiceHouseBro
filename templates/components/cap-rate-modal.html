@@ -21,7 +21,7 @@
 </style>
 
 <!-- Modal -->
-<div class="modal fade" id="capRateModal" tabindex="-1" role="dialog" aria-labelledby="cap-rate-modal-title" style="overflow-y: scroll; max-height:90%; top:3rem;">
+<div class="modal fade" id="capRateModal" tabindex="-1" role="dialog" aria-labelledby="cap-rate-modal-title" style="overflow-y: scroll; max-height:95%; top:3rem;">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header justify-content-between">
@@ -36,12 +36,9 @@
             <div id="cap-rate-formula-table"></div>
 
             <div class="collapse" id="modalFormContainer">
-                <form id="update-formula-form" class="form-group modal-form" method='post'>
-                    {% comment %} <p class='mb-2 fs-5'>Formula Default Values</p> {% endcomment %}
-                    <p class="text-muted mb-2" style="font-size:.8rem;">
-                        By adjusting these default values, you are adjusting the cap rate formula for all properties on the site.
-                        The default values can be reset here or in the settings menu of your profile page.
-                    </p>
+                <p class='mb-2 fs-6'>Formula Default Values</p>
+
+                <form id="update-formula-form" class="form-group modal-form">
                     {% csrf_token %}
                     <input id="value-hidden-input" type='hidden' name='propery_value' value='0'>
                     <input id="rent-hidden-input" type='hidden' name='rent' value='0'>
@@ -50,8 +47,18 @@
                         <p class='text-danger'>{{ form_error }}</p>
                     {% endif %}
 
+                    <p class="text-muted mb-2" style="font-size:.8rem;">
+                        By adjusting the default values, you are adjusting the cap rate formula for all properties on the site.
+                        The default values can be reset here or in the settings menu of your profile page.
+                    </p>
+
                     <div class="modal-footer justify-content-center w-100">
-                        <button type='submit' class='btn btn-sm love-outline'>Save Values</button>
+                        <button class='btn btn-sm love-outline' 
+                        hx-post="{% url 'update_cap_rate_formula' profile_id=user.profile.id %}"
+                        hx-swap="none"
+                        hx-on::after-request="SubmitCapRateForm()"
+                        >Save Values</button>
+                        
                         <button 
                         class="btn btn-sm btn-outline-info" 
                         type="button" 
@@ -60,6 +67,7 @@
                         aria-expanded="false" 
                         aria-controls="modalFormContainer"
                         >Reset Values</button>
+                        
                         <button 
                         class="btn btn-sm btn-secondary" 
                         type="button" 
@@ -105,6 +113,11 @@
             document.querySelector('.modal-body.page-2').style.display = 'block';
             document.getElementById('currentModalPage').innerText = '2 of 2';
         }
+    }
+
+    function SubmitCapRateForm() {
+        htmx.ajax('POST', '/profile/update-cap-rate-formula/', { swap: 'none', form: 'update-formula-form' })
+        alert('updating cap rates!')
     }
 
 </script>

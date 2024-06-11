@@ -8,7 +8,7 @@ from django_htmx.http import trigger_client_event
 from crispy_forms.templatetags.crispy_forms_filters import as_crispy_field
 
 from .models import Profile, BlockedUser, CapRateFormula, GOAL_CHOICES
-from .forms import UpdateProfileForm
+from .forms import UpdateProfileForm, CapRateForm
 from property.functions import calculate_cap_rate
 from property.models import SavedProperty
 from api.redfin import property_detail_api
@@ -122,7 +122,7 @@ def block_user_view(request, blocked_user_id:int ):
 
 # @login_required(login_url='/account/login/')
 @require_http_methods(['GET'])
-def retrieve_new_formula(request, *args, **kwargs):
+def retrieve_new_formula_table(request, *args, **kwargs):
     property_value = int(request.GET.get('property_value'))
     rent = int(request.GET.get('rent'))
     annual_gross_income, annual_operating_expenses, net_operating_income, cap_rate = calculate_cap_rate(
@@ -145,3 +145,14 @@ def retrieve_new_formula(request, *args, **kwargs):
         'cap_rate': cap_rate
     }
     return render(request, 'components/partials/cap-rate-formula-table.html', context)
+
+@login_required(login_url='/account/login/')
+@require_http_methods(['POST'])
+def update_cap_rate_formula(request, profile_id:int, *args, **kwargs):
+    form = CapRateForm(request.POST)
+    if not form.is_valid():
+        return HttpResponse(status=500)
+    formuala: CapRateFormula = form.save(commit=False)
+    formuala.profile = Profile.objects.get(id=profile_id)
+    formuala.save()
+    return HttpResponse(status=200)
