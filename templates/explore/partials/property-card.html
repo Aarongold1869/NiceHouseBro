@@ -114,7 +114,7 @@ data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|
             <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.price|currency:0 }}</h5>
             <p id="property-address-{{ property.propertyId }}" class="card-subtitle text-muted mb-2" style="font-size:.9rem;">{{ property.address_full }}</p>
             
-            <a class="cap-rate-link">
+            <a class="cap-rate-link" href="/" target="_">
                 <p class="card-subtitle mb-2 align-items-center" style="font-size:.9rem!important; width:fit-content;">
                     Rental Estimate: <strong>{{ property.rent|currency:0 }}</strong>&ensp;
                     {% include "icons/question-circle.html" with size=16 fill="var(--love)"%}

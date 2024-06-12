@@ -12,7 +12,7 @@ from account.models import CustomUser
 from profiles.models import Profile, UserSearches, CapRateFormula
 from profiles.forms import CapRateForm
 from property.models import SavedProperty
-from property.functions import calculate_cap_rate
+from property.functions import calculate_cap_rate, calculate_rental_price
 
 import after_response
 import random
@@ -35,9 +35,7 @@ def get_additional_property_list_context(property_data: List[Property], user_pro
 
     def set_property_obj_context(obj, user_profile):
         price = obj['price']['value'] if 'value' in obj['price'] else 0
-        random.seed(obj['propertyId'])
-        print(obj['propertyId'], type(obj['propertyId']))
-        rent = random.randint(900, 2500)
+        rent = calculate_rental_price(property=obj)
         *_, cap_rate = calculate_cap_rate(
             value=int(price), 
             rent=rent, 

@@ -52,6 +52,19 @@
         color: var(--love)!important;
     }
 
+    .cap-rate-link {
+        cursor: pointer;
+        color: var(--bs-body-color);
+        text-decoration: none;
+        align-items: center;
+    }
+    
+    .cap-rate-link:hover {
+        color: var(--love)!important;
+        width: fit-content;
+        align-items: center;
+    }
+
 </style>
 
 <div id='property-detail' class="d-flex flex-column align-items-center justify-content-center position-relative">
@@ -121,18 +134,37 @@
 
             <div id="details-tab">
                 
-                <p class="mb-3 text-muted">{{ property.address }}, {{ property.city }}, {{ property.state }} {{ property.zip }}</p>
                 <h2 class="fw-bold mb-3">{{ property.price }}</h2>
+                <p class="mb-3 text-muted">{{ property.address }}, {{ property.city }}, {{ property.state }} {{ property.zip }}</p>
                  
-                {% comment %} <a 
-                class="btn love-outline border-2 mb-3"
-                href="tel:757-652-3262"
-                >Get in Touch</a> {% endcomment %}
+                <a class="cap-rate-link" href="/" target="_">
+                    <h5 class="mb-2 align-items-center" style="width:fit-content;">
+                        Rental Estimate: <strong>{{ property.rent|currency:0 }}</strong>&ensp;
+                        {% include "icons/question-circle.html" with size=20 fill="var(--love)"%}
+                    </h5>
+                </a>
+    
+                {% if property.cap_rate != 0 %}
+                    <a 
+                    class="cap-rate-link" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#capRateModal"
+                    hx-get="{% url 'retrieve_new_formula_table' %}"
+                    hx-target="#cap-rate-formula-table"
+                    hx-swap="outerHTML"
+                    hx-vals='{ "property_value": "{{ property.price }}", "rent": "{{ property.rent }}", "form_state": "initial" }'
+                    >
+                        <h5 class="mb-2 align-items-center" style="width:fit-content;">
+                            Cap Rate: <strong>{{ property.cap_rate|percentage }}</strong>&ensp;
+                            {% include "icons/question-circle.html" with size=20 fill="var(--love)"%}
+                        </h5>
+                    </a>
+                {% endif %}
+
                 <h5 class="mb-3">
-                    <strong>{{ property.cap_rate|percentage }}</strong> Cap Rate |
-                    <strong>{{ property.beds }}</strong> Beds |
-                    <strong>{{ property.baths }}</strong> Baths |
-                    <strong>{{ property.sq_ft }}</strong> square feet
+                    Beds: <strong>{{ property.beds }}</strong>&ensp;|&ensp;
+                    Baths: <strong>{{ property.baths }}</strong>&ensp;|&ensp;
+                    <strong>{{ property.sq_ft|comma }} sqft.</strong>
                 </h5>
                 
                 <div id="description-container-trunc" class="pb-4" style="display:block;">

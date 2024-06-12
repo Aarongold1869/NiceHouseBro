@@ -15,7 +15,7 @@ from api.google import google_street_view_api_base64
 from api.redfin import property_detail_api
 from api.redfin.redfin_types import Property
 
-from .functions import calculate_cap_rate
+from .functions import calculate_cap_rate, calculate_rental_price
 
 import after_response
 import base64
@@ -24,14 +24,12 @@ import random
 
 def property_detail_view(request, state:str, city:str, address:str, zip:int, propertyId:str):
     property = property_detail_api(state='FL', city=city, address=address, zip=zip, propertyId=propertyId)
-    
+    property['propertyId'] = propertyId
     price = int(property['price'].replace('$','').replace(',',''))
+    rent = calculate_rental_price(property)
     cap_rate_formula = CapRateFormula()
     if request.user.is_authenticated:
         cap_rate_formula, created = CapRateFormula.objects.get_or_create(profile=request.user.profile)
-    random.seed(propertyId)
-    print(propertyId, type(propertyId))
-    rent = random.randint(900, 2500)
     *_, cap_rate = calculate_cap_rate(
         value=int(price), 
         rent=rent, 
@@ -43,7 +41,7 @@ def property_detail_view(request, state:str, city:str, address:str, zip:int, pro
         monthly_hoa_fee=cap_rate_formula.monthly_hoa_fee,
         monthly_utilities=cap_rate_formula.monthly_utilities,
     )
-
+    property['rent'] = rent
     property['cap_rate'] = cap_rate
     # street_view_image = google_street_view_api_base64(address=address)
     is_saved = False
@@ -106,13 +104,14 @@ def toggle_property_saved(request, *args, **kwargs):
     property_id = property_data.get('propertyId', None)
     address = property_data.get('address', None)
     saved_qs = SavedProperty.objects.filter(Q(profile=profile) & Q(property_id=property_id))
+    print(property_data)
     if not saved_qs.exists():
         price = property_data.get('price', 0)
         if type(price) == str:
             price = int(price.replace('$', '').replace(',', ''))
-        beds = property_data.get('beds', 0)
-        baths = property_data.get('baths', 0)
-        sq_ft = property_data.get('sq_ft', 0)
+        beds = int(property_data.get('beds', 0))
+        baths = int(property_data.get('baths', 0))
+        sq_ft = int(property_data.get('sq_ft', 0).replace(',', ''))
         saved_property = SavedProperty.objects.create(
             profile = profile, 
             property_id = property_id,

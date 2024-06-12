@@ -24,3 +24,14 @@ def calculate_cap_rate(
     cap_rate = round((net_operating_income / value), 4)
     return annual_gross_income, annual_operating_expenses, net_operating_income, cap_rate
 
+import random
+import hashlib
+
+def calculate_rental_price(property: dict)-> int:
+    print(property['propertyId'])
+    property_id = property['propertyId']
+    rent = round(int(property_id) % 1000,0)
+    if rent < 1000:
+        rent += 1000
+    print(rent)
+    return rent

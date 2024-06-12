@@ -30,8 +30,7 @@ def fetch_property_list_from_map_data(map_data: MapData)-> List[Property]:
 def property_detail_api(state:str, city:str, address:str, zip:int, propertyId:str)-> Property:
     print('scraping redfin')
     scraper = RedfinPropertyDetailScraper(state=state, city=city, address=address, zip=zip, id=propertyId)
-    property = scraper.get_property_detail_data()
-    print(property)
+    property = scraper.parse_response()
     # property = {
     #     'propertyId': 0, 
     #     'address': address, 
