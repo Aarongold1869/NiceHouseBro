@@ -111,7 +111,7 @@ def toggle_property_saved(request, *args, **kwargs):
             price = int(price.replace('$', '').replace(',', ''))
         beds = int(property_data.get('beds', 0))
         baths = int(property_data.get('baths', 0))
-        sq_ft = int(property_data.get('sq_ft', 0).replace(',', ''))
+        sq_ft = int(str(property_data.get('sq_ft', 0)).replace(',', ''))
         saved_property = SavedProperty.objects.create(
             profile = profile, 
             property_id = property_id,

@@ -31,7 +31,7 @@ def set_last_search(user, search_str:str):
     if user.is_authenticated:
         UserSearches.objects.create(profile=user.profile, search_str=search_str)
 
-def get_additional_property_list_context(property_data: List[Property], user_profile: Profile, cap_rate_formula: CapRateFormula):
+def get_additional_property_list_context(property_data: List[Property], user_profile: Profile|None, cap_rate_formula: CapRateFormula):
 
     def set_property_obj_context(obj, user_profile):
         price = obj['price']['value'] if 'value' in obj['price'] else 0
@@ -81,11 +81,12 @@ def explore_view(request, search_str:str=None, *args, **kwargs):
     set_last_search.after_response(request.user, search_str)
     redfin_property_data: List[Property] = fetch_property_list_from_map_data(map_data=map_data)
 
+    profile = None
     cap_rate_formula = CapRateFormula()
     if request.user.is_authenticated:
-        cap_rate_formula, created = CapRateFormula.objects.get_or_create(profile=request.user.profile)
-        
-    property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=request.user.profile, cap_rate_formula=cap_rate_formula)
+        profile = request.user.profile
+        cap_rate_formula, created = CapRateFormula.objects.get_or_create(profile=profile)
+    property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=profile, cap_rate_formula=cap_rate_formula)
     
     context = {
         'map_data': map_data,
@@ -133,7 +134,14 @@ def explore_view_filtered(
         return HttpResponse(status=500)
     set_last_search.after_response(request.user, search_str)
     redfin_property_data: List[Property] = fetch_property_list_from_map_data(map_data=map_data)
-    property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=Profile.objects.filter(user=request.user.id).first())
+
+    profile = None
+    cap_rate_formula = CapRateFormula()
+    if request.user.is_authenticated:
+        profile = request.user.profile
+        cap_rate_formula, created = CapRateFormula.objects.get_or_create(profile=profile)
+    property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=profile, cap_rate_formula=cap_rate_formula)
+
     filters = { 
         'cap_rate':cap_rate, 
         'min_price':min_price,

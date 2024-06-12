@@ -11,10 +11,14 @@
     position: absolute;
     top: 8px;
     border-radius: 10px;
-    transform: translateX(0) rotate(0) scale(1);
-    transition: transform 400ms ease, box-shadow 200ms ease, border 300ms ease;
     width: 95%;
+    transform: translateX(0) rotate(0) scale(1);
+    -webkit-transform: translateX(0) rotate(0) scale(1);
+    -moz-transform: translateX(0) rotate(0) scale(1);
+    -ms-transform: translateX(0) rotate(0) scale(1);
+    -o-transform: translateX(0) rotate(0) scale(1);
     box-shadow: 0 0 4px 2px var(--bs-dark-bg-subtle);
+    transition: all 400ms ease
 }
 
 .property-card:hover {
@@ -25,6 +29,10 @@
 
 .property-card[data-status="unknown"] {
     transform: translateX(50%) rotate(30deg) scale(0.001);
+    -webkit-transform: translateX(50%) rotate(30deg) scale(0.001);
+    -moz-transform: translateX(50%) rotate(30deg) scale(0.001);
+    -ms-transform: translateX(50%) rotate(30deg) scale(0.001);
+    -o-transform: translateX(50%) rotate(30deg) scale(0.001);
     transition: none;
 }
 
@@ -34,19 +42,35 @@
 
 .property-card[data-status="right"] {
     transform: translateX(50%) rotate(30deg) scale(0.001);
+    -webkit-transform: translateX(50%) rotate(30deg) scale(0.001);
+    -moz-transform: translateX(50%) rotate(30deg) scale(0.001);
+    -ms-transform: translateX(50%) rotate(30deg) scale(0.001);
+    -o-transform: translateX(50%) rotate(30deg) scale(0.001);
 }
 
 .property-card[data-status="left"] {
     transform: translateX(-50%) rotate(-30deg) scale(0.001);
+    -webkit-transform: translateX(-50%) rotate(-30deg) scale(0.001);
+    -moz-transform: translateX(-50%) rotate(-30deg) scale(0.001);
+    -ms-transform: translateX(-50%) rotate(-30deg) scale(0.001);
+    -o-transform: translateX(-50%) rotate(-30deg) scale(0.001);
 }
 
 .property-card[data-status="becoming-active-from-right"] {
     transform: translateX(50%) rotate(30deg) scale(0.001);
+    -webkit-transform: translateX(50%) rotate(30deg) scale(0.001);
+    -moz-transform: translateX(50%) rotate(30deg) scale(0.001);
+    -ms-transform: translateX(50%) rotate(30deg) scale(0.001);
+    -o-transform: translateX(50%) rotate(30deg) scale(0.001);
     transition: none;
 }
 
 .property-card[data-status="becoming-active-from-left"] {
     transform: translateX(-50%) rotate(-30deg) scale(0.001);
+    -webkit-transform: translateX(-50%) rotate(-30deg) scale(0.001);
+    -moz-transform: translateX(-50%) rotate(-30deg) scale(0.001);
+    -ms-transform: translateX(-50%) rotate(-30deg) scale(0.001);
+    -o-transform: translateX(-50%) rotate(-30deg) scale(0.001);
     transition: none;
 }
 
@@ -57,6 +81,10 @@
 
 .property-card[data-status="hidden"] {
     transform: translateY(50%) scale(0.001);
+    -webkit-transform: translateY(50%) scale(0.001);
+    -moz-transform: translateY(50%) scale(0.001);
+    -ms-transform: translateY(50%) scale(0.001);
+    -o-transform: translateY(50%) scale(0.001);
 }
 
 .cap-rate-link {
@@ -114,7 +142,7 @@ data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|
             <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.price|currency:0 }}</h5>
             <p id="property-address-{{ property.propertyId }}" class="card-subtitle text-muted mb-2" style="font-size:.9rem;">{{ property.address_full }}</p>
             
-            <a class="cap-rate-link" href="/" target="_">
+            <a class="cap-rate-link text-muted" href="/" target="_">
                 <p class="card-subtitle mb-2 align-items-center" style="font-size:.9rem!important; width:fit-content;">
                     Rental Estimate: <strong>{{ property.rent|currency:0 }}</strong>&ensp;
                     {% include "icons/question-circle.html" with size=16 fill="var(--love)"%}

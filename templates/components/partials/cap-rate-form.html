@@ -36,13 +36,13 @@
         hx-target="#cap-rate-formula-table"
         hx-include="[name='property_value'], [name='rent']"
         hx-vals='{ "form_state": "reset" }'
-        >Reset Values</button>
+        >Reset</button>
 
         <button class='btn btn-sm love-outline' 
         hx-post="{% url 'update_cap_rate_formula'%}"
         hx-target="#modal-body-page-1"
         hx-swap="outerHTML"
-        >Save Values</button>
+        >Save</button>
         
     </div>
     
