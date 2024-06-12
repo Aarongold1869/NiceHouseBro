@@ -1,5 +1,3 @@
-{% load crispy_forms_tags %}
-
 <style>
     .modal-form{
         display: flex;
@@ -18,12 +16,30 @@
         width: 30%;
     }
 
+    tbody > tr:last-child td {
+        font-weight: bold;
+        /* color: var(--love)!important; */
+        border-top: 3px solid var(--bs-secondary-color);
+    }
+
+    td {
+        padding: 0.5rem 0.25rem!important;
+        font-size: 0.8rem;
+    }
+
+    @media (min-width: 768px) {
+        td {
+            font-size: 1rem;
+        }
+    }
+
 </style>
 
 <!-- Modal -->
 <div class="modal fade" id="capRateModal" tabindex="-1" role="dialog" aria-labelledby="cap-rate-modal-title" style="overflow-y: scroll; max-height:95%; top:3rem;">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
+
         <div class="modal-header justify-content-between">
           <h5 class="modal-title" id="cap-rate-modal-title">Capitalization Rate</h5>
           <button type="button" class="btn close" data-bs-dismiss="modal" aria-label="Close">
@@ -31,53 +47,16 @@
           </button>
         </div>
 
-        <div class="modal-body page-1">
+        <div id="modal-body-page-1" class="modal-body page-1">
 
             <div id="cap-rate-formula-table"></div>
 
-            <div class="collapse" id="modalFormContainer">
-                <p class='mb-2 fs-6'>Formula Default Values</p>
+            <div class="collapse container" id="modalFormContainer">
 
-                <form id="update-formula-form" class="form-group modal-form">
-                    {% csrf_token %}
-                    <input id="value-hidden-input" type='hidden' name='propery_value' value='0'>
-                    <input id="rent-hidden-input" type='hidden' name='rent' value='0'>
-                    {{ form|crispy }}
-                    {% if form_error %}
-                        <p class='text-danger'>{{ form_error }}</p>
-                    {% endif %}
+                <p>Operating Expenses</p>
 
-                    <p class="text-muted mb-2" style="font-size:.8rem;">
-                        By adjusting the default values, you are adjusting the cap rate formula for all properties on the site.
-                        The default values can be reset here or in the settings menu of your profile page.
-                    </p>
+               <div id="update-formula-form"></div>
 
-                    <div class="modal-footer justify-content-center w-100">
-                        <button class='btn btn-sm love-outline' 
-                        hx-post="{% url 'update_cap_rate_formula' profile_id=user.profile.id %}"
-                        hx-swap="none"
-                        hx-on::after-request="SubmitCapRateForm()"
-                        >Save Values</button>
-                        
-                        <button 
-                        class="btn btn-sm btn-outline-info" 
-                        type="button" 
-                        data-bs-toggle="collapse" 
-                        data-bs-target="#modalFormContainer" 
-                        aria-expanded="false" 
-                        aria-controls="modalFormContainer"
-                        >Reset Values</button>
-                        
-                        <button 
-                        class="btn btn-sm btn-secondary" 
-                        type="button" 
-                        data-bs-toggle="collapse" 
-                        data-bs-target="#modalFormContainer" 
-                        aria-expanded="false" 
-                        aria-controls="modalFormContainer"
-                        >Cancel</button>
-                    </div>
-                </form> 
             </div>
 
         </div>
@@ -113,11 +92,6 @@
             document.querySelector('.modal-body.page-2').style.display = 'block';
             document.getElementById('currentModalPage').innerText = '2 of 2';
         }
-    }
-
-    function SubmitCapRateForm() {
-        htmx.ajax('POST', '/profile/update-cap-rate-formula/', { swap: 'none', form: 'update-formula-form' })
-        alert('updating cap rates!')
     }
 
 </script>

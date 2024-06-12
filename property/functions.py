@@ -1,3 +1,4 @@
+from typing import List
 
 def calculate_cap_rate(
     value: int, 
@@ -9,10 +10,10 @@ def calculate_cap_rate(
     monthly_leasing_fee: int=0,
     monthly_hoa_fee: int=0,
     monthly_utilities: int=0,
-)-> float:
+    )-> List[int]:
     
     if rent == 0 or value == 0:
-        return 0
+        return 0, 0, 0, 0
     annual_gross_income = rent * 12
     mo_maintance = rent * monthly_maintance_as_rate
     mo_mgmt_fee = rent * monthly_management_fee_rate

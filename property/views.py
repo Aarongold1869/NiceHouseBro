@@ -8,7 +8,7 @@ from django.views.decorators.http import require_http_methods
 from .models import SavedProperty
 from comment.forms import CommentForm, ReportFormForm
 from comment.models import Comment, CommentLike, ReplyLike
-from profiles.models import Profile, BlockedUser
+from profiles.models import Profile, BlockedUser, CapRateFormula
 from agent.forms import AgentContactFormForm
 from agent.models import AgentContactForm
 from api.google import google_street_view_api_base64
@@ -24,7 +24,27 @@ import random
 
 def property_detail_view(request, state:str, city:str, address:str, zip:int, propertyId:str):
     property = property_detail_api(state='FL', city=city, address=address, zip=zip, propertyId=propertyId)
-    property['cap_rate'] = calculate_cap_rate(int(property['price'].replace('$','').replace(',','')), random.randint(1000, 2000))[3]
+    
+    price = int(property['price'].replace('$','').replace(',',''))
+    cap_rate_formula = CapRateFormula()
+    if request.user.is_authenticated:
+        cap_rate_formula, created = CapRateFormula.objects.get_or_create(profile=request.user.profile)
+    random.seed(propertyId)
+    print(propertyId, type(propertyId))
+    rent = random.randint(900, 2500)
+    *_, cap_rate = calculate_cap_rate(
+        value=int(price), 
+        rent=rent, 
+        annual_property_tax_rate=cap_rate_formula.annual_property_tax_rate,
+        monthly_management_fee_rate=cap_rate_formula.monthly_management_fee_rate,
+        monthly_maintance_as_rate=cap_rate_formula.monthly_maintance_as_rate,
+        monthly_insurance=cap_rate_formula.monthly_insurance,
+        monthly_leasing_fee=cap_rate_formula.monthly_leasing_fee,
+        monthly_hoa_fee=cap_rate_formula.monthly_hoa_fee,
+        monthly_utilities=cap_rate_formula.monthly_utilities,
+    )
+
+    property['cap_rate'] = cap_rate
     # street_view_image = google_street_view_api_base64(address=address)
     is_saved = False
     contact_form = AgentContactFormForm()

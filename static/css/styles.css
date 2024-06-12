@@ -3,6 +3,7 @@
   --hidden: #34d3eb;
   --gray-bg: rgb(223, 223, 223);
   --gray-color: gray;
+  --success: #04c904;
 }
 
 @font-face {

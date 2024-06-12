@@ -123,36 +123,48 @@ def block_user_view(request, blocked_user_id:int ):
 # @login_required(login_url='/account/login/')
 @require_http_methods(['GET'])
 def retrieve_new_formula_table(request, *args, **kwargs):
-    property_value = int(request.GET.get('property_value'))
-    rent = int(request.GET.get('rent'))
+    property_value = int(request.GET.get('property_value', 100000))
+    rent = int(request.GET.get('rent', 1000))
+    
+    form = None
+    formula_obj = CapRateFormula()
+    form_state = request.GET.get('form_state', None) # either initial or reset
+    if form_state:
+        if form_state == 'initial':
+            formula_obj, created = CapRateFormula.objects.get_or_create(profile=request.user.profile) 
+        form = CapRateForm(instance=formula_obj)
+
     annual_gross_income, annual_operating_expenses, net_operating_income, cap_rate = calculate_cap_rate(
                             value=property_value, 
                             rent=rent,
-                            annual_property_tax_rate=float(request.GET.get('annual_property_tax_rate', 0.0091)), 
-                            monthly_management_fee_rate=float(request.GET.get('monthly_management_fee_rate', 0.01)), 
-                            monthly_insurance=int(request.GET.get('monthly_insurance', 136)), 
-                            monthly_maintance_as_rate=float(request.GET.get('monthly_maintance_as_rate', 0.08)), 
-                            monthly_leasing_fee=int(request.GET.get('monthly_leasing_fee', 0)), 
-                            monthly_hoa_fee=int(request.GET.get('monthly_hoa_fee', 0)), 
-                            monthly_utilities=int(request.GET.get('monthly_utilities', 0))
+                            annual_property_tax_rate=float(request.GET.get('annual_property_tax_rate', formula_obj.annual_property_tax_rate)), 
+                            monthly_management_fee_rate=float(request.GET.get('monthly_management_fee_rate', formula_obj.monthly_management_fee_rate)), 
+                            monthly_insurance=int(request.GET.get('monthly_insurance', formula_obj.monthly_insurance)), 
+                            monthly_maintance_as_rate=float(request.GET.get('monthly_maintance_as_rate', formula_obj.monthly_maintance_as_rate)), 
+                            monthly_leasing_fee=int(request.GET.get('monthly_leasing_fee', formula_obj.monthly_leasing_fee)), 
+                            monthly_hoa_fee=int(request.GET.get('monthly_hoa_fee', formula_obj.monthly_hoa_fee)), 
+                            monthly_utilities=int(request.GET.get('monthly_utilities', formula_obj.monthly_utilities))
                         )
+    
+
     context = {
         'property_value': property_value,
         'rent': rent,
         'annual_gross_income': annual_gross_income,
         'annual_operating_expenses': annual_operating_expenses,
         'net_operating_income': net_operating_income,
-        'cap_rate': cap_rate
+        'cap_rate': cap_rate,
+        'form': form
     }
     return render(request, 'components/partials/cap-rate-formula-table.html', context)
 
 @login_required(login_url='/account/login/')
 @require_http_methods(['POST'])
-def update_cap_rate_formula(request, profile_id:int, *args, **kwargs):
-    form = CapRateForm(request.POST)
+def update_cap_rate_formula(request, *args, **kwargs):
+    formula, created = CapRateFormula.objects.get_or_create(profile=request.user.profile)
+    form = CapRateForm(instance=formula, data=request.POST)
     if not form.is_valid():
         return HttpResponse(status=500)
-    formuala: CapRateFormula = form.save(commit=False)
-    formuala.profile = Profile.objects.get(id=profile_id)
-    formuala.save()
-    return HttpResponse(status=200)
+    form.save()
+    return render(request, 'components/partials/cap-rate-form-success.html', {})
+

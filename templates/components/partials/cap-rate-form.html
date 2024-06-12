@@ -1,0 +1,49 @@
+{% load crispy_forms_tags %}
+
+<form hx-swap-oob="true" id="update-formula-form" class="form-group modal-form" onkeydown="return event.key != 'Enter';">
+    {% csrf_token %}
+
+    <input id="value-hidden-input" type='hidden' name='property_value' value="{{ property_value }}">
+    <input id="rent-hidden-input" type='hidden' name='rent' value="{{ rent }}">
+
+    {{ form|crispy }}
+
+    {% if form_error %}
+        <p class='text-danger'>{{ form_error }}</p>
+    {% endif %}
+
+    <p class="text-muted mb-2" style="font-size:.8rem;">
+        By adjusting the default values, you are adjusting the cap rate formula for all properties on the site.
+        The default values can be reset here or in the settings menu of your profile page.
+    </p>
+
+    <div class="modal-footer justify-content-center w-100">
+        
+        <button 
+        class="btn btn-sm btn-secondary" 
+        type="button" 
+        data-bs-toggle="collapse" 
+        data-bs-target="#modalFormContainer" 
+        aria-expanded="false" 
+        aria-controls="modalFormContainer"
+        >Cancel</button>
+
+        <button 
+        class="btn btn-sm btn-outline-info" 
+        type="button" 
+        hx-get="{% url 'retrieve_new_formula_table' %}"
+        hx-swap="outerHTML"
+        hx-target="#cap-rate-formula-table"
+        hx-include="[name='property_value'], [name='rent']"
+        hx-vals='{ "form_state": "reset" }'
+        >Reset Values</button>
+
+        <button class='btn btn-sm love-outline' 
+        hx-post="{% url 'update_cap_rate_formula'%}"
+        hx-target="#modal-body-page-1"
+        hx-swap="outerHTML"
+        >Save Values</button>
+        
+    </div>
+    
+</form> 

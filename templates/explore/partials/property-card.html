@@ -64,7 +64,6 @@
 }
 
 .cap-rate-link:hover {
-    text-decoration: underline;
     color: var(--love)!important;
     width: fit-content;
     align-items: center;
@@ -113,6 +112,15 @@ data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|
             {% comment %} <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.estimatedValue|currency:0 }}</h5> {% endcomment %}
             
             <h5 class="card-title" style="font-weight:600; font-size:1.5rem">{{ property.price|currency:0 }}</h5>
+            <p id="property-address-{{ property.propertyId }}" class="card-subtitle text-muted mb-2" style="font-size:.9rem;">{{ property.address_full }}</p>
+            
+            <a class="cap-rate-link">
+                <p class="card-subtitle mb-2 align-items-center" style="font-size:.9rem!important; width:fit-content;">
+                    Rental Estimate: <strong>{{ property.rent|currency:0 }}</strong>&ensp;
+                    {% include "icons/question-circle.html" with size=16 fill="var(--love)"%}
+                </p>
+            </a>
+
             {% if property.cap_rate != 0 %}
                 <a 
                 class="cap-rate-link" 
@@ -121,9 +129,9 @@ data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|
                 hx-get="{% url 'retrieve_new_formula_table' %}"
                 hx-target="#cap-rate-formula-table"
                 hx-swap="outerHTML"
-                hx-vals='{ "property_value": "{{ property.price }}", "rent": "{{ property.rent }}" }'
+                hx-vals='{ "property_value": "{{ property.price }}", "rent": "{{ property.rent }}", "form_state": "initial" }'
                 >
-                    <p class="card-subtitle mb-2 align-items-center" style="font-size:.9rem!important;">
+                    <p class="card-subtitle mb-2 align-items-center" style="font-size:.9rem!important; width:fit-content;">
                         Cap Rate: <strong>{{ property.cap_rate|percentage }}</strong>&ensp;
                         {% include "icons/question-circle.html" with size=16 fill="var(--love)"%}
                     </p>
@@ -134,7 +142,7 @@ data-imgDidSet="{% if forloop.counter0 <= 1 or forloop.counter == property_list|
                 baths: <strong>{{ property.baths }}</strong>&ensp;|&ensp;
                 <strong>{{ property.sq_ft|comma }} sqft.</strong>
             </p>
-            <h6 id="property-address-{{ property.propertyId }}" class="card-subtitle" style="font-size:.9rem;">{{ property.address_full }}</h6>
+            
             {% comment %} <p class="card-text text-muted" style="font-size:.8rem;">This is a short description of the property.</p>   {% endcomment %}
         </div>
     </a>

@@ -1,28 +1,9 @@
 {% load currency %}
 {% load percentage %}
 {% load comma %}
+{% load crispy_forms_tags %}
 
-<style>
-    tbody > tr:last-child td {
-        font-weight: bold;
-        /* color: var(--love)!important; */
-        border-top: 3px solid var(--bs-secondary-color);
-    }
-
-    td {
-        padding: 0.5rem 0.25rem!important;
-        font-size: 0.8rem;
-    }
-
-    @media (min-width: 768px) {
-        td {
-            font-size: 1rem;
-        }
-    }
-
-</style>
-
-<div id="cap-rate-formula-table">
+<div id="cap-rate-formula-table" class="mb-4">
     <table class='table table-sm w-100'>
         <tbody>
             <tr>
@@ -37,7 +18,7 @@
                     <div class="w-100 justify-content-start align-items-center d-flex">
                         {% if user.is_authenticated %}
                         <button 
-                        class="btn btn-sm love-outline" 
+                        class="btn btn-sm love mt-1" 
                         type="button"
                         data-bs-toggle="collapse" 
                         data-bs-target="#modalFormContainer" 
@@ -45,7 +26,7 @@
                         aria-controls="modalFormContainer"
                         >Modify Formula</button>
                         {% else %}
-                        <button class="btn btn-sm love-outline" onclick="PromptRegister()">Modify Formula</button>
+                        <button class="btn btn-sm love-outline" onclick="()=> {alert('Please register or login to modify the formula')}">Modify Formula</button>
                         {% endif %} 
                     </div>
                 </td>
@@ -59,8 +40,8 @@
             </tr>
 
             <tr>
-                <td>Purchase Price / Value</td>
-                <td class="text-muted"></td>
+                <td>Property Value</td>
+                <td class="text-muted">Value at purchase</td>
                 <td>{{ property_value|currency:0 }}</td>
             </tr>
 
@@ -72,16 +53,11 @@
         </tbody>
     </table>
 
-    <script>
-
-        function PromptRegister() {
-            alert('Please register or login to modify the formula');
-        }
-    </script>
-
 </div>
 
-<input hx-swap-oob="true" id="value-hidden-input" type='hidden' name='property_value' value='{{ property_value }}'>
-<input hx-swap-oob="true" id="rent-hidden-input" type='hidden' name='rent' value='{{ rent }}'>
+{% comment %} <input hx-swap-oob="true" id="value-hidden-input" type='hidden' name='property_value' value='{{ property_value }}'>
+<input hx-swap-oob="true" id="rent-hidden-input" type='hidden' name='rent' value='{{ rent }}'> {% endcomment %}
 
-
+{% if form %}
+    {% include 'components/partials/cap-rate-form.html' %}
+{% endif %}

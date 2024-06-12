@@ -31,14 +31,27 @@ def set_last_search(user, search_str:str):
     if user.is_authenticated:
         UserSearches.objects.create(profile=user.profile, search_str=search_str)
 
-def get_additional_property_list_context(property_data: List[Property], user_profile:Profile):
+def get_additional_property_list_context(property_data: List[Property], user_profile: Profile, cap_rate_formula: CapRateFormula):
 
     def set_property_obj_context(obj, user_profile):
         price = obj['price']['value'] if 'value' in obj['price'] else 0
-        rent = random.randint(1000, 2000)
+        random.seed(obj['propertyId'])
+        print(obj['propertyId'], type(obj['propertyId']))
+        rent = random.randint(900, 2500)
+        *_, cap_rate = calculate_cap_rate(
+            value=int(price), 
+            rent=rent, 
+            annual_property_tax_rate=cap_rate_formula.annual_property_tax_rate,
+            monthly_management_fee_rate=cap_rate_formula.monthly_management_fee_rate,
+            monthly_maintance_as_rate=cap_rate_formula.monthly_maintance_as_rate,
+            monthly_insurance=cap_rate_formula.monthly_insurance,
+            monthly_leasing_fee=cap_rate_formula.monthly_leasing_fee,
+            monthly_hoa_fee=cap_rate_formula.monthly_hoa_fee,
+            monthly_utilities=cap_rate_formula.monthly_utilities,
+        )
         obj['price'] = price
         obj['rent'] = rent
-        obj['cap_rate'] = calculate_cap_rate(value=int(price), rent=rent)[3]
+        obj['cap_rate'] = float(cap_rate)
         obj['address'] = obj['streetLine']['value'] if 'value' in obj['streetLine'] else obj['streetLine']
         obj['address_full'] = f"{obj['streetLine']['value'] if 'value' in obj['streetLine'] else obj['streetLine']} {obj['city']}, {obj['state']} {obj['postalCode']['value']}"
         obj['is_saved'] = SavedProperty.objects.filter(property_id=obj['propertyId']).filter(profile=user_profile).exists()
@@ -69,12 +82,13 @@ def explore_view(request, search_str:str=None, *args, **kwargs):
         return HttpResponse(status=500)
     set_last_search.after_response(request.user, search_str)
     redfin_property_data: List[Property] = fetch_property_list_from_map_data(map_data=map_data)
-    property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=Profile.objects.filter(user=request.user.id).first())
+
     cap_rate_formula = CapRateFormula()
     if request.user.is_authenticated:
-        cap_rate_formula_qs = CapRateFormula.objects.filter(profile=request.user.profile)
-        if cap_rate_formula_qs.exists():
-            cap_rate_formula = cap_rate_formula_qs.first()
+        cap_rate_formula, created = CapRateFormula.objects.get_or_create(profile=request.user.profile)
+        
+    property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=request.user.profile, cap_rate_formula=cap_rate_formula)
+    
     context = {
         'map_data': map_data,
         'property_list': property_list, 
@@ -88,7 +102,7 @@ def explore_view(request, search_str:str=None, *args, **kwargs):
             'baths': '',
             'sq_ft': ''
         },
-        'cap_rate_form': CapRateForm(initial=cap_rate_formula.__dict__)
+        'cap_rate_form': CapRateForm(instance=cap_rate_formula)
     }
     return render(request, "explore/explore.html", context)
 

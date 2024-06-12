@@ -14,5 +14,5 @@ urlpatterns = [
     path('validate-email/', views.validate_email, name='validate_email'),
     path('validate-phone-number/', views.validate_phone_number, name='validate_phone_number'),
     path('retrieve-new-formula-table/', views.retrieve_new_formula_table, name='retrieve_new_formula_table'),
-    path('update-cap-rate-formula/<int:profile_id>/', views.update_cap_rate_formula, name='update_cap_rate_formula'),
+    path('update-cap-rate-formula/', views.update_cap_rate_formula, name='update_cap_rate_formula'),
 ]
