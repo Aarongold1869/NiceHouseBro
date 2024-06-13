@@ -134,10 +134,10 @@
 
             <div id="details-tab">
                 
-                <h2 class="fw-bold mb-3">{{ property.price }}</h2>
+                <h2 class="fw-bold mb-3">{{ property.price|currency:0 }}</h2>
                 <p class="mb-3 text-muted">{{ property.address }}, {{ property.city }}, {{ property.state }} {{ property.zip }}</p>
                  
-                <a class="cap-rate-link" href="/" target="_">
+                <a class="cap-rate-link" href="/faq/rental-estimate/#rental-estimate" target="_">
                     <h5 class="mb-2 align-items-center" style="width:fit-content;">
                         Rental Estimate: <strong>{{ property.rent|currency:0 }}</strong>&ensp;
                         {% include "icons/question-circle.html" with size=20 fill="var(--love)"%}
@@ -208,6 +208,7 @@
 </div>
 
 {% include "components/register-modal.html" %}
+{% include "components/cap-rate-modal.html" with form=cap_rate_form %}
 
 {{ property|json_script:"property" }}
 

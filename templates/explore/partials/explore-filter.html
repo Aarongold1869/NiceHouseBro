@@ -55,10 +55,10 @@
             <div id="cap-rate-filter-container" class="d-flex justify-content-between my-4 align-items-center">
                 <label for="cap-rate" class='d-flex'>
                     Cap Rate&ensp;
-                    <p id="cap-rate-value" class="m-0" style="font-weight:bold;">{{ filters.cap_rate|decimal }}% +</p>
+                    <p id="cap-rate-value" class="m-0" style="font-weight:bold;">{{ filters.cap_rate.value|decimal }}% +</p>
                 </label>
                 
-                <input type="range" min="0" max="0.2" value="{{filters.cap_rate}}" step="0.01" class="slider" id="cap-rate-input" name="cap-rate" style="width: 80%;"
+                <input type="range" min="0" max="0.2" value="{{filters.cap_rate.value}}" step="0.01" class="slider" id="cap-rate-input" name="cap-rate" style="width: 80%;"
                 oninput="updateSliderValue()"
                 >
             </div>

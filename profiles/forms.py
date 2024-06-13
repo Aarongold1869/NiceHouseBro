@@ -36,7 +36,7 @@ class CapRateForm(forms.ModelForm):
         exclude = ['profile']
         labels = {
             'annual_property_tax_rate': 'Property Tax Rate (%)',
-            'monthly_management_fee_rate': 'Management Fee Rate (%)',
+            'monthly_management_fee_rate': 'Mgmt. Rate (%)',
             'monthly_insurance': 'Monthly Insurance ($)',
             'monthly_maintance_as_rate': 'Maintance Fee Rate (%)',
             'monthly_leasing_fee': 'Monthly Leasing Fee ($)',
@@ -52,3 +52,8 @@ class CapRateForm(forms.ModelForm):
             'monthly_hoa_fee': forms.NumberInput(attrs={'step': 1, 'min':0, **CAP_RATE_HTMX_ATTRS}),
             'monthly_utilities': forms.NumberInput(attrs={'step': 1, 'min':0, **CAP_RATE_HTMX_ATTRS})
         }
+
+    def __init__(self, *args, **kwargs):
+        super(CapRateForm, self).__init__(*args, **kwargs)
+        for field_name in self.fields:
+            self.fields[field_name].required = False

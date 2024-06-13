@@ -94,12 +94,12 @@ def explore_view(request, search_str:str=None, *args, **kwargs):
         'property_obj': property_list[0] if len(property_list) > 0 else None,
         'search_str': search_str,
         'filters': {
-            'cap_rate': 0,
-            'min_price': 0,
-            'max_price': '',
-            'beds': '',
-            'baths': '',
-            'sq_ft': ''
+            'cap_rate': { 'name': 'Cap Rate', 'value': 0 },
+            'min_price': { 'name': 'Min Price', 'value': 0 },
+            'max_price': { 'name': 'Max Price', 'value': 0 },
+            'beds': { 'name': 'Beds', 'value': 0 },
+            'baths': { 'name': 'Baths', 'value': 0 },
+            'sq_ft': { 'name': 'Sq Ft', 'value': 0 },
         },
         'cap_rate_form': CapRateForm(instance=cap_rate_formula)
     }
@@ -107,7 +107,7 @@ def explore_view(request, search_str:str=None, *args, **kwargs):
 
 
 def filter_property_list(property_list: List[Property], filters: dict):
-    filtered_property_list = list(filter(lambda x: x["cap_rate"] >= float(filters['cap_rate']), property_list))
+    filtered_property_list = list(filter(lambda x: x["cap_rate"] >= float(filters['cap_rate']['value']), property_list))
     return filtered_property_list
 
 def explore_view_filtered(
@@ -143,12 +143,12 @@ def explore_view_filtered(
     property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=profile, cap_rate_formula=cap_rate_formula)
 
     filters = { 
-        'cap_rate':cap_rate, 
-        'min_price':min_price,
-        'max_price':max_price,
-        'beds':beds,
-        'baths':baths,
-        'sq_ft':sq_ft,
+        'cap_rate': { 'name': 'Cap Rate', 'value': cap_rate },
+        'min_price': { 'name': 'Min Price', 'value': min_price },
+        'max_price': { 'name': 'Max Price', 'value': max_price },
+        'beds': { 'name': 'Beds', 'value': beds },
+        'baths': { 'name': 'Baths', 'value': baths },
+        'sq_ft': { 'name': 'Sq Ft', 'value': sq_ft },
     }
     filtered_property_list = filter_property_list(property_list=property_list, filters=filters)
     context = {

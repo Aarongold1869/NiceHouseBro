@@ -23,7 +23,7 @@ def retreive_notification_view(request, *args, **kwargs):
 
 def delete_notification_view(request, id):
     notification = Notification.objects.get(id=id)
-    if notification.user != request.user:
+    if notification.profile != request.user.profile:
         return 400
     notification.delete()
     return HttpResponse(status=200)

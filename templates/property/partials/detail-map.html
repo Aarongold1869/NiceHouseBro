@@ -1,20 +1,24 @@
 
-<div id="map" style="width: 100%; height:400px;"></div>
+{% if property.coordinates %}
 
-{{ property|json_script:"property" }}
+    <div id="map" style="width: 100%; height:400px;"></div>
 
-<script>
-    // Get the map data from the django context
-    var map = L.map('map').fitWorld();
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap'
-    }).addTo(map);
+    {{ property|json_script:"property" }}
 
-    let property = JSON.parse(document.getElementById('property').textContent);
-    if (property) { // if coordinates are provided, set the map view to the coordinates
-        map.setView([property.latLong.value.latitude, property.latLong.value.longitude], 16);
-        var marker = L.marker([property.latLong.value.latitude, property.latLong.value.longitude]).addTo(map);
-    } 
+    <script>
+        // Get the map data from the django context
+        var map = L.map('map').fitWorld();
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
 
-</script>
+        let property = JSON.parse(document.getElementById('property').textContent);
+        if (property) { // if coordinates are provided, set the map view to the coordinates
+            map.setView([property.coordinates.latitude, property.coordinates.longitude], 16);
+            var marker = L.marker([property.coordinates.latitude, property.coordinates.longitude]).addTo(map);
+        } 
+
+    </script> 
+
+{% endif %}

@@ -28,15 +28,15 @@
 <div class="container d-flex flex-column align-items-center mt-5" >
     <form method="POST" class="form-group col-sm-10 px-5 py-4 shadow" style="border: 1px solid var(--bs-secondary-bg); border-radius: 10px;">
         <p class="text-center text-muted mb-3">{{ progress }}</p>
-        <h1 class="text-center">{{ title }}</h1>
+        <h1 class="text-center mb-3">{{ title }}</h1>
         {% csrf_token %}
         {{ form|crispy }}
         <div class="d-flex justify-content-center">
-            <button type="submit" class="btn love-outline w-25 mt-3">{{ button_text }}</button>
+            <button type="submit" class="btn love-outline mt-3">{{ button_text }}</button>
         </div>
         
         {% if title == 'Create an Account' %}
-            <p class="mt-5 text-center">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+            <p class="mt-4 text-center">Already have an account? <a href="{% url 'login' %}" style="color:var(--love);">Login</a></p>
         {% else %}
             <a href="{% if step == 3%}/{% else %}/account/register/step-3/{% endif %}" style="color:var(--love); text-decoration:none;">
                 <p style="text-align:right!important; margin-top: 1rem;">Skip ></p>

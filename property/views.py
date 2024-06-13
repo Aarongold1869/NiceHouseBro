@@ -22,16 +22,20 @@ import base64
 import json
 import random
 
-def property_detail_view(request, state:str, city:str, address:str, zip:int, propertyId:str):
+def property_detail_view(request, state:str, city:str, address:str, zip:int, propertyId:str, lat:str=None, long:str=None,):
+    print(propertyId, lat, long)
     property = property_detail_api(state='FL', city=city, address=address, zip=zip, propertyId=propertyId)
     property['propertyId'] = propertyId
+
     price = int(property['price'].replace('$','').replace(',',''))
     rent = calculate_rental_price(property)
+
     cap_rate_formula = CapRateFormula()
     if request.user.is_authenticated:
         cap_rate_formula, created = CapRateFormula.objects.get_or_create(profile=request.user.profile)
+
     *_, cap_rate = calculate_cap_rate(
-        value=int(price), 
+        value=price, 
         rent=rent, 
         annual_property_tax_rate=cap_rate_formula.annual_property_tax_rate,
         monthly_management_fee_rate=cap_rate_formula.monthly_management_fee_rate,
@@ -41,9 +45,7 @@ def property_detail_view(request, state:str, city:str, address:str, zip:int, pro
         monthly_hoa_fee=cap_rate_formula.monthly_hoa_fee,
         monthly_utilities=cap_rate_formula.monthly_utilities,
     )
-    property['rent'] = rent
-    property['cap_rate'] = cap_rate
-    # street_view_image = google_street_view_api_base64(address=address)
+
     is_saved = False
     contact_form = AgentContactFormForm()
     if request.user.is_authenticated:
@@ -59,7 +61,19 @@ def property_detail_view(request, state:str, city:str, address:str, zip:int, pro
                 'phone_number': Profile.objects.get(user=request.user).phone_number,
                 'address': address,
             })
-    property = { **property, 'propertyId': propertyId, 'address': address, 'state': state, 'city': city, 'zip': zip, 'is_saved': is_saved }
+    property = { 
+        **property, 
+        # 'propertyId': propertyId, 
+        'price': price,
+        'rent': rent,
+        'cap_rate': cap_rate,
+        'address': address, 
+        'state': state, 
+        'city': city, 
+        'zip': zip, 
+        'coordinates': { 'latitude': lat, 'longitude': long } if lat and long else None,
+        'is_saved': is_saved 
+    }
     context = { 'property': property, 'contact_form': contact_form }
     return render(request, 'property/property-detail.html', context)
 

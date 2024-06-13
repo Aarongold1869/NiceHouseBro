@@ -26,7 +26,7 @@
                         aria-controls="modalFormContainer"
                         >Modify Formula</button>
                         {% else %}
-                        <button class="btn btn-sm love-outline" onclick="()=> {alert('Please register or login to modify the formula')}">Modify Formula</button>
+                        <button class="btn btn-sm love" data-bs-toggle="modal" data-bs-target="#registerModal">Modify Formula</button>
                         {% endif %} 
                     </div>
                 </td>
@@ -54,9 +54,6 @@
     </table>
 
 </div>
-
-{% comment %} <input hx-swap-oob="true" id="value-hidden-input" type='hidden' name='property_value' value='{{ property_value }}'>
-<input hx-swap-oob="true" id="rent-hidden-input" type='hidden' name='rent' value='{{ rent }}'> {% endcomment %}
 
 {% if form %}
     {% include 'components/partials/cap-rate-form.html' %}

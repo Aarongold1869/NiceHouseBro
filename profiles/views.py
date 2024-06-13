@@ -130,7 +130,7 @@ def retrieve_new_formula_table(request, *args, **kwargs):
     formula_obj = CapRateFormula()
     form_state = request.GET.get('form_state', None) # either initial or reset
     if form_state:
-        if form_state == 'initial':
+        if form_state == 'initial' and request.user.is_authenticated:
             formula_obj, created = CapRateFormula.objects.get_or_create(profile=request.user.profile) 
         form = CapRateForm(instance=formula_obj)
 

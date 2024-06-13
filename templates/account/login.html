@@ -3,7 +3,7 @@
 {% block content %}
 {% load crispy_forms_tags %}
 
-<div class='container col-sm-4 col-10 text-center mt-5'>
+<div class='container col-sm-4 text-center mt-5'>
     {% if user.is_authenticated %}
     <p class='text-light'> You are already logged in </p>
     {% else %}
@@ -16,6 +16,8 @@
             <p class='text-danger'>{{ form_error }}</p>
         {% endif %}
         <input type='submit' class='btn love-outline' value='Login'>
+
+        <a class="text-center" style="color:var(--love);" href="{% url 'register' %}"><p class="mt-4">Click here to sign up.</p></a>
     </form>
     {% endif %}
 </div>

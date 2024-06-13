@@ -28,10 +28,8 @@ import random
 import hashlib
 
 def calculate_rental_price(property: dict)-> int:
-    print(property['propertyId'])
     property_id = property['propertyId']
     rent = round(int(property_id) % 1000,0)
     if rent < 1000:
         rent += 1000
-    print(rent)
     return rent
