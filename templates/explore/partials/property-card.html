@@ -32,6 +32,13 @@
     box-shadow: 0 0 10px 2px var(--love);
 }
 
+@media (max-width: 768px) {
+    .property-card img {
+        max-height: 225px;
+        object-fit: cover;
+    }
+}
+
 .property-card[data-status="unknown"] {
     /* transform: translateX(50%) rotate(30deg) scale(0.001);
     -webkit-transform: translateX(50%) rotate(30deg) scale(0.001);

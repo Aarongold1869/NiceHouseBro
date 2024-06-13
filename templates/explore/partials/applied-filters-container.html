@@ -10,7 +10,7 @@
     {% for filter, obj in filters.items %}
         {% if obj.value != 0 %}
             <div class='btn btn-sm btn-secondary me-1 align-items-center applied-filter-button' data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom">
-                <p class="m-0" style="white-space: nowrap;">{{ obj.name }} {{ obj.value }} +</p>
+                <p class="m-0" style="white-space: nowrap;">{{ obj.name }} {{ obj.value }}</p>
                 {% comment %} <button class='p-0 m-0 ms-1 btn'>&times;</button> {% endcomment %}
             </div>
         {% endif %}

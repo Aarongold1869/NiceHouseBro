@@ -17,7 +17,7 @@ def fetch_property_list_from_map_data(map_data: MapData)-> List[Property]:
     scraper = RedfinScraper(
         include_nearby_homes=True, 
         market=map_data['address']['city'], 
-        num_homes=50,
+        num_homes=100,
         page_number=1, 
         poly=poly_str
     )

@@ -193,7 +193,7 @@
             <div id="sqfeet-filter-container" class="d-flex justify-content-evenly my-4" style="flex-direction: column;">
                 <p class="mb-2">Square Feet</p>
                 <div class="d-flex w-100">
-                    <select id="min-sqfeet" name="min-sqfeet">
+                    <select id="min-sq-feet" name="min-sq-feet">
                         <option value="0">No Min</option>
                         <option value="500">500</option>
                         <option value="750">750</option>
@@ -226,7 +226,7 @@
                         <option value="7500">7500</option>
                     </select>
                     <p style="margin: 0 10px;"> - </p>
-                    <select id="max-sqfeet" name="max-sqfeet">
+                    <select id="max-sq-feet" name="max-sq-feet">
                         <option value="0">No Max</option>
                         <option value="500">500</option>
                         <option value="750">750</option>
@@ -330,22 +330,22 @@
 
     function applyFilters () {
 
-        const formValues = () => {
-            const form = document.getElementById("explore-filter-form");
-            const formData = new FormData(form);
-            const values = {};
-            for (const [key, value] of formData.entries()) {
-                values[key] = value;
+        let filter_url ='/explore/filter/search={{ search_str }}';
+        const form = document.getElementById("explore-filter-form");
+        const formData = new FormData(form);
+        // const values = {};
+        for (const [key, value] of formData.entries()) {
+            // values[key] = value;
+            if (value !== 0) {
+                filter_url += `&${key}=${value}`;
             }
-            return values;
         }
-        const formData = formValues();
-        window.location.replace(`/explore/filter/search={{ search_str }}&cap_rate=${formData['cap-rate']}/`);
+        window.location.replace(filter_url+'/');
     }
 
     function resetFilterForm() {
         const filterForm = document.getElementById("explore-filter");
         filterForm.reset();
-        document.getElementById("cap-rate-value").innerHTML = 5;
+        document.getElementById("cap-rate-value").innerHTML = 0;
     }
 </script>

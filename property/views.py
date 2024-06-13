@@ -22,8 +22,7 @@ import base64
 import json
 import random
 
-def property_detail_view(request, state:str, city:str, address:str, zip:int, propertyId:str, lat:str=None, long:str=None,):
-    print(propertyId, lat, long)
+def property_detail_view(request, state:str, city:str, address:str, zip:int, propertyId:str, lat:str=None, long:str=None):
     property = property_detail_api(state='FL', city=city, address=address, zip=zip, propertyId=propertyId)
     property['propertyId'] = propertyId
 

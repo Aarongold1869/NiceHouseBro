@@ -99,7 +99,10 @@ def explore_view(request, search_str:str=None, *args, **kwargs):
             'max_price': { 'name': 'Max Price', 'value': 0 },
             'beds': { 'name': 'Beds', 'value': 0 },
             'baths': { 'name': 'Baths', 'value': 0 },
-            'sq_ft': { 'name': 'Sq Ft', 'value': 0 },
+            'min_sq_ft': { 'name': 'Baths', 'value': 0 },
+            'max_sq_ft': { 'name': 'Baths', 'value': 0 },
+            'min_lot': { 'name': 'Baths', 'value': 0 },
+            'max_lot': { 'name': 'Baths', 'value': 0 },
         },
         'cap_rate_form': CapRateForm(instance=cap_rate_formula)
     }
@@ -107,7 +110,13 @@ def explore_view(request, search_str:str=None, *args, **kwargs):
 
 
 def filter_property_list(property_list: List[Property], filters: dict):
-    filtered_property_list = list(filter(lambda x: x["cap_rate"] >= float(filters['cap_rate']['value']), property_list))
+    def object_matches_filter_criteria(obj, filters):
+        if obj['cap_rate'] < float(filters['cap_rate']['value']):
+            return False
+        if not int(filters['min_price']['value']) <= obj['price'] <= int(filters['max_price']['value']):
+            return False
+        return True
+    filtered_property_list = list(filter(lambda x: object_matches_filter_criteria(x, filters=filters), property_list))
     return filtered_property_list
 
 def explore_view_filtered(
@@ -118,7 +127,10 @@ def explore_view_filtered(
         max_price:int=0,
         beds:int=0,
         baths:int=0,
-        sq_ft:int=0,
+        min_sq_ft:int=0,
+        max_sq_ft:int=0,
+        min_lot:int=0,
+        max_lot:int=0,
         *args, 
         **kwargs
     ):
@@ -148,8 +160,12 @@ def explore_view_filtered(
         'max_price': { 'name': 'Max Price', 'value': max_price },
         'beds': { 'name': 'Beds', 'value': beds },
         'baths': { 'name': 'Baths', 'value': baths },
-        'sq_ft': { 'name': 'Sq Ft', 'value': sq_ft },
+        'min_sq_ft': { 'name': 'Baths', 'value': min_sq_ft },
+        'max_sq_ft': { 'name': 'Baths', 'value': max_sq_ft },
+        'min_lot': { 'name': 'Baths', 'value': min_lot },
+        'max_lot': { 'name': 'Baths', 'value': max_lot },
     }
+    
     filtered_property_list = filter_property_list(property_list=property_list, filters=filters)
     context = {
         'map_data': map_data,
