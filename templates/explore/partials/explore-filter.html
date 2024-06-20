@@ -29,11 +29,11 @@
             <h5 class="offcanvas-title" id="offcanvasBottomLabel">Filter Properties</h5>
 
             <div class="d-flex w-50 justify-content-evenly">
-                <button 
+                <a
+                href="/explore/search={{ search_str }}/" 
                 class="btn btn-sm btn-outline-info border-3" 
                 style="width:45%;"
-                onclick="resetFilterForm()"
-                >Reset</button>
+                >Clear Filters</a>
 
                 <button 
                 class="btn btn-sm love-outline border-3"
@@ -317,8 +317,8 @@
     </div>
 </div>
 
-
-{{ property_list|json_script:"property_list" }}
+<!-- {{ property_list|json_script:"property_list" }} -->
+{{ filters|json_script:"filters" }}
 
 <script>
     
@@ -328,8 +328,22 @@
         output.innerHTML = parseFloat(slider.value * 100).toFixed(0) + "% +";
     }
 
-    function applyFilters () {
+    function setFormInitial() {
+        const filters = JSON.parse(document.getElementById("filters").textContent);
+        document.getElementById('min-price').value=filters['min_price']['value'];
+        document.getElementById('max-price').value=filters['max_price']['value'];
+        document.getElementById('bedrooms').value=filters['beds']['value'];
+        document.getElementById('bathrooms').value=filters['baths']['value'];
+        document.getElementById('min-sq-feet').value=filters['min_sq_feet']['value'];
+        document.getElementById('max-sq-feet').value=filters['max_sq_feet']['value'];
+        document.getElementById('lotSize-min').value=filters['min_lot']['value'];
+        document.getElementById('lotSize-max').value=filters['max_lot']['value'];
+        // document.getElementById('year-built-min').value=filters['year_built_min']['value'];
+        // document.getElementById('year-built-max').value=filters['year_built_max']['value'];
+    }
+    setFormInitial();
 
+    function applyFilters () {
         let filter_url ='/explore/filter/search={{ search_str }}';
         const form = document.getElementById("explore-filter-form");
         const formData = new FormData(form);
@@ -343,9 +357,5 @@
         window.location.replace(filter_url+'/');
     }
 
-    function resetFilterForm() {
-        const filterForm = document.getElementById("explore-filter");
-        filterForm.reset();
-        document.getElementById("cap-rate-value").innerHTML = 0;
-    }
+
 </script>

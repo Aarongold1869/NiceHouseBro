@@ -13,6 +13,7 @@ from profiles.models import Profile, UserSearches, CapRateFormula
 from profiles.forms import CapRateForm
 from property.models import SavedProperty
 from property.functions import calculate_cap_rate, calculate_rental_price
+from property.templatetags import currency, percentage, comma
 
 import after_response
 import random
@@ -58,10 +59,6 @@ def get_additional_property_list_context(property_data: List[Property], user_pro
         return obj
     
     property_list = list(map(lambda x: { **x, **set_property_obj_context(x, user_profile) }, property_data))
-    if len(property_list) > 0:
-        end = 2 if len(property_list) > 2 else len(property_list)
-        for i in range(-1, end):
-            property_list[i]['image'] = google_street_view_api_base64(address=property_list[i]['address'])
     return property_list
 
 
@@ -87,6 +84,11 @@ def explore_view(request, search_str:str=None, *args, **kwargs):
         profile = request.user.profile
         cap_rate_formula, created = CapRateFormula.objects.get_or_create(profile=profile)
     property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=profile, cap_rate_formula=cap_rate_formula)
+    if len(property_list) > 0:
+        end = 2 if len(property_list) > 2 else len(property_list)
+        for i in range(-1, end):
+            property_list[i]['image'] = google_street_view_api_base64(address=property_list[i]['address'])
+            print(property_list[i]['image'][:40], property_list[i]['propertyId'])
     
     context = {
         'map_data': map_data,
@@ -111,9 +113,22 @@ def explore_view(request, search_str:str=None, *args, **kwargs):
 
 def filter_property_list(property_list: List[Property], filters: dict):
     def object_matches_filter_criteria(obj, filters):
-        if obj['cap_rate'] < float(filters['cap_rate']['value']):
-            return False
-        if not int(filters['min_price']['value']) <= obj['price'] <= int(filters['max_price']['value']):
+        try:
+            if obj['cap_rate'] < float(filters['cap_rate']['value']):
+                return False
+            max_price = int(filters['max_price']['value']) if not filters['max_price']['value'] == 0 else 999999999
+            if not int(filters['min_price']['value']) <= obj['price'] <= max_price:
+                return False
+            if not obj['beds'] >= int(filters['beds']['value']):
+                return False
+            if not obj['baths'] >= int(filters['baths']['value']):
+                return False
+            max_sq_ft = int(filters['max_sq_ft']['value']) if not filters['max_sq_ft']['value'] == 0 else 999999999
+            if not int(filters['min_sq_ft']['value']) <= obj['sq_ft'] <= max_sq_ft:
+                return False
+            # if not int(filters['min_lot']['value']) <= obj['lot_size'] <= int(filters['max_lot']['value']): 
+            #     return False 
+        except Exception as e:
             return False
         return True
     filtered_property_list = list(filter(lambda x: object_matches_filter_criteria(x, filters=filters), property_list))
@@ -155,18 +170,23 @@ def explore_view_filtered(
     property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=profile, cap_rate_formula=cap_rate_formula)
 
     filters = { 
-        'cap_rate': { 'name': 'Cap Rate', 'value': cap_rate },
-        'min_price': { 'name': 'Min Price', 'value': min_price },
-        'max_price': { 'name': 'Max Price', 'value': max_price },
-        'beds': { 'name': 'Beds', 'value': beds },
-        'baths': { 'name': 'Baths', 'value': baths },
-        'min_sq_ft': { 'name': 'Baths', 'value': min_sq_ft },
-        'max_sq_ft': { 'name': 'Baths', 'value': max_sq_ft },
-        'min_lot': { 'name': 'Baths', 'value': min_lot },
-        'max_lot': { 'name': 'Baths', 'value': max_lot },
+        'cap_rate': { 'name': 'Cap Rate', 'value': cap_rate, 'filter_string': f'{percentage.percentage(cap_rate)} + Cap Rate' },
+        'min_price': { 'name': 'Min Price', 'value': min_price, 'filter_string': f'Price >= {currency.currency(min_price, 0)}' },
+        'max_price': { 'name': 'Max Price', 'value': max_price, 'filter_string': f'Price <= {currency.currency(max_price, 0)}' },
+        'beds': { 'name': 'Beds', 'value': beds, 'filter_string': f'{beds}+ Beds' },
+        'baths': { 'name': 'Baths', 'value': baths, 'filter_string': f'{baths}+ Baths' },
+        'min_sq_ft': { 'name': 'Baths', 'value': min_sq_ft, 'filter_string': f'SqFt >= {comma.comma(min_sq_ft)}' },
+        'max_sq_ft': { 'name': 'Baths', 'value': max_sq_ft, 'filter_string': f'SqFt <= {comma.comma(max_sq_ft)}' },
+        'min_lot': { 'name': 'Baths', 'value': min_lot, 'filter_string': f'' },
+        'max_lot': { 'name': 'Baths', 'value': max_lot, 'filter_string': f'' },
     }
     
     filtered_property_list = filter_property_list(property_list=property_list, filters=filters)
+    if len(filtered_property_list) > 0:
+        end = 2 if len(filtered_property_list) > 2 else len(filtered_property_list)
+        for i in range(-1, end):
+            filtered_property_list[i]['image'] = google_street_view_api_base64(address=filtered_property_list[i]['address']) 
+
     context = {
         'map_data': map_data,
         'property_list': filtered_property_list, 
