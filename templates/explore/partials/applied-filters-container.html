@@ -9,7 +9,7 @@
 <div id="applied-filter-container" class="d-flex w-100 ms-2">
     {% for filter, obj in filters.items %}
         {% if obj.value != 0 and obj.value != '0' %}
-            <div class='btn btn-sm btn-secondary me-1 align-items-center applied-filter-button' data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom">
+            <div class='btn btn-sm btn-outline-info me-1 align-items-center applied-filter-button border-2' data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom">
                 <p class="m-0" style="white-space: nowrap;">{{ obj.filter_string }}</p>
                 {% comment %} <button class='p-0 m-0 ms-1 btn'>&times;</button> {% endcomment %}
             </div>

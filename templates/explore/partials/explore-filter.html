@@ -25,19 +25,17 @@
 <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
     <div class="offcanvas-header justify-content-center" style="background-color: var(--bs-secondary-bg); flex-direction: column!important;">
         
-        <div class="d-flex col-sm-6 justify-content-between align-items-center">
-            <h5 class="offcanvas-title" id="offcanvasBottomLabel">Filter Properties</h5>
+        <div class="d-flex col-12 col-sm-6 justify-content-between align-items-center">
+            <p class="offcanvas-title" id="offcanvasBottomLabel">Filter Properties</p>
 
             <div class="d-flex w-50 justify-content-evenly">
                 <a
                 href="/explore/search={{ search_str }}/" 
-                class="btn btn-sm btn-outline-info border-3" 
-                style="width:45%;"
+                class="btn btn-sm btn-outline-info border-2" 
                 >Clear Filters</a>
 
                 <button 
-                class="btn btn-sm love-outline border-3"
-                style="width:45%;"
+                class="btn btn-sm love-outline border-2"
                 onclick="applyFilters()"
                 data-bs-dismiss="offcanvas" 
                 aria-label="Close"
@@ -53,12 +51,12 @@
         <form id="explore-filter-form" class="container col-sm-6 mx-auto">
 
             <div id="cap-rate-filter-container" class="d-flex justify-content-between my-4 align-items-center">
-                <label for="cap-rate" class='d-flex'>
+                <label for="cap-rate" style="white-space:nowrap; display: flex;">
                     Cap Rate&ensp;
                     <p id="cap-rate-value" class="m-0" style="font-weight:bold;">{{ filters.cap_rate.value|decimal }}% +</p>
                 </label>
                 
-                <input type="range" min="0" max="0.2" value="{{filters.cap_rate.value}}" step="0.01" class="slider" id="cap-rate-input" name="cap-rate" style="width: 80%;"
+                <input type="range" min="0" max="0.2" value="{{filters.cap_rate.value}}" step="0.01" class="slider" id="cap-rate-input" name="cap-rate" style="width: 65%;"
                 oninput="updateSliderValue()"
                 >
             </div>
