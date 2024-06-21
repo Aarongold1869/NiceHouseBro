@@ -28,6 +28,7 @@
 
 <div 
 id="comment-section" 
+class="container"
 hx-get="{% url 'get_comments' property_id=property.propertyId %}"
 hx-swap="outerHTML"
 hx-trigger="reload-comments from:body"
@@ -39,6 +40,7 @@ hx-trigger="reload-comments from:body"
     hx-post="{% url 'create_comment' property_id=property.propertyId %}"
     hx-target="#comment-list"
     hx-swap="afterbegin"
+    hx-vals='{ "url_path": "{{ request.get_full_path }}" }'
     hx-on::after-request="clearForm()"
     >
         {% csrf_token %}
@@ -51,7 +53,11 @@ hx-trigger="reload-comments from:body"
         {% endif %}
     </form>
     
-    <div id="comment-list" class="container mt-4 px-2 pt-2 pb-1 rounded" style="background-color:var(--bs-secondary-bg);">
+    <div 
+    id="comment-list" 
+    class="container mt-3 px-2 pt-2 pb-1 rounded" 
+    style="background-color:var(--bs-secondary-bg);"
+    >
         {% if not comment_list %}
             <p id="no-comments" style="margin: 1rem!important;">No comments yet.</p>
         {% else %}
@@ -80,6 +86,11 @@ hx-trigger="reload-comments from:body"
             let commentEl = comments[i];
             let textEl = commentEl.querySelector('.card-text');
             await formatTextElTags(textEl);
+
+            // Highlight comment if it is the current page
+            if (window.location.href.includes(commentEl.id)) {
+                commentEl.style.boxShadow = 'inset 0 0 10px var(--love)';
+            }
         };
     }
     formatUserTags();

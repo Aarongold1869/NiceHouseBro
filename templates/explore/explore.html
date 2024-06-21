@@ -291,7 +291,17 @@
         if (search === '') {
           return;
         }
-        window.location.replace(`/explore/search=${search}`)
+        let url =`/explore/filter/search=${search}`;
+        const form = document.getElementById("explore-filter-form");
+        const formData = new FormData(form);
+        // const values = {};
+        for (const [key, value] of formData.entries()) {
+            // values[key] = value;
+            if (value !== 0) {
+                url += `&${key}=${value}`;
+            }
+        }
+        window.location.replace(url+'/');
       }
     
       const searchButton = document.getElementById('search-button');

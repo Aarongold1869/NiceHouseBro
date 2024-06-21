@@ -20,7 +20,6 @@ from .functions import calculate_cap_rate, calculate_rental_price
 import after_response
 import base64
 import json
-import random
 
 def property_detail_view(request, state:str, city:str, address:str, zip:int, propertyId:str, lat:str=None, long:str=None):
     property = property_detail_api(state='FL', city=city, address=address, zip=zip, propertyId=propertyId)
@@ -117,7 +116,6 @@ def toggle_property_saved(request, *args, **kwargs):
     property_id = property_data.get('propertyId', None)
     address = property_data.get('address', None)
     saved_qs = SavedProperty.objects.filter(Q(profile=profile) & Q(property_id=property_id))
-    print(property_data)
     if not saved_qs.exists():
         price = property_data.get('price', 0)
         if type(price) == str:

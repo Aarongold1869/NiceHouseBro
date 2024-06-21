@@ -54,7 +54,7 @@ def send_notifications_on_contact_form_submit(sender, instance: AgentContactForm
             message=f'Your contact form for {instance.address} was submitted successfully. An agent will be in touch soon.',
         )
         channel_layer = get_channel_layer()
-        group_name = f'user-notifications-{instance.user.id}'
+        group_name = f'user-notifications-{instance.lead_profile.user.id}'
         event = {
             'type': 'notification_created',
             'notification': notification

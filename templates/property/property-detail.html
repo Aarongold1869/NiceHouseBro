@@ -68,7 +68,7 @@
 </style>
 
 <div id='property-detail' class="d-flex flex-column align-items-center justify-content-center position-relative">
-    <div class="col-sm-8">
+    <div class="col-sm-6">
     
         <div 
         id="user-controls"
@@ -184,7 +184,10 @@
             </div>
 
             <div id="comments-tab" style="display:none;">
-                <div id="comment-section"></div>
+
+                {% comment %} <div id="comment-section"></div> {% endcomment %}
+                {% include "comment/comment-section.html" %}
+
             </div>
 
             <div id="contact-tab" class="container" style="display:none;">
@@ -279,6 +282,13 @@
     window.onload = (event) => {
         const property = JSON.parse(document.getElementById('property').textContent);
         retrieveComments(property.propertyId)
+        if (window.location.href.includes('#comment')){
+            toggleTab('comments')
+            setTimeout(()=> {
+                let right = window.location.href.split('#')[1];
+                document.getElementById(right).scrollIntoView();
+            } , 100);
+        }
     }; 
 
 </script>

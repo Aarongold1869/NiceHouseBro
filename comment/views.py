@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -7,6 +6,7 @@ from django.views.decorators.http import require_http_methods
 
 from .forms import CommentForm, ReplyForm
 from .models import Comment, CommentLike, Reply, ReplyLike, ReportForm
+from account.models import CustomUser
 from profiles.models import Profile, BlockedUser
 
 from django_htmx.http import trigger_client_event
@@ -17,7 +17,7 @@ def format_tag_string(text: str)-> str:
     tags = re.findall(r'@(\w+)', text)
     for tag in tags:
         span_class = 'user-tag'
-        user_qs = User.objects.filter(username=tag)
+        user_qs = CustomUser.objects.filter(username=tag)
         if not user_qs.exists():
             span_class = 'failed-user-tag'
         text = text.replace(f'@{tag}', f'<span class="{span_class}">@{tag}</span>')
@@ -32,6 +32,7 @@ def format_user_tags(request):
 @require_http_methods(['POST'])
 def create_comment_view(request, property_id: str):
     profile = Profile.objects.get(user=request.user)
+    print(request.POST.get('url_path'))
     comment = Comment.objects.create(
         profile=profile,
         property_id=property_id,

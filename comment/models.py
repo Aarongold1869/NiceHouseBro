@@ -8,6 +8,7 @@ class Comment(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     property_id = models.CharField(max_length=100)
     property_address = models.CharField(max_length=250)
+    property_url = models.CharField(max_length=1000)
     text = models.CharField(max_length=999)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -16,8 +17,13 @@ class Comment(models.Model):
     def __str__(self):
         return f'{self.profile.user.username} - {str(self.property_id)} - {self.timestamp}'
     
-    def detail_page_endpoint(self):
-        return f'/property/detail/{self.property_address}/'
+    @property
+    def comment_link(self):
+        return f'/property/detail/{self.property_url}/#comment-{self.id}'
+
+    @property
+    def page_link(self):
+        return f'#comment-{self.id}'
     
     
 class CommentLike(models.Model):

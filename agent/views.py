@@ -9,7 +9,6 @@ from account.models import CustomUser
 from profiles.models import Profile
 
 
-
 # Create your views here.
 def is_agent(user: CustomUser) -> bool:
     return user.is_agent

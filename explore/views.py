@@ -62,53 +62,53 @@ def get_additional_property_list_context(property_data: List[Property], user_pro
     return property_list
 
 
-def explore_view(request, search_str:str=None, *args, **kwargs):
-    ''' View recieves search string as an argument and returns a list of properties, 
-    and map data based on the search string. If no search string is provided, the 
-    view returns data for Pensacola, FL.'''
-    if not search_str:
-        if request.user.is_authenticated:
-            search_str = get_search_str(request.user)
-        else:
-            search_str = 'Pensacola, FL'
+# def explore_view(request, search_str:str=None, *args, **kwargs):
+#     ''' View recieves search string as an argument and returns a list of properties, 
+#     and map data based on the search string. If no search string is provided, the 
+#     view returns data for Pensacola, FL.'''
+#     if not search_str:
+#         if request.user.is_authenticated:
+#             search_str = get_search_str(request.user)
+#         else:
+#             search_str = 'Pensacola, FL'
     
-    map_data: MapData = fetch_map_data_from_search_str(search_str=search_str) 
-    if not map_data:
-        return HttpResponse(status=500)
-    set_last_search.after_response(request.user, search_str)
-    redfin_property_data: List[Property] = fetch_property_list_from_map_data(map_data=map_data)
+#     map_data: MapData = fetch_map_data_from_search_str(search_str=search_str) 
+#     if not map_data:
+#         return HttpResponse(status=500)
+#     set_last_search.after_response(request.user, search_str)
+#     redfin_property_data: List[Property] = fetch_property_list_from_map_data(map_data=map_data)
 
-    profile = None
-    cap_rate_formula = CapRateFormula()
-    if request.user.is_authenticated:
-        profile = request.user.profile
-        cap_rate_formula, created = CapRateFormula.objects.get_or_create(profile=profile)
-    property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=profile, cap_rate_formula=cap_rate_formula)
-    if len(property_list) > 0:
-        end = 2 if len(property_list) > 2 else len(property_list)
-        for i in range(-1, end):
-            property_list[i]['image'] = google_street_view_api_base64(address=property_list[i]['address'])
-            print(property_list[i]['image'][:40], property_list[i]['propertyId'])
+#     profile = None
+#     cap_rate_formula = CapRateFormula()
+#     if request.user.is_authenticated:
+#         profile = request.user.profile
+#         cap_rate_formula, created = CapRateFormula.objects.get_or_create(profile=profile)
+#     property_list = get_additional_property_list_context(property_data=redfin_property_data, user_profile=profile, cap_rate_formula=cap_rate_formula)
+#     if len(property_list) > 0:
+#         end = 2 if len(property_list) > 2 else len(property_list)
+#         for i in range(-1, end):
+#             property_list[i]['image'] = google_street_view_api_base64(address=property_list[i]['address'])
+#             print(property_list[i]['image'][:40], property_list[i]['propertyId'])
     
-    context = {
-        'map_data': map_data,
-        'property_list': property_list, 
-        'property_obj': property_list[0] if len(property_list) > 0 else None,
-        'search_str': search_str,
-        'filters': {
-            'cap_rate': { 'name': 'Cap Rate', 'value': 0 },
-            'min_price': { 'name': 'Min Price', 'value': 0 },
-            'max_price': { 'name': 'Max Price', 'value': 0 },
-            'beds': { 'name': 'Beds', 'value': 0 },
-            'baths': { 'name': 'Baths', 'value': 0 },
-            'min_sq_ft': { 'name': 'Baths', 'value': 0 },
-            'max_sq_ft': { 'name': 'Baths', 'value': 0 },
-            'min_lot': { 'name': 'Baths', 'value': 0 },
-            'max_lot': { 'name': 'Baths', 'value': 0 },
-        },
-        'cap_rate_form': CapRateForm(instance=cap_rate_formula)
-    }
-    return render(request, "explore/explore.html", context)
+#     context = {
+#         'map_data': map_data,
+#         'property_list': property_list, 
+#         'property_obj': property_list[0] if len(property_list) > 0 else None,
+#         'search_str': search_str,
+#         'filters': {
+#             'cap_rate': { 'name': 'Cap Rate', 'value': 0 },
+#             'min_price': { 'name': 'Min Price', 'value': 0 },
+#             'max_price': { 'name': 'Max Price', 'value': 0 },
+#             'beds': { 'name': 'Beds', 'value': 0 },
+#             'baths': { 'name': 'Baths', 'value': 0 },
+#             'min_sq_ft': { 'name': 'Baths', 'value': 0 },
+#             'max_sq_ft': { 'name': 'Baths', 'value': 0 },
+#             'min_lot': { 'name': 'Baths', 'value': 0 },
+#             'max_lot': { 'name': 'Baths', 'value': 0 },
+#         },
+#         'cap_rate_form': CapRateForm(instance=cap_rate_formula)
+#     }
+#     return render(request, "explore/explore.html", context)
 
 
 def filter_property_list(property_list: List[Property], filters: dict):
@@ -181,16 +181,19 @@ def explore_view_filtered(
         'max_lot': { 'name': 'Baths', 'value': max_lot, 'filter_string': f'' },
     }
     
-    filtered_property_list = filter_property_list(property_list=property_list, filters=filters)
-    if len(filtered_property_list) > 0:
-        end = 2 if len(filtered_property_list) > 2 else len(filtered_property_list)
+    uri = request.build_absolute_uri()
+    if '/filter/' in uri:
+        property_list = filter_property_list(property_list=property_list, filters=filters)
+
+    if len(property_list) > 0:
+        end = 2 if len(property_list) > 2 else len(property_list)
         for i in range(-1, end):
-            filtered_property_list[i]['image'] = google_street_view_api_base64(address=filtered_property_list[i]['address']) 
+            property_list[i]['image'] = google_street_view_api_base64(address=property_list[i]['address']) 
 
     context = {
         'map_data': map_data,
-        'property_list': filtered_property_list, 
-        'property_obj': filtered_property_list[0] if len(filtered_property_list) > 0 else None,
+        'property_list': property_list, 
+        'property_obj': property_list[0] if len(property_list) > 0 else None,
         'search_str': search_str,
         'filters': filters
     }

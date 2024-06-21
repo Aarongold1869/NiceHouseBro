@@ -20,6 +20,10 @@
         border: 1px solid #ccc;
         border-radius: 5px;
     }
+
+    .invalid-input {
+        border: 2px solid var(--bs-danger);
+    }
 </style>
 
 <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
@@ -37,8 +41,6 @@
                 <button 
                 class="btn btn-sm love-outline border-2"
                 onclick="applyFilters()"
-                data-bs-dismiss="offcanvas" 
-                aria-label="Close"
                 >Apply</button>
             </div>
             
@@ -64,7 +66,7 @@
             <div id="price-filter-container" class="d-flex justify-content-between align-items-center my-4">
                 <div style="text-align: left; width:45%;">
                     <label class="mb-2" for="min-price">Min Price</label>
-                    <select id="min-price" name="min-price">
+                    <select id="min-price" name="min-price" onchange="RemoveInvalidInput()">
                         <option value="0">No Min</option>
                         <option value="50000">$50,000</option>
                         <option value="100000">$100,000</option>
@@ -319,6 +321,15 @@
 {{ filters|json_script:"filters" }}
 
 <script>
+    function RemoveInvalidInput(e) {
+        e.target.classList.remove('invalid-input');
+    }
+    var min_price_input = document.getElementById('min-price');
+    min_price_input.addEventListener('change', RemoveInvalidInput);
+    var min_sq_feet_input = document.getElementById('min-sq-feet');
+    min_sq_feet_input.addEventListener('change', RemoveInvalidInput);
+    var min_lot_input = document.getElementById('lotSize-min');
+    min_lot_input.addEventListener('change', RemoveInvalidInput);
     
     function updateSliderValue() {
         const slider = document.getElementById("cap-rate-input");
@@ -332,8 +343,8 @@
         document.getElementById('max-price').value=filters['max_price']['value'];
         document.getElementById('bedrooms').value=filters['beds']['value'];
         document.getElementById('bathrooms').value=filters['baths']['value'];
-        document.getElementById('min-sq-feet').value=filters['min_sq_feet']['value'];
-        document.getElementById('max-sq-feet').value=filters['max_sq_feet']['value'];
+        document.getElementById('min-sq-feet').value=filters['min_sq_ft']['value'];
+        document.getElementById('max-sq-feet').value=filters['max_sq_ft']['value'];
         document.getElementById('lotSize-min').value=filters['min_lot']['value'];
         document.getElementById('lotSize-max').value=filters['max_lot']['value'];
         // document.getElementById('year-built-min').value=filters['year_built_min']['value'];
@@ -341,7 +352,47 @@
     }
     setFormInitial();
 
+    function validateForm() {
+        const min_price_input = document.getElementById('min-price');
+        const min_price = min_price_input.value;
+        let max_price = document.getElementById('max-price').value;
+        if (max_price === '0') {
+            max_price = 999999999;
+        }
+        if (parseInt(min_price) > parseInt(max_price)) {
+            min_price_input.classList.toggle('invalid-input');
+            alert('Min price must be less than max price');
+            return false;
+        }
+        const min_sq_feet_input = document.getElementById('min-sq-feet')
+        const min_sq_feet = min_sq_feet_input.value;
+        let max_sq_feet = document.getElementById('max-sq-feet').value;
+        if (max_sq_feet === '0') {
+            max_sq_feet = 999999999;
+        }
+        if (parseInt(min_sq_feet) > parseInt(max_sq_feet)) {
+            min_sq_feet_input.classList.toggle('invalid-input');
+            alert('Min sq feet must be less than max sq feet');
+            return false;
+        }
+        const min_lot_input = document.getElementById('lotSize-min');
+        const min_lot = min_lot_input.value;
+        let max_lot = document.getElementById('lotSize-max').value;
+        if (max_lot === '0') {
+            max_lot = 999999999;
+        }
+        if (parseInt(min_lot) > parseInt(max_lot)) {
+            min_lot_input.classList.toggle('invalid-input');
+            alert('Min lot size must be less than max lot size');
+            return false;
+        }
+        return true;
+    }
+
     function applyFilters () {
+        if (!validateForm()) {
+            return;
+        }
         let filter_url ='/explore/filter/search={{ search_str }}';
         const form = document.getElementById("explore-filter-form");
         const formData = new FormData(form);
@@ -354,6 +405,5 @@
         }
         window.location.replace(filter_url+'/');
     }
-
 
 </script>
